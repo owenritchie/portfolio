@@ -1,0 +1,35 @@
+[
+  {
+    "title": "OC Transpo Real-Time Analytics",
+    "subtitle": "End-to-end automated pipeline & visualization dashboard",
+    "description": "A comprehensive data engineering project featuring automated ETL pipelines that ingest real-time GTFS data, transform it through staging layers, and present insights via an interactive Streamlit dashboard. Built with Python, PostgreSQL, and deployed on cloud infrastructure for continuous operation.",
+    "link": "https://oc-transpo.streamlit.app/",
+    "live": true,
+    "image": "/projects/oc-transpo.png",
+    "colorTheme": "orange"
+  },
+  {
+    "title": "Digital Transformation in Sub-Saharan Africa",
+    "subtitle": "Interactive data dashboard exploring tech adoption trends",
+    "link": "https://www.linkedin.com/posts/owenritchie2004_during-my-last-term-i-wanted-to-expand-my-activity-7331368509077127168-LG6p?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
+    "live": false,
+    "image": "/projects/africa.jpeg",
+    "colorTheme": "mint"
+  },
+  {
+    "title": "Chardrop",
+    "subtitle": "WebSocket-based real-time messaging application",
+    "link": "https://www.linkedin.com/posts/owenritchie2004_here-are-some-personal-projects-i-worked-activity-7239399953419112448-ygtn?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
+    "live": false,
+    "image": "/projects/chardrop.jpeg",
+    "colorTheme": "blue"
+  },
+  {
+    "title": "Listzy",
+    "subtitle": "Spotify recommendation web-app",
+    "link": "https://www.linkedin.com/posts/owenritchie2004_here-are-some-personal-projects-i-worked-activity-7239399953419112448-ygtn?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
+    "live": false,
+    "image": "/projects/liszty.jpeg",
+    "colorTheme": "sand"
+  }
+]

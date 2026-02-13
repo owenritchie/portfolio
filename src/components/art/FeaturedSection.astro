@@ -1,0 +1,79 @@
+---
+const featuredLogos = [
+  { file: 'globe.webp', name: 'The Globe and Mail', classes: 'logo-grayscale' },
+  { file: 'parks_canada.png', name: 'Parks Canada', classes: 'logo-large logo-invert' },
+  { file: 'rom.png', name: 'Royal Ontario Museum', classes: 'logo-invert' },
+];
+---
+
+<section class="featured-section">
+  <p class="featured-label">as featured in</p>
+  <div class="featured-logos">
+    {featuredLogos.map(logo => (
+      <div class="featured-logo-wrap">
+        <img src={`/featured_in/${logo.file}`} alt={logo.name} class={logo.classes} />
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .featured-section {
+    margin-bottom: 3rem;
+  }
+
+  .featured-label {
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-logos {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .featured-logo-wrap {
+    display: flex;
+    align-items: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .featured-logo-wrap:hover {
+    opacity: 1;
+  }
+
+  .featured-logo-wrap img {
+    height: 56px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .featured-logo-wrap img.logo-large {
+    height: 80px;
+  }
+
+  .featured-logo-wrap img.logo-grayscale {
+    filter: grayscale(1);
+  }
+
+  :global([data-theme="dark"]) .featured-logo-wrap img.logo-invert {
+    filter: invert(1);
+  }
+
+  @media (max-width: 768px) {
+    .featured-logos {
+      gap: 1.5rem;
+    }
+
+    .featured-logo-wrap img {
+      height: 42px;
+    }
+  }
+</style>

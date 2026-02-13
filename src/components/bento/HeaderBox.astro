@@ -1,0 +1,50 @@
+---
+---
+
+<div class="header-box animate-in animate-delay-1">
+  <div class="header-content">
+    <h1 class="name">Owen Ritchie</h1>
+  </div>
+</div>
+
+<style>
+  .header-box {
+    grid-area: header;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0 0.5rem 0;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    align-items: flex-start;
+    min-height: 120px;
+  }
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .name {
+    font-family: 'Myflora', serif;
+    font-size: 6.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    transform-origin: top;
+  }
+
+  @media (max-width: 768px) {
+    .header-box {
+      gap: 0.375rem;
+      min-height: auto;
+      padding: 0.5rem 0;
+    }
+
+    .name {
+      font-size: 2.5rem;
+    }
+  }
+</style>

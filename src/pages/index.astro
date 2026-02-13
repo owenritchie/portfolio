@@ -1,0 +1,199 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import PhotoBox from '../components/bento/PhotoBox.astro';
+import HeaderBox from '../components/bento/HeaderBox.astro';
+import AboutBox from '../components/bento/AboutBox.astro';
+import MapBox from '../components/bento/MapBox.astro';
+import ArtLink from '../components/bento/ArtLink.astro';
+import ProjectsSection from '../components/projects/ProjectsSection.astro';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const projectsData = JSON.parse(
+  readFileSync(join(process.cwd(), 'public/config/projects.json'), 'utf-8')
+) as {
+  title: string;
+  subtitle: string;
+  link: string;
+  live: boolean;
+  image: string;
+  colorTheme: string;
+  stack?: string[];
+}[];
+---
+
+<Layout title="Owen Ritchie">
+  <main>
+    <ThemeToggle />
+
+    <div class="bento">
+      <PhotoBox />
+      <HeaderBox />
+      <AboutBox />
+      <MapBox />
+      <ArtLink />
+    </div>
+
+    <!-- View My Work Button -->
+    <a href="#projects" class="view-work-btn animate-in animate-delay-5">
+      View my work
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" class="view-work-arrow">
+        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+      </svg>
+    </a>
+
+    <ProjectsSection projects={projectsData} />
+  </main>
+</Layout>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+  /* Load-in Animation Keyframes */
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Animation Classes */
+  :global(.animate-in) {
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease-out forwards;
+  }
+
+  :global(.animate-in-scale) {
+    opacity: 0;
+    animation: fadeScale 0.6s ease-out forwards;
+  }
+
+  :global(.animate-delay-1) { animation-delay: 0.1s; }
+  :global(.animate-delay-2) { animation-delay: 0.2s; }
+  :global(.animate-delay-3) { animation-delay: 0.3s; }
+  :global(.animate-delay-4) { animation-delay: 0.4s; }
+  :global(.animate-delay-5) { animation-delay: 0.5s; }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  main > :global(.theme-toggle) {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+  }
+
+  .bento {
+    display: grid;
+    grid-template-areas:
+      "header header header photo"
+      "about about about photo"
+      "about about about map"
+      "about about about art";
+    grid-template-columns: 1fr 1fr 1fr 280px;
+    grid-template-rows: auto 1fr 1fr 80px;
+    gap: 1rem;
+    min-height: 600px;
+  }
+
+  :global(.box) {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* View My Work Button */
+  .view-work-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+    text-decoration: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .view-work-btn:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+
+  .view-work-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .view-work-btn:hover .view-work-arrow {
+    transform: translateY(3px);
+  }
+
+  @media (max-width: 1024px) {
+    .bento {
+      grid-template-columns: 1fr 1fr 1fr 240px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .bento {
+      grid-template-areas:
+        "header header"
+        "photo photo"
+        "map map"
+        "about about"
+        "art art";
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto 200px auto auto auto;
+      min-height: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .bento {
+      grid-template-areas:
+        "header"
+        "photo"
+        "map"
+        "about"
+        "art";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 220px auto auto auto;
+      gap: 0.75rem;
+    }
+  }
+</style>

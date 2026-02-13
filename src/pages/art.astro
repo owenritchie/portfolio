@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import FeaturedSection from '../components/art/FeaturedSection.astro';
+import Gallery from '../components/art/Gallery.astro';
+import Lightbox from '../components/art/Lightbox.astro';
+import { readdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+
+const photosDir = resolve('./public/photos');
+const photoFiles = (await readdir(photosDir))
+  .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))
+  .sort();
+---
+
+<Layout title="Art — Owen Ritchie">
+  <div class="page">
+    <header class="page-header">
+      <a href="/" class="back-link">← back</a>
+      <ThemeToggle />
+    </header>
+
+    <FeaturedSection />
+    <Gallery photos={photoFiles} />
+  </div>
+
+  <Lightbox />
+</Layout>
+
+<style>
+  .page {
+    width: 100%;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+
+  .back-link {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--text);
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      margin-bottom: 2rem;
+    }
+  }
+</style>

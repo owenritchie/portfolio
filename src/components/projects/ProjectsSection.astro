@@ -1,0 +1,88 @@
+---
+import ProjectCard from './ProjectCard.astro';
+
+interface Project {
+  title: string;
+  subtitle: string;
+  link: string;
+  live: boolean;
+  image: string;
+  colorTheme: string;
+  stack?: string[];
+}
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section id="projects" class="projects-bento-section">
+  <div class="projects-bento">
+    {projects.map((project, index) => (
+      <ProjectCard
+        title={project.title}
+        subtitle={project.subtitle}
+        link={project.link}
+        live={project.live}
+        image={project.image}
+        colorTheme={project.colorTheme}
+        stack={project.stack}
+        index={index}
+      />
+    ))}
+  </div>
+</section>
+
+<style>
+  .projects-bento-section {
+    margin-top: 1rem;
+  }
+
+  .projects-bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 360px 320px;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .projects-bento {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      gap: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .projects-bento {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  function initializeProjectCards() {
+    const projectCards = document.querySelectorAll('.project-card');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    projectCards.forEach(card => {
+      observer.observe(card);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeProjectCards();
+  });
+</script>

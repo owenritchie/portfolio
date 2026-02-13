@@ -1,0 +1,95 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Righteous&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <script>
+      const html = document.documentElement;
+      const stored = localStorage.getItem('theme');
+      if (stored) {
+        html.dataset.theme = stored;
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        html.dataset.theme = 'dark';
+      }
+
+      window.toggleTheme = () => {
+        const current = html.dataset.theme;
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.dataset.theme = next;
+        localStorage.setItem('theme', next);
+      };
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: "Myflora";
+    src: url("/fonts/Myflora.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #ffffff;
+    --card: #fafafa;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+
+    --font-heading: "Inter", system-ui, -apple-system, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+  }
+
+  html {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+    font-weight: 400;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,323 @@
+---
+---
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<div class="box map-box animate-in-scale animate-delay-3">
+  <div class="map-container">
+    <div id="map" class="map-leaflet"></div>
+    <div class="map-overlay"></div>
+    <div class="map-pin">
+      <div class="pin-pulse"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-ring"></div>
+    </div>
+    <div class="map-label-container">
+      <div class="map-label-content">
+        <span class="map-label">Sandy Hill, Ottawa</span>
+        <span class="map-sublabel">45.4248° N, 75.6829° W</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .map-box {
+    grid-area: map;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--card);
+    position: relative;
+  }
+
+  .map-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .map-leaflet {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    z-index: 1;
+  }
+
+  /* Hide default Leaflet controls */
+  .leaflet-control-zoom,
+  .leaflet-control-attribution {
+    display: none !important;
+  }
+
+  .map-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      transparent 50%,
+      var(--card) 85%);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 10;
+  }
+
+  /* Enhanced Location Pin */
+  .map-pin {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .pin-dot {
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    box-shadow:
+      0 0 0 4px rgba(96, 165, 250, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 3;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .map-box:hover .pin-dot {
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 6px rgba(96, 165, 250, 0.4),
+      0 6px 20px rgba(0, 0, 0, 0.4),
+      inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .pin-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(96, 165, 250, 0.5);
+    border-radius: 50%;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .map-box:hover .pin-ring {
+    width: 32px;
+    height: 32px;
+    border-color: rgba(96, 165, 250, 0.7);
+  }
+
+  .pin-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pin-pulse 3s ease-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes pin-pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+
+  .map-label-container {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: auto;
+    padding: 0;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .map-label-content {
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  :global([data-theme="dark"]) .map-label-content {
+    background: transparent;
+    border: none;
+  }
+
+  .map-label {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .map-sublabel {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    opacity: 0.8;
+  }
+
+  /* Light theme adjustments */
+  [data-theme="light"] .pin-dot {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow:
+      0 0 0 4px rgba(59, 130, 246, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="light"] .map-box:hover .pin-dot {
+    box-shadow:
+      0 0 0 6px rgba(59, 130, 246, 0.4),
+      0 6px 20px rgba(0, 0, 0, 0.25),
+      inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="light"] .pin-ring {
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+
+  [data-theme="light"] .map-box:hover .pin-ring {
+    border-color: rgba(59, 130, 246, 0.7);
+  }
+
+  [data-theme="light"] .pin-pulse {
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+  }
+
+  @media (max-width: 768px) {
+    .map-box {
+      height: 180px;
+    }
+  }
+</style>
+
+<script>
+  let map: any;
+  let marker: any;
+  let currentTileLayer: any;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeMap();
+    observeThemeChanges();
+  });
+
+  function observeThemeChanges() {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          updateMapTheme();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+  }
+
+  function updateMapTheme() {
+    if (!map) return;
+
+    if (currentTileLayer) {
+      map.removeLayer(currentTileLayer);
+    }
+
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+    const tileUrl = isDarkMode
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+    currentTileLayer = (window as any).L.tileLayer(tileUrl, {
+      attribution: '',
+      maxZoom: 18,
+      opacity: 0.9
+    }).addTo(map);
+  }
+
+  function initializeMap() {
+    const L = (window as any).L;
+    const ottawaLat = 45.4248;
+    const ottawaLng = -75.6829;
+
+    map = L.map('map', {
+      center: [ottawaLat, ottawaLng],
+      zoom: 15,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      dragging: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      tap: false,
+      zoomSnap: 0,
+      zoomDelta: 0,
+      trackResize: true
+    });
+
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+    const tileUrl = isDarkMode
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+    currentTileLayer = L.tileLayer(tileUrl, {
+      attribution: '',
+      maxZoom: 18,
+      minZoom: 15,
+      opacity: 0.9,
+      updateWhenIdle: false,
+      updateWhenZooming: false,
+      noWrap: true
+    }).addTo(map);
+
+    const customIcon = L.divIcon({
+      className: 'custom-marker',
+      html: '',
+      iconSize: [1, 1],
+      iconAnchor: [0, 0]
+    });
+
+    marker = L.marker([ottawaLat, ottawaLng], { icon: customIcon }).addTo(map);
+
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+
+    const mapElement = document.getElementById('map');
+    if (mapElement) mapElement.style.pointerEvents = 'none';
+  }
+</script>

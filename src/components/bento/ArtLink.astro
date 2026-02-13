@@ -1,0 +1,124 @@
+---
+---
+
+<a href="/art" class="box art-box animate-in-scale animate-delay-4">
+  <span class="art-title">
+    View my art
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" class="art-arrow">
+      <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/>
+    </svg>
+  </span>
+</a>
+
+<style>
+  .art-box {
+    grid-area: art;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .art-box:hover {
+    border-color: transparent;
+  }
+
+  .art-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center,
+      #FFFFFF 0%,
+      #FFFACD 8%,
+      #FFD700 15%,
+      #FF8C00 22%,
+      #FF4500 30%,
+      #FF1493 40%,
+      #FF69B4 50%,
+      #9D4EDD 60%,
+      #5A67D8 72%,
+      #2D3748 85%,
+      #0A192F 100%);
+    background-size: 300% 300%;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .art-box:hover::before {
+    opacity: 1;
+    animation: heat-flow 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .art-box::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.25) 45%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.25) 55%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .art-box:hover::after {
+    animation: shimmer 0.6s ease-out forwards;
+  }
+
+  @keyframes heat-flow {
+    0% {
+      background-position: 50% 0%;
+      filter: brightness(1.05) saturate(1.15);
+    }
+    100% {
+      background-position: 100% 15%;
+      filter: brightness(1.2) saturate(1.35) hue-rotate(10deg);
+    }
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .art-title {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    z-index: 2;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .art-box:hover .art-title {
+    color: #ffffff;
+  }
+
+  .art-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .art-box:hover .art-arrow {
+    transform: translateX(4px);
+  }
+</style>
