@@ -15,21 +15,5 @@
     "live": false,
     "image": "/projects/africa.jpeg",
     "colorTheme": "mint"
-  },
-  {
-    "title": "Chardrop",
-    "subtitle": "WebSocket-based real-time messaging application",
-    "link": "https://www.linkedin.com/posts/owenritchie2004_here-are-some-personal-projects-i-worked-activity-7239399953419112448-ygtn?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
-    "live": false,
-    "image": "/projects/chardrop.jpeg",
-    "colorTheme": "blue"
-  },
-  {
-    "title": "Listzy",
-    "subtitle": "Spotify recommendation web-app",
-    "link": "https://www.linkedin.com/posts/owenritchie2004_here-are-some-personal-projects-i-worked-activity-7239399953419112448-ygtn?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
-    "live": false,
-    "image": "/projects/liszty.jpeg",
-    "colorTheme": "sand"
   }
 ]
