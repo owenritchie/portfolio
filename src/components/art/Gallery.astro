@@ -70,6 +70,12 @@ const { photos } = Astro.props;
     .gallery {
       gap: 0.5rem;
     }
+  }
+
+  @media (max-width: 480px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
 
     .photo-item {
       border-radius: 10px;

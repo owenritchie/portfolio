@@ -1,0 +1,280 @@
+---
+// LavaCard — full-width bento card, horizontal on desktop, stacked on mobile
+---
+
+<a
+  href="https://pypi.org/project/lava-cmd/"
+  target="_blank"
+  rel="noopener"
+  class="project-card project-card-lava"
+>
+  <div class="lava-inner">
+    <div class="lava-left">
+      <div class="lava-top">
+        <h3 class="lava-title">Lava</h3>
+        <p class="lava-subtitle">Python based CLI note-taker for tree-oriented markdown hierarchies such as Obsidian</p>
+      </div>
+      <button class="lava-code-block" id="lava-copy-btn" aria-label="Copy install command">
+        <span class="lava-code-text">pip install lava-cmd</span>
+        <span class="lava-copy-icon">
+          <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </span>
+      </button>
+    </div>
+    <div class="lava-right">
+      <img src="/projects/lava-demo.gif" alt="Lava CLI demo" />
+    </div>
+  </div>
+</a>
+
+<style>
+  /* ── Grid ── */
+  .project-card-lava {
+    grid-column: 1 / 5;
+    grid-row: 1;
+    border-radius: 16px;
+    text-decoration: none;
+    border: 1px dashed transparent;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease-out, transform 0.1s ease, border-color 0.3s ease, box-shadow 0.1s ease;
+  }
+
+  :global(.project-card-lava.visible) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  :global(.project-card-lava.visible:hover) {
+    border-color: var(--text) !important;
+  }
+
+  :global(html[data-theme="dark"]) .project-card-lava {
+    border-color: var(--border);
+  }
+
+  /* ── Card shell ── */
+  .lava-inner {
+    background: #d5e8fd;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+  }
+
+  :global(html[data-theme="dark"]) .lava-inner {
+    background: transparent !important;
+  }
+
+  /* ── Left: desktop — space-between, code block at bottom ── */
+  .lava-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 38%;
+    flex-shrink: 0;
+    padding: 2rem 2rem 2rem 2rem;
+    gap: 1.5rem;
+  }
+
+  .lava-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .lava-title {
+    font-family: 'Myflora', serif;
+    font-size: 3.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.0;
+  }
+
+  .lava-subtitle {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.84rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Copy block — full width, pinned to bottom ── */
+  .lava-code-block {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    background: transparent;
+    border-radius: 10px;
+    padding: 0.6rem 0.55rem 0.6rem 0.85rem;
+    border: 1px dashed rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    width: fit-content;
+    transition: border-color 0.3s ease;
+  }
+
+  :global(html[data-theme="dark"]) .lava-code-block {
+    border-color: var(--border);
+  }
+
+  .lava-code-block:hover {
+    border-color: var(--text);
+  }
+
+  .lava-code-block:active {
+    transform: scale(0.97);
+  }
+
+  .lava-code-text {
+    color: var(--text);
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .lava-copy-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: color 0.18s ease;
+    pointer-events: none;
+  }
+
+  .lava-code-block:hover .lava-copy-icon {
+    color: var(--text);
+  }
+
+  .lava-code-block.copied {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: rgba(34, 197, 94, 0.35) !important;
+  }
+
+  .lava-code-block.copied .lava-copy-icon {
+    color: #22c55e;
+  }
+
+  /* ── Right: GIF ── */
+  .lava-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1.25rem 1.25rem 1.25rem 0;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .lava-right img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    box-shadow: 0 6px 36px rgba(0, 0, 0, 0.22);
+  }
+
+  :global([data-theme="dark"]) .lava-right img {
+    box-shadow: 0 6px 36px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ── Tablet / Mobile: vertical stack ── */
+  @media (max-width: 768px) {
+    .project-card-lava {
+      grid-column: 1 / 3;
+      grid-row: auto;
+      min-height: 280px;
+    }
+
+    .lava-inner {
+      flex-direction: column;
+    }
+
+    .lava-left {
+      width: 100%;
+      padding: 1.25rem 1.25rem 0.75rem;
+      justify-content: flex-start;
+      gap: 0.4rem;
+    }
+
+    .lava-title {
+      font-size: 1.25rem;
+    }
+
+    .lava-copy-icon {
+      display: none;
+    }
+
+    .lava-code-block {
+      display: none;
+    }
+
+    .lava-right {
+      flex: 1;
+      padding: 0 1.25rem 0;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .lava-right img {
+      width: 90%;
+      height: 100%;
+      max-height: none;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    :global([data-theme="dark"]) .lava-right img {
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-card-lava {
+      grid-column: 1 / 3;
+      grid-row: auto;
+      min-height: 220px;
+    }
+  }
+</style>
+
+<script>
+  const codeBlock = document.getElementById('lava-copy-btn');
+  if (codeBlock) {
+    const copyIcon = codeBlock.querySelector('.copy-icon') as HTMLElement | null;
+    const checkIcon = codeBlock.querySelector('.check-icon') as HTMLElement | null;
+
+    codeBlock.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        await navigator.clipboard.writeText('pip install lava-cmd');
+        codeBlock.classList.add('copied');
+        if (copyIcon) copyIcon.style.display = 'none';
+        if (checkIcon) checkIcon.style.display = 'block';
+        setTimeout(() => {
+          codeBlock.classList.remove('copied');
+          if (copyIcon) copyIcon.style.display = 'block';
+          if (checkIcon) checkIcon.style.display = 'none';
+        }, 2000);
+      } catch {
+        // clipboard unavailable — silently fail
+      }
+    });
+  }
+</script>

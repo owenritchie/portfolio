@@ -1,5 +1,6 @@
 ---
 import ProjectCard from './ProjectCard.astro';
+import LavaCard from './LavaCard.astro';
 
 interface Project {
   title: string;
@@ -20,6 +21,7 @@ const { projects } = Astro.props;
 
 <section id="projects" class="projects-bento-section">
   <div class="projects-bento">
+    <LavaCard />
     {projects.map((project, index) => (
       <ProjectCard
         title={project.title}
@@ -38,12 +40,13 @@ const { projects } = Astro.props;
 <style>
   .projects-bento-section {
     margin-top: 1rem;
+    scroll-margin-top: 1rem;
   }
 
   .projects-bento {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 360px 320px;
+    grid-template-rows: 360px 360px;
     gap: 1rem;
   }
 
