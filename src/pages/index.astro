@@ -1,12 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
-import PhotoBox from '../components/bento/PhotoBox.astro';
-import HeaderBox from '../components/bento/HeaderBox.astro';
-import AboutBox from '../components/bento/AboutBox.astro';
-import MapBox from '../components/bento/MapBox.astro';
-import ArtLink from '../components/bento/ArtLink.astro';
+import Hero from '../components/Hero.astro';
+import AboutMe from '../components/AboutMe.astro';
 import ProjectsSection from '../components/projects/ProjectsSection.astro';
+import SkillsSection from '../components/SkillsSection.astro';
+import Timeline from '../components/timeline/Timeline.astro';
+import Footer from '../components/Footer.astro';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -15,35 +14,49 @@ const projectsData = JSON.parse(
 ) as {
   title: string;
   subtitle: string;
-  link: string;
-  live: boolean;
+  link?: string;
   image: string;
   colorTheme: string;
+  comingSoon?: boolean;
   stack?: string[];
 }[];
+
+const timelineData = JSON.parse(
+  readFileSync(join(process.cwd(), 'public/config/timeline.json'), 'utf-8')
+) as {
+  entries: {
+    title: string;
+    role: string;
+    start: string;
+    end: string;
+    color?: string;
+    link?: string;
+    logo?: string;
+    logoZoom?: number;
+    logoFit?: 'cover' | 'contain';
+    description?: string;
+  }[];
+  events?: { date: string; label: string; description?: string; link?: string }[];
+};
+
+// Timeline cuts off at the real current date (resolved at build time).
+const today = new Date().toISOString().slice(0, 10);
 ---
 
 <Layout title="Owen Ritchie">
   <main>
-    <ThemeToggle />
+    <Hero />
 
-    <div class="bento">
-      <PhotoBox />
-      <HeaderBox />
-      <AboutBox />
-      <MapBox />
-      <ArtLink />
-    </div>
+    <AboutMe />
 
-    <!-- View My Work Button -->
-    <a href="#projects" class="view-work-btn animate-in animate-delay-5">
-      View my work
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" class="view-work-arrow">
-        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
-      </svg>
-    </a>
+    <!-- Experience Timeline -->
+    <Timeline now={today} entries={timelineData.entries} />
 
     <ProjectsSection projects={projectsData} />
+
+    <SkillsSection />
+
+    <Footer />
   </main>
 </Layout>
 
@@ -91,7 +104,7 @@ const projectsData = JSON.parse(
   :global(.animate-delay-5) { animation-delay: 0.5s; }
 
   main {
-    max-width: 1100px;
+    max-width: 1320px;
     margin: 0 auto;
     position: relative;
   }
@@ -126,41 +139,6 @@ const projectsData = JSON.parse(
     justify-content: flex-start;
     position: relative;
     overflow: hidden;
-  }
-
-  /* View My Work Button */
-  .view-work-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 1rem;
-    margin-top: 1rem;
-    border: 1px dashed var(--border);
-    border-radius: 16px;
-    text-decoration: none;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-
-  .view-work-btn:hover {
-    border-color: var(--text);
-    color: var(--text);
-  }
-
-  .view-work-arrow {
-    transition: transform 0.3s ease;
-  }
-
-  .view-work-btn:hover .view-work-arrow {
-    transform: translateY(3px);
   }
 
   @media (max-width: 1024px) {

@@ -1,0 +1,168 @@
+---
+---
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<div class="about-map" data-reveal="fade">
+  <div id="about-map-canvas" class="about-map-canvas"></div>
+  <!-- Recolor overlay: a restrained wash of the accent hue over a greyscale
+       map — just enough to sit on-palette without shouting. -->
+  <div class="about-map-tint"></div>
+
+  <div class="about-map-pin">
+    <span class="about-map-pin-pulse"></span>
+    <span class="about-map-pin-dot"></span>
+  </div>
+</div>
+
+<style>
+  .about-map {
+    position: relative;
+    height: 100%;
+    min-height: clamp(420px, 54vh, 620px);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  /* Stacked under the text on phones — a tall square eats the whole screen, so
+     drop it to a short, wide strip. */
+  @media (max-width: 820px) {
+    .about-map {
+      min-height: clamp(220px, 34vh, 300px);
+    }
+  }
+
+  .about-map-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Keep the map mostly neutral — a light greyscale, no contrast punch. */
+    filter: grayscale(1) contrast(1.02);
+  }
+
+  :global(.about-map .leaflet-control-zoom),
+  :global(.about-map .leaflet-control-attribution) {
+    display: none !important;
+  }
+
+  /* Tame tint: a low-opacity accent wash. The map stays close to greyscale
+     with only a quiet cool cast, so it recedes into the section. */
+  .about-map-tint {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: var(--accent-2);
+    mix-blend-mode: color;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Magenta pin pops against the blue map (the duotone at work). */
+  .about-map-pin {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .about-map-pin-dot {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    position: relative;
+    z-index: 2;
+  }
+
+  .about-map-pin-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 46px;
+    height: 46px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 45%, transparent) 0%, transparent 70%);
+    animation: about-map-pulse 3s ease-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes about-map-pulse {
+    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+
+</style>
+
+<script>
+  function initAboutMap() {
+    const el = document.getElementById('about-map-canvas');
+    if (!el) return;
+
+    const L = (window as any).L;
+    // Leaflet loads from a separate <script>; wait for it if it isn't ready yet.
+    if (!L) {
+      setTimeout(initAboutMap, 80);
+      return;
+    }
+
+    const lat = 45.4248;
+    const lng = -75.6829;
+
+    const map = L.map(el, {
+      center: [lat, lng],
+      zoom: 14,
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      dragging: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      tap: false,
+    });
+
+    let tiles: any = null;
+    function setTiles() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const url = dark
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+      if (tiles) map.removeLayer(tiles);
+      tiles = L.tileLayer(url, { maxZoom: 18, opacity: 1 }).addTo(map);
+    }
+    setTiles();
+
+    el.style.pointerEvents = 'none';
+
+    // The container is far down the page / in a grid cell, so Leaflet often
+    // measures it as 0x0 on first paint — recompute once it has real size.
+    const refresh = () => map.invalidateSize();
+    setTimeout(refresh, 250);
+    window.addEventListener('load', refresh);
+    if ('ResizeObserver' in window) new ResizeObserver(refresh).observe(el);
+
+    new MutationObserver(() => setTiles()).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+  }
+
+  if (document.readyState !== 'loading') initAboutMap();
+  else document.addEventListener('DOMContentLoaded', initAboutMap);
+</script>

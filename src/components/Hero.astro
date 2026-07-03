@@ -1,0 +1,424 @@
+---
+---
+
+<header class="hero">
+  <!-- Fireflies (dark mode only). Back layer sits behind the title + photo,
+       front layer holds the few that drift in front. Populated in JS. -->
+  <div class="hero-fx hero-fx--back" aria-hidden="true"></div>
+
+  <div class="hero-top">
+    <a class="hero-name" href="/" data-reveal="up">Owen Ritchie</a>
+
+    <nav class="hero-nav" aria-label="Primary" data-reveal="up" style="--rd:0.08s">
+      <a href="#me">Me</a>
+      <a href="#work">Work</a>
+      <a href="#projects">Projects</a>
+      <a href="/art">Art</a>
+    </nav>
+
+    <button class="hero-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle color theme" data-reveal="up" style="--rd:0.14s">
+      <svg class="hero-sun" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <circle cx="50" cy="50" r="20" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="7" stroke-linecap="round">
+          <line x1="50" y1="24" x2="50" y2="12" />
+          <line x1="50" y1="76" x2="50" y2="88" />
+          <line x1="24" y1="50" x2="12" y2="50" />
+          <line x1="76" y1="50" x2="88" y2="50" />
+          <line x1="68.38" y1="31.62" x2="76.87" y2="23.13" />
+          <line x1="68.38" y1="68.38" x2="76.87" y2="76.87" />
+          <line x1="31.62" y1="68.38" x2="23.13" y2="76.87" />
+          <line x1="31.62" y1="31.62" x2="23.13" y2="23.13" />
+        </g>
+      </svg>
+      <svg class="hero-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="hero-media" data-reveal="scale" style="--rd:0.06s">
+    <img
+      class="hero-img hero-img-light"
+      src="/hero/light-hero.jpg"
+      alt="Stone staircase climbing a Mayan pyramid at dusk"
+      fetchpriority="high"
+    />
+    <img
+      class="hero-img hero-img-dark"
+      src="/hero/dark-hero.jpg"
+      alt="Stone staircase climbing a Mayan pyramid at dusk"
+      fetchpriority="high"
+    />
+  </div>
+
+  <div class="hero-fx hero-fx--front" aria-hidden="true"></div>
+</header>
+
+<style>
+  .hero {
+    /* Constrain the whole hero so the name + nav sit right above the image card. */
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-top: clamp(0.75rem, 2.5vw, 1.75rem);
+    /* Own stacking context: keeps the firefly layers ordered around the hero
+       content and contained within it (they can't bleed over later sections). */
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* One row: name on the left, menu in the middle, sun/moon on the right. */
+  .hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    margin-bottom: clamp(1.25rem, 3vw, 2.25rem);
+    /* Above the back fireflies, below the front ones. */
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-name {
+    font-family: 'Myflora', serif;
+    font-weight: bold;
+    font-size: clamp(2.35rem, 6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .hero-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.1rem, 2.6vw, 2.2rem);
+    font-family: 'Bebas Neue', sans-serif;
+  }
+
+  /* Sun / moon toggle sits top-right, where the menu used to be. */
+  .hero-toggle {
+    flex-shrink: 0;
+    width: clamp(2.5rem, 4vw, 3.3rem);
+    height: clamp(2.5rem, 4vw, 3.3rem);
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .hero-toggle:hover {
+    transform: rotate(60deg);
+  }
+
+  .hero-sun,
+  .hero-moon {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .hero-moon {
+    display: none;
+    width: 78%;
+    height: 78%;
+  }
+
+  :global([data-theme="dark"]) .hero-sun {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .hero-moon {
+    display: block;
+    /* Cool lunar halo so the moon reads as a light source in night mode. */
+    color: #eaf2ff;
+    filter:
+      drop-shadow(0 0 6px rgba(170, 205, 255, 0.55))
+      drop-shadow(0 0 16px rgba(120, 170, 255, 0.35));
+    animation: moon-glow 4.5s ease-in-out infinite;
+  }
+
+  @keyframes moon-glow {
+    0%, 100% {
+      filter:
+        drop-shadow(0 0 5px rgba(170, 205, 255, 0.45))
+        drop-shadow(0 0 12px rgba(120, 170, 255, 0.25));
+    }
+    50% {
+      filter:
+        drop-shadow(0 0 9px rgba(190, 220, 255, 0.7))
+        drop-shadow(0 0 22px rgba(140, 185, 255, 0.45));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-theme="dark"]) .hero-moon {
+      animation: none;
+    }
+  }
+
+  .hero-nav a {
+    font-size: clamp(1rem, 1.6vw, 1.35rem);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .hero-nav a:hover {
+    color: var(--accent);
+  }
+
+  .hero-media {
+    /* Full 16:9 framing; width comes from the constrained .hero above. */
+    aspect-ratio: 16 / 9;
+    border-radius: clamp(16px, 2.5vw, 28px);
+    overflow: hidden;
+    /* Above the back fireflies, below the front ones. */
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Theme-swapped artwork: warm duotone in light, cool in dark. */
+  .hero-img-dark {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .hero-img-light {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .hero-img-dark {
+    display: block;
+  }
+
+  @media (max-width: 620px) {
+    /* On a phone the section links (Me / Work / Projects) are just scroll
+       anchors on a one-page site, and cramming them beside the name overran the
+       edge. Drop the whole menu for a clean name + toggle header; /art lives in
+       the footer so it stays reachable. */
+    .hero-nav {
+      display: none;
+    }
+
+    .hero-media {
+      aspect-ratio: 3 / 2;
+    }
+  }
+</style>
+
+<!-- Firefly styles are global: the dots are built in JS, so they don't carry
+     Astro's scope hash and scoped rules wouldn't reach them. -->
+<style is:global>
+  .hero-fx {
+    position: absolute;
+    /* Full-bleed to the viewport width (the hero itself is only 72rem), so the
+       swarm spreads across the whole top instead of bunching over the photo. */
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    pointer-events: none;
+    display: none;
+  }
+
+  /* Fireflies are a night thing — dark theme only. */
+  [data-theme="dark"] .hero-fx {
+    display: block;
+  }
+
+  .hero-fx--back {
+    z-index: 0;
+  }
+
+  .hero-fx--front {
+    z-index: 2;
+  }
+
+  /* Outer wrapper: the rise-from-below / sink-away intro, kept separate from
+     the inner dot so it never fights the looping drift. Driven by JS toggling
+     `.is-in` on the layer as the hero enters/leaves view. Collapsed by default:
+     below the viewport and invisible. */
+  .firefly-wrap {
+    position: absolute;
+    transform: translateY(115vh);
+    opacity: 0;
+    /* Leaving view (removing .is-in): a quick fade + sink. */
+    transition:
+      transform 0.7s cubic-bezier(0.4, 0, 1, 1),
+      opacity 0.35s ease;
+  }
+
+  /* Risen. Slow expo lift; per-firefly duration gives the trickle. */
+  .hero-fx.is-in .firefly-wrap {
+    transform: translateY(0);
+    opacity: 1;
+    transition:
+      transform var(--rise-dur, 2s) cubic-bezier(0.22, 1.1, 0.36, 1),
+      opacity 0.9s ease;
+  }
+
+  /* First rise only: staggered delay so the swarm trickles up. Dropped on later
+     rises so scrolling back up brings them straight in. */
+  .hero-fx.is-in.stagger .firefly-wrap {
+    transition-delay: var(--rise-delay, 0s);
+  }
+
+  /* Inner dot: soft radial glow + looping drift and pulse. */
+  .firefly {
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      #eaffb0 0%,
+      #b6f05e 35%,
+      rgba(140, 220, 70, 0.35) 65%,
+      rgba(140, 220, 70, 0) 100%
+    );
+    animation:
+      fly-drift ease-in-out infinite,
+      fly-pulse ease-in-out infinite;
+  }
+
+  @keyframes fly-drift {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(var(--x1), var(--y1)); }
+    40% { transform: translate(var(--x2), var(--y2)); }
+    60% { transform: translate(var(--x3), var(--y3)); }
+    80% { transform: translate(var(--x4), var(--y4)); }
+    100% { transform: translate(0, 0); }
+  }
+
+  @keyframes fly-pulse {
+    0%, 100% { opacity: var(--omin); }
+    50% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .firefly-wrap { transform: none; opacity: 1; transition: none; }
+    .firefly { animation: fly-pulse 4s ease-in-out infinite; }
+  }
+</style>
+
+<script>
+  (function () {
+    const back = document.querySelector('.hero-fx--back');
+    const front = document.querySelector('.hero-fx--front');
+    if (!back || !front) return;
+    const layerEls = [back, front];
+
+    const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
+    // Depth layers: far/small/blurred through near/large/sharp. `front` is how
+    // many of each land on the front layer (over the photo + title).
+    const layers = [
+      { count: 11, size: [4, 7],   blur: 1.6, omin: 0.06, range: 40, front: 0 },
+      { count: 9,  size: [8, 12],  blur: 0.6, omin: 0.1,  range: 65, front: 1 },
+      { count: 6,  size: [13, 19], blur: 0,   omin: 0.15, range: 90, front: 2 },
+    ];
+
+    for (const layer of layers) {
+      for (let i = 0; i < layer.count; i++) {
+        const wrap = document.createElement('div');
+        wrap.className = 'firefly-wrap';
+        wrap.style.left = rand(1, 99) + '%';
+        wrap.style.top = rand(5, 85) + '%';
+        // Per-firefly rise duration + first-rise stagger delay (see CSS).
+        wrap.style.setProperty('--rise-dur', rand(1.6, 2.8).toFixed(2) + 's');
+        wrap.style.setProperty('--rise-delay', rand(0, 2.2).toFixed(2) + 's');
+
+        const fly = document.createElement('div');
+        fly.className = 'firefly';
+        const size = rand(layer.size[0], layer.size[1]);
+        fly.style.width = size + 'px';
+        fly.style.height = size + 'px';
+        if (layer.blur) fly.style.filter = `blur(${layer.blur}px)`;
+
+        for (let k = 1; k <= 4; k++) {
+          fly.style.setProperty(`--x${k}`, rand(-layer.range, layer.range).toFixed(0) + 'px');
+          fly.style.setProperty(`--y${k}`, rand(-layer.range * 0.6, layer.range * 0.6).toFixed(0) + 'px');
+        }
+        fly.style.setProperty('--omin', String(layer.omin));
+        // drift slow (14-28s); pulse quick (2.4-6s); negative delays desync them.
+        fly.style.animationDuration = `${rand(14, 28).toFixed(1)}s, ${rand(2.4, 6).toFixed(1)}s`;
+        fly.style.animationDelay = `${(-rand(0, 20)).toFixed(1)}s, ${(-rand(0, 4)).toFixed(1)}s`;
+
+        wrap.appendChild(fly);
+        (i < layer.front ? front : back).appendChild(wrap);
+      }
+    }
+
+    // Reduced motion: just show them, no rise/collapse choreography.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      layerEls.forEach((c) => c.classList.add('is-in'));
+      return;
+    }
+
+    // Rise when the hero is in view, collapse (sink away) as it scrolls off to
+    // the next section. First rise staggers; later ones come straight in.
+    let risen = false;
+    let firstRise = true;
+    function rise() {
+      if (risen) return;
+      risen = true;
+      layerEls.forEach((c) => {
+        c.classList.toggle('stagger', firstRise);
+        c.classList.add('is-in');
+      });
+      firstRise = false;
+    }
+    function collapse() {
+      if (!risen) return;
+      risen = false;
+      layerEls.forEach((c) => c.classList.remove('stagger', 'is-in'));
+    }
+
+    // Sensitive scroll trigger: sink away after a small scroll (the parallax
+    // pins the hero, so scroll position is the reliable cue), rise back near the
+    // top. Viewport-relative with a little hysteresis so it doesn't chatter.
+    let ticking = false;
+    function evaluate() {
+      const y = window.scrollY;
+      const vh = window.innerHeight;
+      if (y > vh * 0.06) collapse();
+      else if (y < vh * 0.025) rise();
+      ticking = false;
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(evaluate);
+    }
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+
+    // Replay the rise intro when the user switches into dark mode. The swarm is
+    // hidden in light, so on the flip we reset to collapsed + re-arm the stagger,
+    // then let evaluate() lift them fresh (only if we're near the top).
+    let lastDark = document.documentElement.dataset.theme === 'dark';
+    new MutationObserver(() => {
+      const dark = document.documentElement.dataset.theme === 'dark';
+      if (dark && !lastDark) {
+        layerEls.forEach((c) => c.classList.remove('is-in', 'stagger'));
+        risen = false;
+        firstRise = true;
+        requestAnimationFrame(() => requestAnimationFrame(evaluate));
+      }
+      lastDark = dark;
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // Paint the collapsed state first so the initial rise actually transitions.
+    requestAnimationFrame(() => requestAnimationFrame(evaluate));
+  })();
+</script>

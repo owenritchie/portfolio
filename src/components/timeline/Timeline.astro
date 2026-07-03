@@ -1,0 +1,681 @@
+---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+interface Entry {
+  title: string;
+  role: string;
+  start: string;
+  end: string;
+  color?: string;
+  link?: string;
+  logo?: string;
+  logoZoom?: number;
+  logoFit?: 'cover' | 'contain';
+  description?: string;
+  skills?: string[];
+}
+
+interface Props {
+  now: string;
+  entries: Entry[];
+}
+
+const { now, entries } = Astro.props;
+
+// Map skill names to their stack icons so chips can reuse the same artwork
+// as the Skills section.
+const skillIcons = new Map(
+  (JSON.parse(readFileSync(join(process.cwd(), 'public/config/skills.json'), 'utf-8')) as {
+    name: string;
+    icon: string;
+  }[]).map((s) => [s.name, s.icon] as const)
+);
+
+const resolveSkills = (names?: string[]) =>
+  (names ?? []).map((name) => ({ name, icon: skillIcons.get(name) ?? '' }));
+
+function toYear(value: string): number {
+  const v = value === 'present' ? now : value;
+  const [y, m, d] = v.split('-').map(Number);
+  return y + ((m ?? 1) - 1) / 12 + ((d ?? 1) - 1) / 365;
+}
+
+const nowY = toYear(now);
+
+const resolved = entries.map((e) => ({
+  ...e,
+  startY: toYear(e.start),
+  endY: Math.min(toYear(e.end), nowY),
+}));
+
+const domainStart = Math.min(...resolved.map((e) => e.startY));
+const domainEnd = nowY;
+const span = domainEnd - domainStart || 1;
+
+const pct = (year: number) => ((year - domainStart) / span) * 100;
+const clamp = (n: number) => Math.max(0, Math.min(100, n));
+
+const bars = resolved
+  .map((e) => ({
+    ...e,
+    startPct: clamp(pct(e.startY)),
+    widthPct: Math.max(clamp(pct(e.endY)) - clamp(pct(e.startY)), 0),
+    initial: e.title.charAt(0),
+  }))
+  .sort((a, b) => b.startY - a.startY);
+
+const yearTicks = [];
+for (let y = Math.ceil(domainStart); y <= Math.floor(domainEnd); y++) {
+  yearTicks.push({ year: y, left: clamp(pct(y)) });
+}
+
+const lead = bars[0];
+
+// Compact year range for the stacked mobile list (the gantt bars are hidden there).
+const fmtYear = (v: string) => (v === 'present' ? 'Present' : v.slice(0, 4));
+const fmtRange = (e: { start: string; end: string }) => {
+  const a = fmtYear(e.start);
+  const b = fmtYear(e.end);
+  return a === b ? a : `${a} — ${b}`;
+};
+---
+
+<section id="work" class="timeline" aria-label="Work timeline" data-reveal="trigger">
+  <h2 class="timeline-heading" data-reveal="up">Where I've done my work</h2>
+
+  <div class="timeline-shell">
+    <div class="timeline-chart">
+      {bars.map((bar, i) => {
+        const logoStyle = [
+          bar.logoFit ? `--logo-fit:${bar.logoFit}` : '',
+          bar.logoZoom ? `--logo-zoom:${bar.logoZoom}` : '',
+        ].filter(Boolean).join(';');
+        return (
+          <button
+            type="button"
+            class={`timeline-row${i === 0 ? ' is-active' : ''}`}
+            style={`--i:${i};`}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            data-title={bar.title}
+            data-role={bar.role}
+            data-desc={bar.description}
+            data-link={bar.link}
+            data-skills={JSON.stringify(resolveSkills(bar.skills))}
+          >
+            <span class="timeline-label">
+              <span class="timeline-label-text">
+                <span class="timeline-label-title">{bar.title}</span>
+                <!-- Stacked-list only (mobile): role, dates, blurb inline so each
+                     row is a full experience entry instead of a bare label. -->
+                <span class="timeline-label-role">{bar.role}</span>
+                <span class="timeline-label-dates">{fmtRange(bar)}</span>
+                {bar.description && <span class="timeline-label-desc">{bar.description}</span>}
+              </span>
+              <span class="timeline-logo">
+                {bar.logo
+                  ? <img class="timeline-logo-img" src={bar.logo} alt={bar.title} loading="lazy" style={logoStyle || undefined} />
+                  : <span class="timeline-logo-mono">{bar.initial}</span>}
+              </span>
+            </span>
+            <span class="timeline-track">
+              <span class="timeline-rail"></span>
+              <span class="timeline-bar" style={`left:${bar.startPct}%; width:${bar.widthPct}%;`}></span>
+            </span>
+          </button>
+        );
+      })}
+
+      <div class="timeline-axis" aria-hidden="true">
+        {yearTicks.map((t) => (
+          <span class="timeline-axis-year" style={`left:${t.left}%;`}>{t.year}</span>
+        ))}
+      </div>
+    </div>
+
+    <aside class="timeline-side" aria-live="polite">
+      <h3 class="timeline-side-title">
+        <a
+          class={`timeline-side-link${lead?.link ? '' : ' is-static'}`}
+          href={lead?.link}
+          target={lead?.link ? '_blank' : undefined}
+          rel={lead?.link ? 'noopener' : undefined}
+        >
+          <span class="timeline-side-name">{lead?.title}</span>
+        </a>
+      </h3>
+      <p class="timeline-side-role">{lead?.role}</p>
+      <p class="timeline-side-desc">{lead?.description}</p>
+      <ul class="timeline-side-skills" aria-label="Skills">
+        {resolveSkills(lead?.skills).map((s) => (
+          s.icon && (
+            <li class="timeline-skill">
+              <img class="timeline-skill-icon" src={s.icon} alt={s.name} title={s.name} loading="lazy" />
+            </li>
+          )
+        ))}
+      </ul>
+    </aside>
+  </div>
+
+  <hr class="timeline-separator" />
+</section>
+
+<style>
+  .timeline {
+    --bar: var(--accent-2);
+    --rail: color-mix(in oklab, var(--text) 11%, transparent);
+    --label-col: 34%;
+    --col-gap: 1.5rem;
+    --row-h: 92px;
+    --plot-left: calc(var(--label-col) + var(--col-gap));
+    /* Full-bleed opaque panel so it can slide up and cover About Me on scroll.
+       No overflow:hidden here — that would break the sticky side panel. */
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    /* Overlap About Me by the corner radius so the rounded top sits ON the lavender
+       instead of exposing the page background behind the curved corners. */
+    margin-top: calc(-1 * clamp(28px, 5vw, 52px));
+    scroll-margin-top: 1.5rem;
+    background: var(--bg);
+    border-radius: clamp(28px, 5vw, 52px) clamp(28px, 5vw, 52px) 0 0;
+    padding: clamp(2.5rem, 6vw, 4.5rem) max((100vw - 1240px) / 2, clamp(1.5rem, 5vw, 4rem));
+  }
+
+  /* Dashed hairline across the curved top, fading down the sides. */
+  .timeline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1.5px dashed var(--border);
+    border-bottom: none;
+    border-radius: inherit;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+    mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+  }
+
+  /* Same Playfair face as the project titles / companies, just larger. */
+  .timeline-heading {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    /* Shrinks on phones (see .pc-heading) rather than clipping the long phrase. */
+    font-size: clamp(2rem, 7vw, 4.6rem);
+    line-height: 1.05;
+    color: var(--text);
+    text-align: center;
+    margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .timeline-shell {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+
+  /* Description panel — updates to the hovered role */
+  .timeline-side {
+    flex: 0 0 31%;
+    position: sticky;
+    top: 2.5rem;
+    box-sizing: border-box;
+    padding: 1.6rem 1.7rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 16px;
+  }
+
+  .timeline-side-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    /* Matches the projects section header (.pc-title). */
+    font-size: clamp(2rem, 4.2vw, 3.4rem);
+    line-height: 1.08;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .timeline-side-role {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0.6rem 0 0;
+  }
+
+  /* The outbound link now lives on the open entry's name — it's only here while
+     that entry is selected, so it's only clickable when you have it open. */
+  .timeline-side-link,
+  .timeline-side-link:visited {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .timeline-side-link.is-static {
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .timeline-side-link:hover {
+    color: var(--bar);
+  }
+
+  :global(html[data-theme="dark"]) .timeline-side-link:hover {
+    color: var(--text-muted);
+  }
+
+  .timeline-side-desc {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text);
+    opacity: 0.82;
+    max-width: 40ch;
+    margin: 1.1rem 0 0;
+  }
+
+  .timeline-side-skills {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0;
+    margin: 1.3rem 0 0;
+  }
+
+  /* Chips are rebuilt in JS on select, so the nodes won't carry Astro's
+     scope hash — style them globally within the scoped list. */
+  .timeline-side-skills :global(.timeline-skill) {
+    display: inline-flex;
+  }
+
+  .timeline-side-skills :global(.timeline-skill-icon) {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+
+  .timeline-side-skills :global(.timeline-skill-icon:hover) {
+    transform: scale(1.12);
+  }
+
+  /* Collapse the row entirely for entries with no listed skills. */
+  .timeline-side-skills:empty {
+    display: none;
+    margin: 0;
+  }
+
+  .timeline-chart {
+    flex: 1 1 auto;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 1rem;
+    padding-bottom: 1.9rem;
+  }
+
+  /* ---- Rows ---- */
+  .timeline-row {
+    /* Rows are buttons now — they select an entry to read rather than
+       navigating away. Strip the native button chrome. */
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    text-align: inherit;
+    width: 100%;
+    cursor: pointer;
+    color: inherit;
+    display: flex;
+    gap: var(--col-gap);
+    align-items: center;
+    height: var(--row-h);
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: tlIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(var(--i) * 0.06s);
+    transition: opacity 0.25s ease;
+  }
+
+  @keyframes tlIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .timeline-label {
+    flex: 0 0 var(--label-col);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    min-width: 0;
+  }
+
+  .timeline-label-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 0.08rem;
+    line-height: 1.12;
+    min-width: 0;
+  }
+
+  .timeline-label-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* Inline role / dates / blurb belong to the stacked mobile list only. */
+  .timeline-label-role,
+  .timeline-label-dates,
+  .timeline-label-desc {
+    display: none;
+  }
+
+  .timeline-logo {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  /* Hover grows the logo slightly — the only effect on the icon. */
+  .timeline-row:hover .timeline-logo {
+    transform: scale(1.09);
+  }
+
+  .timeline-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: var(--logo-fit, cover);
+    transform: scale(var(--logo-zoom, 1));
+  }
+
+  .timeline-logo-mono {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bar);
+    color: #eef4ec;
+    font-family: var(--font-heading, system-ui), sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+
+  /* ---- Track ---- */
+  .timeline-track {
+    flex: 1 1 auto;
+    position: relative;
+    align-self: stretch;
+  }
+
+  .timeline-rail {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--rail);
+    border-radius: 2px;
+  }
+
+  /* Bars draw in from their start date */
+  .timeline-bar {
+    position: absolute;
+    top: 50%;
+    height: 52px;
+    min-width: 18px;
+    border-radius: 999px;
+    background: var(--bar);
+    transform-origin: left center;
+    transform: translateY(-50%) scaleX(0);
+    animation: barIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(var(--i) * 0.09s + 0.25s);
+  }
+
+  @keyframes barIn {
+    to { transform: translateY(-50%) scaleX(1); }
+  }
+
+  /* Selected entry: a soft dashed ring held a little off the pill's edge. */
+  .timeline-row.is-active .timeline-bar {
+    outline: 1.5px dashed var(--border);
+    outline-offset: 4px;
+  }
+
+  /* ---- Year axis ---- */
+  .timeline-axis {
+    position: absolute;
+    left: var(--plot-left);
+    right: 0;
+    bottom: 0;
+    height: 1.4rem;
+  }
+
+  .timeline-axis-year {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    opacity: 0.7;
+    font-feature-settings: 'tnum';
+  }
+
+  /* ---- Separator ---- */
+  .timeline-separator {
+    border: none;
+    border-top: 1.5px dashed var(--border);
+    margin: 2rem 0 0;
+  }
+
+  /* ---- Mobile ---- */
+  @media (max-width: 860px) {
+    .timeline-shell {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .timeline-side {
+      position: static;
+      flex-basis: auto;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 720px) {
+    /* Gantt chart doesn't read on a phone: hide the track, axis, and the
+       tap-to-update side panel, and let each row stand alone as a full-width
+       experience entry (logo + title + role + dates + blurb). */
+    .timeline-track,
+    .timeline-axis,
+    .timeline-side {
+      display: none;
+    }
+
+    .timeline-shell {
+      gap: 0;
+    }
+
+    .timeline-chart {
+      padding-top: 0;
+      padding-bottom: 0;
+      gap: 0;
+    }
+
+    .timeline-row {
+      height: auto;
+      align-items: flex-start;
+      cursor: default;
+    }
+
+    /* Dashed divider between entries — the site's border motif as a CV rule. */
+    .timeline-row + .timeline-row {
+      border-top: 1.5px dashed var(--border);
+      margin-top: 1.6rem;
+      padding-top: 1.6rem;
+    }
+
+    .timeline-label {
+      flex: 1 1 auto;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0.9rem;
+    }
+
+    .timeline-logo {
+      order: -1;
+      width: 50px;
+      height: 50px;
+    }
+
+    .timeline-label-text {
+      flex: 1 1 auto;
+      min-width: 0;
+      align-items: flex-start;
+      text-align: left;
+      gap: 0.15rem;
+    }
+
+    .timeline-label-title {
+      white-space: normal;
+      font-size: 1.4rem;
+      line-height: 1.1;
+    }
+
+    .timeline-label-role {
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .timeline-label-dates {
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      opacity: 0.75;
+    }
+
+    .timeline-label-desc {
+      display: block;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: var(--text);
+      opacity: 0.82;
+      margin-top: 0.5rem;
+      max-width: min(60ch, 100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-row {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .timeline-bar {
+      animation: none;
+      transform: translateY(-50%) scaleX(1);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.timeline').forEach((scope) => {
+    const root = scope as HTMLElement;
+    const side = root.querySelector('.timeline-side');
+    if (!side) return;
+    const elRole = side.querySelector<HTMLElement>('.timeline-side-role');
+    const elTitle = side.querySelector<HTMLElement>('.timeline-side-title');
+    const elDesc = side.querySelector<HTMLElement>('.timeline-side-desc');
+    const elSkills = side.querySelector<HTMLElement>('.timeline-side-skills');
+    const rows = Array.from(root.querySelectorAll<HTMLElement>('.timeline-row'));
+
+    function select(row: HTMLElement) {
+      rows.forEach((r) => {
+        const on = r === row;
+        r.classList.toggle('is-active', on);
+        r.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+
+      if (elRole) elRole.textContent = row.dataset.role || '';
+      if (elDesc) elDesc.textContent = row.dataset.desc || '';
+
+      // Rebuild the skill chips for the selected entry.
+      if (elSkills) {
+        let skills: { name: string; icon: string }[] = [];
+        try { skills = JSON.parse(row.dataset.skills || '[]'); } catch { skills = []; }
+        elSkills.textContent = '';
+        skills.forEach((s) => {
+          if (!s.icon) return;
+          const li = document.createElement('li');
+          li.className = 'timeline-skill';
+          const img = document.createElement('img');
+          img.className = 'timeline-skill-icon';
+          img.src = s.icon;
+          img.alt = s.name;
+          img.title = s.name;
+          img.loading = 'lazy';
+          li.appendChild(img);
+          elSkills.appendChild(li);
+        });
+      }
+
+      // Update the existing link in place — rebuilding its HTML would drop the
+      // Astro scope attribute and the link would lose its scoped styles.
+      const a = elTitle?.querySelector<HTMLAnchorElement>('.timeline-side-link');
+      const name = elTitle?.querySelector<HTMLElement>('.timeline-side-name');
+      if (name) name.textContent = row.dataset.title || '';
+      if (a) {
+        const link = row.dataset.link;
+        if (link) {
+          a.href = link;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.classList.remove('is-static');
+        } else {
+          a.removeAttribute('href');
+          a.classList.add('is-static');
+        }
+      }
+    }
+
+    rows.forEach((row) => {
+      row.addEventListener('click', () => select(row));
+    });
+  });
+</script>

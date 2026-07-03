@@ -1,0 +1,107 @@
+---
+import AboutMap from './AboutMap.astro';
+---
+
+<section id="me" class="about-me">
+  <div class="about-me-inner">
+    <div class="about-me-content">
+      <img class="about-me-portrait" src="/me/owen.png" alt="Owen Ritchie" loading="lazy" data-reveal="up" />
+
+      <h2 class="about-me-heading" data-reveal="up" style="--rd:0.06s">About Me</h2>
+      <p data-reveal="up" style="--rd:0.12s">
+        Hey, I'm Owen — a student, engineer &amp; designer currently based in Ottawa, ON. I love
+        working on creative and meaningful projects, and spend lots of my free time outside hiking,
+        skiing and playing sports, as well as playing music &amp; taking pictures.
+      </p>
+      <p data-reveal="up" style="--rd:0.18s">
+        Feel free to reach out!
+      </p>
+    </div>
+
+    <AboutMap />
+  </div>
+</section>
+
+<style>
+  /* Full-bleed light panel with the footer's curved rounded top. */
+  .about-me {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: clamp(3rem, 7vw, 6rem);
+    scroll-margin-top: 1rem;
+    background: var(--card);
+    border-radius: clamp(28px, 5vw, 52px) clamp(28px, 5vw, 52px) 0 0;
+    padding: clamp(3rem, 8vw, 6.5rem) clamp(1.5rem, 5vw, 5rem) clamp(4.5rem, 10vw, 8rem);
+    overflow: hidden;
+  }
+
+  /* Dashed hairline across the curved top, fading down the sides (footer motif). */
+  .about-me::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1.5px dashed var(--border);
+    border-bottom: none;
+    border-radius: inherit;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, black 0, black 3%, transparent 14%);
+    mask-image: linear-gradient(to bottom, black 0, black 3%, transparent 14%);
+  }
+
+  .about-me-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 0.72fr 1.28fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: stretch;
+  }
+
+  .about-me-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .about-me-portrait {
+    display: block;
+    width: clamp(120px, 20vw, 180px);
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-me-heading {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    line-height: 1.05;
+    color: var(--text);
+    margin: 0 0 1.25rem;
+  }
+
+  .about-me-content p {
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.35vw, 1.15rem);
+    line-height: 1.7;
+    /* flex-start column: children size to content, so the raw 52ch would
+       overrun a narrow phone. Cap at the column width too. */
+    max-width: min(52ch, 100%);
+    margin: 0 0 1rem;
+  }
+
+  .about-me-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 820px) {
+    .about-me-inner {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

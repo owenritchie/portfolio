@@ -1,0 +1,61 @@
+---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const skills = JSON.parse(
+  readFileSync(join(process.cwd(), 'public/config/skills.json'), 'utf-8')
+) as { name: string; icon: string }[];
+---
+
+<section class="using" aria-label="Tools and technologies">
+  <div class="using-frame">
+    <div class="using-grid">
+      {skills.map((s, i) => (
+        <img src={s.icon} alt={s.name} title={s.name} loading="lazy" data-reveal="scale" style={`--rd:${(i * 0.04).toFixed(2)}s`} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .using {
+    margin: clamp(3rem, 7vw, 5rem) 0 clamp(2rem, 4vw, 3rem);
+  }
+
+  /* One dotted rectangle around the whole set. */
+  .using-frame {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1.5px dashed var(--border);
+    border-radius: 18px;
+  }
+
+  /* 18 logos, laid out as exactly 2 rows of 9. */
+  .using-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: clamp(1rem, 2.4vw, 2rem);
+    justify-items: center;
+    align-items: center;
+  }
+
+  .using-grid img {
+    width: clamp(34px, 5vw, 56px);
+    height: clamp(34px, 5vw, 56px);
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+  }
+
+  .using-grid img:hover {
+    transform: rotate(360deg) scale(1.15);
+  }
+
+  /* Icons get too small at 9-across on phones — relax to 6 per row. */
+  @media (max-width: 640px) {
+    .using-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+</style>

@@ -7,10 +7,10 @@ const featuredLogos = [
 ---
 
 <section class="featured-section">
-  <p class="featured-label">as featured in</p>
+  <h2 class="featured-title" data-reveal="up">As Featured In</h2>
   <div class="featured-logos">
-    {featuredLogos.map(logo => (
-      <div class="featured-logo-wrap">
+    {featuredLogos.map((logo, i) => (
+      <div class="featured-logo-wrap" data-reveal="up" style={`--rd:${(0.08 + i * 0.08).toFixed(2)}s`}>
         <img src={`/featured_in/${logo.file}`} alt={logo.name} class={logo.classes} />
       </div>
     ))}
@@ -22,13 +22,13 @@ const featuredLogos = [
     margin-bottom: 3rem;
   }
 
-  .featured-label {
-    font-size: 1.1rem;
+  .featured-title {
     font-family: 'Playfair Display', serif;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 1.25rem;
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.05;
+    color: var(--text);
+    margin: 0 0 1.75rem;
   }
 
   .featured-logos {

@@ -1,0 +1,71 @@
+{
+  "entries": [
+    {
+      "title": "University of Ottawa",
+      "role": "BSc Computer Science",
+      "start": "2022-09",
+      "end": "present",
+      "color": "blue",
+      "link": "https://www.uottawa.ca/",
+      "logo": "/timeline/uottawa.png",
+      "logoZoom": 1.4,
+      "description": "Honours BSc in Computer Science on the Dean's List. Coursework in design and analysis of algorithms, operating systems, data structures, and software engineering."
+    },
+    {
+      "title": "Poisson Consulting",
+      "role": "Data Science Intern",
+      "start": "2023-05",
+      "end": "2023-09",
+      "color": "purple",
+      "link": "https://www.poissonconsulting.ca/",
+      "logo": "/timeline/poisson.png",
+      "logoZoom": 1,
+      "description": "Performed quality assurance in R to replace deprecated functions within analyses scripts, and mapped 1000s of salmon redds (fish eggs) in the Lower Columbia river to reduce mortality rates during water-level fluctuations from the dam upstream.",
+      "skills": ["R", "Tidyverse", "Postgres"]
+    },
+    {
+      "title": "City of Ottawa",
+      "role": "Pool Attendant",
+      "start": "2024-06",
+      "end": "2024-08",
+      "color": "orange",
+      "link": "https://ottawa.ca/",
+      "logo": "/timeline/ottawa.png",
+      "description": "Sandy Hill's wading pool has never been cleaner. Chlorine has never been more optimized."
+    },
+    {
+      "title": "Ottawa Senators",
+      "role": "Sales Representative",
+      "start": "2024-09",
+      "end": "2024-12",
+      "color": "blue",
+      "link": "https://www.nhl.com/senators/",
+      "logo": "/timeline/senators.png",
+      "logoZoom": 0.85,
+      "logoFit": "contain",
+      "description": "Sold dozens of Tim Stützle jerseys — fortunately they never found out I'm a Leafs fan."
+    },
+    {
+      "title": "Global Affairs Canada",
+      "role": "Junior Statistical Analyst",
+      "start": "2025-01",
+      "end": "2025-07",
+      "color": "sand",
+      "link": "https://www.international.gc.ca/",
+      "logo": "/timeline/gac.png",
+      "description": "Developed an interactive tool allowing executives to model Official Development Assistance against our current commitments, as well as contributing significantly to statistics found in Canada's G7 Comprehensive Accountability Report for the 2025 Kananaskis summit. Additionally conducted analyses and built reports for countries in the CARICOM and Sahel.",
+      "skills": ["Power BI", "Python", "Pandas"]
+    },
+    {
+      "title": "Kinaxis",
+      "role": "Data & Analytics Engineer Intern",
+      "start": "2025-09",
+      "end": "present",
+      "color": "mint",
+      "link": "https://www.kinaxis.com/",
+      "logo": "/timeline/kinaxis.svg",
+      "description": "Supported a variety of Data Engineering and Cloud Analytics related tasks, including the development of dbt, GCP, and Power BI infrastructure for Marketing, Sales, Product, Finance, IT & Cloud Services. Heavily influenced dashboard styling within our Data & Analytics team, and was tasked with designing and modeling a customer footprint dashboard to welcome the new CEO to Kinaxis.",
+      "skills": ["dbt", "GCP", "Snowflake", "Postgres", "Grafana", "Power BI", "Python", "GitHub Actions"]
+    }
+  ]
+}

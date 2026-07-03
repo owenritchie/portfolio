@@ -1,0 +1,20 @@
+[
+  { "name": "Python", "icon": "/stack/python.png" },
+  { "name": "GCP", "icon": "/stack/gcp.png" },
+  { "name": "dbt", "icon": "/stack/dbt.png" },
+  { "name": "Snowflake", "icon": "/stack/snowflake.png" },
+  { "name": "Databricks", "icon": "/stack/databricks.png" },
+  { "name": "Airflow", "icon": "/stack/airflow.png" },
+  { "name": "Scikit-learn", "icon": "/stack/scikit.png" },
+  { "name": "Grafana", "icon": "/stack/grafana.png" },
+  { "name": "GitHub Actions", "icon": "/stack/github_actions.png" },
+  { "name": "Pandas", "icon": "/stack/pandas.png" },
+  { "name": "Postgres", "icon": "/stack/postgres.png" },
+  { "name": "React", "icon": "/stack/react.png" },
+  { "name": "Power BI", "icon": "/stack/powerbi.png" },
+  { "name": "Tidyverse", "icon": "/stack/tidyverse.png" },
+  { "name": "Java", "icon": "/stack/java.png" },
+  { "name": "TypeScript", "icon": "/stack/typescript.png" },
+  { "name": "R", "icon": "/stack/r.png" },
+  { "name": "Looker", "icon": "/stack/looker.png" }
+]

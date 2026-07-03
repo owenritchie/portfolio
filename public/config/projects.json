@@ -1,19 +1,34 @@
 [
   {
+    "title": "Mill",
+    "short": "Mill",
+    "subtitle": "Hierarchy-based planning tool for delivery via MCP, supporting the Anthropic SDK & Ollama models",
+    "image": "/projects/mill.png",
+    "colorTheme": "mint",
+    "comingSoon": true
+  },
+  {
     "title": "OC Transpo Real-Time Analytics",
-    "subtitle": "End-to-end automated pipeline & visualization dashboard",
-    "description": "A comprehensive data engineering project featuring automated ETL pipelines that ingest real-time GTFS data, transform it through staging layers, and present insights via an interactive Streamlit dashboard. Built with Python, PostgreSQL, and deployed on cloud infrastructure for continuous operation.",
+    "short": "OC Transpo",
+    "subtitle": "End-to-end automated transit pipeline & visualization dashboard for Ottawa's fleet of 750+ busses",
     "link": "https://oc-transpo.streamlit.app/",
-    "live": true,
     "image": "/projects/oc-transpo.png",
     "colorTheme": "orange"
   },
   {
+    "title": "G7 Canada 2025 Accountability Report",
+    "short": "G7 Report",
+    "subtitle": "Accountability report detailing G7 commitments and action in various socioeconomic areas. Released under Canada's 2025 G7 presidency",
+    "link": "https://international.canada.ca/en/global-affairs/corporate/reports/g7-2025-accountability-report",
+    "image": "/projects/g7.png",
+    "colorTheme": "sand"
+  },
+  {
     "title": "Digital Transformation in Sub-Saharan Africa",
-    "subtitle": "Interactive data dashboard exploring tech adoption trends",
+    "short": "Sub-Saharan",
+    "subtitle": "Interactive Metabase report exploring tech adoption trends across 40+ countries",
     "link": "https://www.linkedin.com/posts/owenritchie2004_during-my-last-term-i-wanted-to-expand-my-activity-7331368509077127168-LG6p?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
-    "live": false,
     "image": "/projects/africa.jpeg",
-    "colorTheme": "mint"
+    "colorTheme": "purple"
   }
 ]
