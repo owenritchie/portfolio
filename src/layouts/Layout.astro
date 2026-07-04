@@ -26,11 +26,11 @@ const { title } = Astro.props;
     <slot />
     <script>
       const html = document.documentElement;
+      // Always open in light on a first visit — dark is a surprise you toggle
+      // into. A previously chosen theme still persists via localStorage.
       const stored = localStorage.getItem('theme');
       if (stored) {
         html.dataset.theme = stored;
-      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        html.dataset.theme = 'dark';
       }
 
       window.toggleTheme = () => {
