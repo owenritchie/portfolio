@@ -239,6 +239,13 @@
     display: block;
   }
 
+  /* ...but never on phones: they drift past the viewport edge and shift the page. */
+  @media (max-width: 620px) {
+    [data-theme="dark"] .hero-fx {
+      display: none;
+    }
+  }
+
   .hero-fx--back {
     z-index: 0;
   }
@@ -316,6 +323,9 @@
     const back = document.querySelector('.hero-fx--back');
     const front = document.querySelector('.hero-fx--front');
     if (!back || !front) return;
+    // No fireflies on phones: they drift past the viewport edge and let the
+    // page shift sideways. (CSS also hides .hero-fx at this width.)
+    if (window.innerWidth <= 620) return;
     const layerEls = [back, front];
 
     const rand = (min: number, max: number) => min + Math.random() * (max - min);

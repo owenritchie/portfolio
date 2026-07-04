@@ -417,6 +417,17 @@
     .sun-toggle {
       display: none;
     }
+
+    /* No moving light at the bottom on phones: hold the afterburner spectrum
+       still and drop the sweeping flare. */
+    :global([data-theme="dark"]) .footer-burn::before,
+    :global([data-theme="dark"]) .footer-burn::after {
+      animation: none;
+    }
+
+    :global([data-theme="dark"]) .footer-flare {
+      display: none;
+    }
   }
 
   @media (max-width: 480px) {
