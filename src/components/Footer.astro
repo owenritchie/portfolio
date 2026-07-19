@@ -2,15 +2,6 @@
 ---
 
 <footer class="site-footer">
-  <!-- Afterburner: a searing jet-exhaust spectrum (blue → white-hot → yellow →
-       pink) that sits BEHIND the card face, so it only bleeds out past the
-       curved top rim in dark mode. -->
-  <div class="footer-burn" aria-hidden="true">
-    <div class="footer-flare"></div>
-  </div>
-  <!-- Opaque surface on top of the burn — everything reads on this. -->
-  <div class="footer-face" aria-hidden="true"></div>
-
   <div class="footer-inner">
   <h2 class="footer-name" data-reveal="up">Owen Ritchi<span class="sun-anchor">e<button
         class="sun-toggle"
@@ -68,19 +59,15 @@
 
 <style>
   .site-footer {
-    /* Light theme: light lavender surface with deep indigo ink. */
     --footer-ink: oklch(0.3 0.1 278);
     --footer-muted: oklch(0.5 0.1 285);
     --footer-bg: oklch(0.955 0.03 292);
 
     position: relative;
     margin-top: 1.5rem;
-    /* Full-bleed: break out of main's max-width + the body padding to span 100vw.
-       Works because main is centered in the viewport. */
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    /* Bleed past the body's bottom padding so the square edge meets the page bottom. */
     margin-bottom: -2rem;
     background: var(--footer-bg);
     border-radius: clamp(28px, 5vw, 52px) clamp(28px, 5vw, 52px) 0 0;
@@ -88,181 +75,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* No clip: the afterburner glow needs to bloom above the top rim. The grain
-       layer rounds its own corners instead (see .site-footer::before). */
   }
 
-  /* Dark theme: deep indigo surface with light ink, and the whole footer blooms —
-     a luminous blue edge, plus glowing name, sun toggle, and contact icons to
-     match the site's night glow. */
   :global([data-theme="dark"]) .site-footer {
     --footer-ink: oklch(0.95 0.02 290);
     --footer-muted: oklch(0.72 0.06 286);
     --footer-bg: oklch(0.22 0.04 285);
-    /* Just the dark elevation lift now — colour comes from the afterburner. */
     box-shadow: 0 -16px 34px -20px rgba(20, 18, 60, 0.4);
-  }
-
-  /* ---- Afterburner top-rim glow (dark mode only) ----------------------
-     Lives behind .footer-face, shaped to the card's rounded top, so the
-     blurred spectrum only escapes past the curved edge — never onto the face. */
-  .footer-burn {
-    display: none;
-  }
-
-  :global([data-theme="dark"]) .footer-burn {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 150px;
-    /* Match the card's rounded top so the glow follows the curve at the corners. */
-    border-radius: inherit;
-    z-index: 0;
-    /* One full period of jet exhaust — starts and ends on the same blue so it
-       scrolls seamlessly: blue → white-hot → yellow → pink → violet → blue. */
-    --burn: linear-gradient(
-      90deg,
-      oklch(0.55 0.25 264) 0%,
-      oklch(0.72 0.2 246) 11%,
-      oklch(0.9 0.1 240) 21%,
-      oklch(0.99 0.02 250) 33%,
-      oklch(0.97 0.15 85) 45%,
-      oklch(0.8 0.22 32) 57%,
-      oklch(0.72 0.29 350) 69%,
-      oklch(0.62 0.28 320) 80%,
-      oklch(0.57 0.26 292) 90%,
-      oklch(0.55 0.25 264) 100%
-    );
-  }
-
-  /* Two blurred fills bloom the spectrum out past the rim — a tight hot core
-     and a wider, softer wash. Both scroll the spectrum (at different speeds and
-     directions) so the colours drift and shimmer along the edge. The face above
-     clips everything but this outward bleed. */
-  :global([data-theme="dark"]) .footer-burn::before,
-  :global([data-theme="dark"]) .footer-burn::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--burn);
-    background-size: 200% 100%;
-    pointer-events: none;
-  }
-
-  :global([data-theme="dark"]) .footer-burn::before {
-    z-index: 1; /* tight bright core */
-    filter: blur(9px);
-    opacity: 0.95;
-  }
-
-  :global([data-theme="dark"]) .footer-burn::after {
-    z-index: 0; /* wide soft wash beneath */
-    filter: blur(28px);
-    opacity: 0.6;
-  }
-
-  /* Solar-flare hotspot: a white-hot surge that sweeps along the rim and fades
-     in/out, so the intensity keeps travelling instead of glowing flat. */
-  .footer-flare {
-    display: none;
-  }
-
-  :global([data-theme="dark"]) .footer-flare {
-    display: block;
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    border-radius: inherit;
-    /* White-hot core wrapped in a warm flame edge — the primary flare. */
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      oklch(0.9 0.16 65 / 0.25) 28%,
-      oklch(1 0.05 90 / 1) 50%,
-      oklch(0.9 0.16 65 / 0.25) 72%,
-      transparent 100%
-    );
-    background-size: 40% 100%;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    filter: blur(11px);
-    pointer-events: none;
-  }
-
-  /* A second, tighter surge sweeping the opposite way, so bright flares cross
-     the rim at different points instead of one predictable pass. */
-  :global([data-theme="dark"]) .footer-flare::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      oklch(1 0.06 330 / 0.9) 50%,
-      transparent 100%
-    );
-    background-size: 26% 100%;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    filter: blur(14px);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    :global([data-theme="dark"]) .footer-burn::before {
-      animation: burn-cycle 9s linear infinite;
-    }
-    :global([data-theme="dark"]) .footer-burn::after {
-      animation: burn-cycle 15s linear infinite reverse;
-    }
-    :global([data-theme="dark"]) .footer-flare {
-      animation: burn-flare 5.5s ease-in-out infinite;
-    }
-    :global([data-theme="dark"]) .footer-flare::after {
-      animation: burn-flare-2 8.5s ease-in-out infinite;
-    }
-  }
-
-  /* Scroll one full period — seamless because the spectrum loops back to blue. */
-  @keyframes burn-cycle {
-    from { background-position: 0% 50%; }
-    to { background-position: 200% 50%; }
-  }
-
-  /* Primary flare: sweeps across while flaring up in sharp surges, so the
-     brightness pulses as it travels rather than fading smoothly. */
-  @keyframes burn-flare {
-    0% { background-position: -25% 50%; opacity: 0; }
-    12% { opacity: 0.45; }
-    26% { opacity: 1; }
-    40% { opacity: 0.5; }
-    56% { opacity: 1; }
-    72% { opacity: 0.55; }
-    100% { background-position: 125% 50%; opacity: 0; }
-  }
-
-  /* Secondary flare: a quick, bright surge crossing the other way. */
-  @keyframes burn-flare-2 {
-    0% { background-position: 120% 50%; opacity: 0; }
-    45% { opacity: 0; }
-    60% { opacity: 0.95; }
-    75% { opacity: 0.2; }
-    100% { background-position: -20% 50%; opacity: 0; }
-  }
-
-  /* Opaque surface stacked over the burn — the name, links and grain all read
-     on this, and it hides the burn everywhere but its bleed past the top edge. */
-  .footer-face {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--footer-bg);
-    z-index: 1;
   }
 
   :global([data-theme="dark"]) .footer-name {
@@ -281,8 +100,6 @@
     filter: drop-shadow(0 0 13px oklch(0.9 0.06 288 / 0.55));
   }
 
-  /* Centre the block; the name + links stay left-aligned within it
-     (links keep sitting under the name's first letter). */
   .footer-inner {
     position: relative;
     z-index: 3;
@@ -292,13 +109,11 @@
     gap: clamp(1.25rem, 3vw, 2.5rem);
   }
 
-  /* Film grain over the whole component. */
   .site-footer::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 2;
-    /* Round to the footer's top corners now that the parent no longer clips. */
     border-radius: inherit;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
     opacity: 0.38;
@@ -306,7 +121,6 @@
     pointer-events: none;
   }
 
-  /* Dashed outline that's crisp across the top and fades out down the sides. */
   .site-footer::after {
     content: "";
     position: absolute;
@@ -324,14 +138,13 @@
     font-family: 'Myflora', serif;
     color: var(--footer-ink);
     font-weight: bold;
-    font-size: clamp(3.5rem, 14vw, 13rem);
+    font-size: clamp(2.25rem, 9vw, 8rem);
     line-height: 0.95;
     letter-spacing: 0.02em;
     text-align: left;
     margin: 0;
   }
 
-  /* Sun (light) / moon (dark) mode toggle, sitting above the "e". */
   .sun-anchor {
     position: relative;
   }
@@ -341,8 +154,8 @@
     left: 100%;
     bottom: 100%;
     transform: translate(-35%, 45%);
-    width: clamp(2.75rem, 6.5vw, 5.5rem);
-    height: clamp(2.75rem, 6.5vw, 5.5rem);
+    width: clamp(2.25rem, 5vw, 4rem);
+    height: clamp(2.25rem, 5vw, 4rem);
     padding: 0;
     border: none;
     background: none;
@@ -377,7 +190,6 @@
     display: block;
   }
 
-  /* Centered under the name. */
   .footer-links {
     align-self: center;
     display: flex;
@@ -411,28 +223,14 @@
     transform: translateY(-3px);
   }
 
-  /* On phones the hero toggle is already at hand, so drop the footer sun/moon
-     that sits over the name. */
   @media (max-width: 620px) {
     .sun-toggle {
-      display: none;
-    }
-
-    /* No moving light at the bottom on phones: hold the afterburner spectrum
-       still and drop the sweeping flare. */
-    :global([data-theme="dark"]) .footer-burn::before,
-    :global([data-theme="dark"]) .footer-burn::after {
-      animation: none;
-    }
-
-    :global([data-theme="dark"]) .footer-flare {
       display: none;
     }
   }
 
   @media (max-width: 480px) {
     .site-footer {
-      /* Body padding drops to 1rem at this width. */
       margin-bottom: -1rem;
     }
   }

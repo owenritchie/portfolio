@@ -16,7 +16,6 @@ const { title } = Astro.props;
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Righteous&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon/owen.svg" />
     <title>{title}</title>
-    <!-- Google tag (gtag.js) -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8RHHBW0QB9"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -25,8 +24,6 @@ const { title } = Astro.props;
       gtag('config', 'G-8RHHBW0QB9');
     </script>
     <script is:inline>
-      // Flag JS up-front so scroll-reveal targets only start hidden when we can
-      // actually reveal them — no-JS keeps everything visible, no flash.
       document.documentElement.classList.add('js-reveal');
     </script>
   </head>
@@ -34,8 +31,6 @@ const { title } = Astro.props;
     <slot />
     <script>
       const html = document.documentElement;
-      // Always open in light on a first visit — dark is a surprise you toggle
-      // into. A previously chosen theme still persists via localStorage.
       const stored = localStorage.getItem('theme');
       if (stored) {
         html.dataset.theme = stored;
@@ -50,10 +45,7 @@ const { title } = Astro.props;
     </script>
 
     <script>
-      // Parallax cover: as a section scrolls up past the top it is held back, so
-      // the NEXT (opaque, higher-z) section slides up and over it.
       (function () {
-        // Respect reduced-motion: skip the scroll-driven cover transforms entirely.
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         const panels = Array.from(
@@ -61,15 +53,11 @@ const { title } = Astro.props;
         );
         if (panels.length < 2) return;
 
-        // Later panels sit above earlier ones, so each rises over the previous.
         panels.forEach((p, i) => {
           p.style.position = 'relative';
           p.style.zIndex = String(i + 1);
         });
 
-        // The section being covered gets held back. Skip projects (no effect there)
-        // and the sections whose transform would break their own sticky scroll
-        // (timeline side panel = the coverer anyway; projects pinned image).
         const movers = panels.filter(
           (p) => p.id !== 'work' && p.id !== 'projects' && p.tagName !== 'FOOTER'
         );
@@ -103,9 +91,6 @@ const { title } = Astro.props;
     </script>
 
     <script>
-      // Scroll reveal: elements marked [data-reveal] fade/slide in the first
-      // time they enter the viewport. Above-the-fold targets fire immediately,
-      // so it doubles as a staggered load-in. One-shot per element.
       (function () {
         const els = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
         if (!els.length) return;
@@ -130,9 +115,6 @@ const { title } = Astro.props;
 
         els.forEach((el) => io.observe(el));
 
-        // Bottom-of-page safety: targets sitting inside the negative bottom
-        // margin can never scroll high enough to trip the observer, so flush any
-        // stragglers once the page is scrolled to the very end.
         function flush() {
           if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
             els.forEach((el) => {
@@ -154,8 +136,6 @@ const { title } = Astro.props;
     src: url("/fonts/Myflora.otf") format("opentype");
     font-weight: normal;
     font-style: normal;
-    /* Myflora ships empty glyphs for 0-9; drop the digit range so numerals
-       fall through to the next serif in the stack instead of rendering tofu. */
     unicode-range: U+0-2F, U+3A-10FFFF;
   }
 
@@ -166,7 +146,6 @@ const { title } = Astro.props;
   }
 
   :root {
-    /* Duotone — electric blue + magenta pulled from the hero artwork. */
     --bg: oklch(0.99 0.006 292);
     --card: oklch(0.955 0.028 292);
     --border: oklch(0.82 0.06 288);
@@ -180,7 +159,6 @@ const { title } = Astro.props;
   }
 
   [data-theme="dark"] {
-    /* Night duotone — deep indigo ground, the same blue + magenta accents. */
     --bg: oklch(0.17 0.03 278);
     --card: oklch(0.22 0.04 280);
     --border: oklch(0.5 0.05 282);
@@ -190,8 +168,6 @@ const { title } = Astro.props;
     --accent-2: oklch(0.62 0.2 268);
   }
 
-  /* Dark mode only: the white type — every section header, project title, and
-     the hero — glows softly against the deep indigo ground. */
   [data-theme="dark"] .hero-name,
   [data-theme="dark"] .hero-nav a,
   [data-theme="dark"] .about-me-heading,
@@ -204,9 +180,6 @@ const { title } = Astro.props;
       0 0 34px oklch(0.85 0.07 285 / 0.28);
   }
 
-  /* The big display type (Playfair / Myflora) also carries a whisper of blur,
-     so the glow reads as a soft luminous bloom rather than a crisp halo. Kept
-     off the small nav links, where any blur would just look unfocused. */
   [data-theme="dark"] .hero-name,
   [data-theme="dark"] .about-me-heading,
   [data-theme="dark"] .timeline-heading,
@@ -216,20 +189,13 @@ const { title } = Astro.props;
     filter: blur(0.4px);
   }
 
-  /* The sun/moon toggle is an SVG — text-shadow can't reach it, so glow the
-     icon itself with a drop-shadow. */
   [data-theme="dark"] .hero-toggle {
     filter: drop-shadow(0 0 12px oklch(0.9 0.05 288 / 0.5));
   }
 
-  /* ---- Scroll reveal --------------------------------------------------- */
-  /* Reveals drive the independent `translate`/`scale` properties (not
-     `transform`) so they compose with, rather than clobber, component :hover
-     transforms like the skill-icon spin or footer-link lift. */
   @media (prefers-reduced-motion: no-preference) {
     .js-reveal [data-reveal] {
       opacity: 0;
-      /* ease-out-expo: quick to settle, no overshoot. */
       transition:
         opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
         translate 0.9s cubic-bezier(0.16, 1, 0.3, 1),
@@ -245,7 +211,6 @@ const { title } = Astro.props;
     .js-reveal [data-reveal="fade"] { translate: 0 0; }
     .js-reveal [data-reveal="blur"] { translate: 0 20px; filter: blur(10px); }
 
-    /* Pure class hook — stays visible, only gates its descendants' animations. */
     .js-reveal [data-reveal="trigger"] {
       opacity: 1;
       transition: none;
@@ -258,8 +223,6 @@ const { title } = Astro.props;
       filter: none;
     }
 
-    /* Hold the timeline's own staggered row/bar entrance until it scrolls in,
-       so it plays on arrival instead of unseen at load. */
     .js-reveal .timeline[data-reveal]:not(.is-in) .timeline-row,
     .js-reveal .timeline[data-reveal]:not(.is-in) .timeline-bar {
       animation-play-state: paused;
@@ -268,8 +231,6 @@ const { title } = Astro.props;
 
   html {
     font-family: var(--font-body);
-    /* Scale the whole site down ~10% so it fits at 100% zoom (like viewing at 90%).
-       Everything sized in rem/clamp follows this. */
     font-size: 90%;
     background: var(--bg);
     color: var(--text);
@@ -285,7 +246,6 @@ const { title } = Astro.props;
   body {
     min-height: 100vh;
     padding: 2rem;
-    /* the footer spans 100vw; keep that from creating a horizontal scrollbar */
     overflow-x: hidden;
   }
 

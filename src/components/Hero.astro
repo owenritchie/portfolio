@@ -2,8 +2,6 @@
 ---
 
 <header class="hero">
-  <!-- Fireflies (dark mode only). Back layer sits behind the title + photo,
-       front layer holds the few that drift in front. Populated in JS. -->
   <div class="hero-fx hero-fx--back" aria-hidden="true"></div>
 
   <div class="hero-top">
@@ -56,24 +54,19 @@
 
 <style>
   .hero {
-    /* Constrain the whole hero so the name + nav sit right above the image card. */
-    max-width: 72rem;
+    max-width: 58rem;
     margin-inline: auto;
     padding-top: clamp(0.75rem, 2.5vw, 1.75rem);
-    /* Own stacking context: keeps the firefly layers ordered around the hero
-       content and contained within it (they can't bleed over later sections). */
     position: relative;
     isolation: isolate;
   }
 
-  /* One row: name on the left, menu in the middle, sun/moon on the right. */
   .hero-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: clamp(1rem, 3vw, 2.5rem);
     margin-bottom: clamp(1.25rem, 3vw, 2.25rem);
-    /* Above the back fireflies, below the front ones. */
     position: relative;
     z-index: 1;
   }
@@ -81,7 +74,7 @@
   .hero-name {
     font-family: 'Myflora', serif;
     font-weight: bold;
-    font-size: clamp(2.35rem, 6vw, 4.5rem);
+    font-size: clamp(2rem, 5vw, 3.6rem);
     line-height: 1;
     letter-spacing: 0.02em;
     color: var(--text);
@@ -95,7 +88,6 @@
     font-family: 'Bebas Neue', sans-serif;
   }
 
-  /* Sun / moon toggle sits top-right, where the menu used to be. */
   .hero-toggle {
     flex-shrink: 0;
     width: clamp(2.5rem, 4vw, 3.3rem);
@@ -133,7 +125,6 @@
 
   :global([data-theme="dark"]) .hero-moon {
     display: block;
-    /* Cool lunar halo so the moon reads as a light source in night mode. */
     color: #eaf2ff;
     filter:
       drop-shadow(0 0 6px rgba(170, 205, 255, 0.55))
@@ -161,7 +152,7 @@
   }
 
   .hero-nav a {
-    font-size: clamp(1rem, 1.6vw, 1.35rem);
+    font-size: clamp(0.9rem, 1.4vw, 1.15rem);
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--text);
@@ -174,11 +165,9 @@
   }
 
   .hero-media {
-    /* Full 16:9 framing; width comes from the constrained .hero above. */
     aspect-ratio: 16 / 9;
     border-radius: clamp(16px, 2.5vw, 28px);
     overflow: hidden;
-    /* Above the back fireflies, below the front ones. */
     position: relative;
     z-index: 1;
   }
@@ -190,7 +179,6 @@
     display: block;
   }
 
-  /* Theme-swapped artwork: warm duotone in light, cool in dark. */
   .hero-img-dark {
     display: none;
   }
@@ -204,10 +192,6 @@
   }
 
   @media (max-width: 620px) {
-    /* On a phone the section links (Me / Work / Projects) are just scroll
-       anchors on a one-page site, and cramming them beside the name overran the
-       edge. Drop the whole menu for a clean name + toggle header; /art lives in
-       the footer so it stays reachable. */
     .hero-nav {
       display: none;
     }
@@ -218,13 +202,9 @@
   }
 </style>
 
-<!-- Firefly styles are global: the dots are built in JS, so they don't carry
-     Astro's scope hash and scoped rules wouldn't reach them. -->
 <style is:global>
   .hero-fx {
     position: absolute;
-    /* Full-bleed to the viewport width (the hero itself is only 72rem), so the
-       swarm spreads across the whole top instead of bunching over the photo. */
     top: 0;
     bottom: 0;
     left: 50%;
@@ -234,12 +214,10 @@
     display: none;
   }
 
-  /* Fireflies are a night thing — dark theme only. */
   [data-theme="dark"] .hero-fx {
     display: block;
   }
 
-  /* ...but never on phones: they drift past the viewport edge and shift the page. */
   @media (max-width: 620px) {
     [data-theme="dark"] .hero-fx {
       display: none;
@@ -254,21 +232,15 @@
     z-index: 2;
   }
 
-  /* Outer wrapper: the rise-from-below / sink-away intro, kept separate from
-     the inner dot so it never fights the looping drift. Driven by JS toggling
-     `.is-in` on the layer as the hero enters/leaves view. Collapsed by default:
-     below the viewport and invisible. */
   .firefly-wrap {
     position: absolute;
     transform: translateY(115vh);
     opacity: 0;
-    /* Leaving view (removing .is-in): a quick fade + sink. */
     transition:
       transform 0.7s cubic-bezier(0.4, 0, 1, 1),
       opacity 0.35s ease;
   }
 
-  /* Risen. Slow expo lift; per-firefly duration gives the trickle. */
   .hero-fx.is-in .firefly-wrap {
     transform: translateY(0);
     opacity: 1;
@@ -277,13 +249,10 @@
       opacity 0.9s ease;
   }
 
-  /* First rise only: staggered delay so the swarm trickles up. Dropped on later
-     rises so scrolling back up brings them straight in. */
   .hero-fx.is-in.stagger .firefly-wrap {
     transition-delay: var(--rise-delay, 0s);
   }
 
-  /* Inner dot: soft radial glow + looping drift and pulse. */
   .firefly {
     border-radius: 50%;
     background: radial-gradient(
@@ -323,19 +292,15 @@
     const back = document.querySelector('.hero-fx--back');
     const front = document.querySelector('.hero-fx--front');
     if (!back || !front) return;
-    // No fireflies on phones: they drift past the viewport edge and let the
-    // page shift sideways. (CSS also hides .hero-fx at this width.)
     if (window.innerWidth <= 620) return;
     const layerEls = [back, front];
 
     const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
-    // Depth layers: far/small/blurred through near/large/sharp. `front` is how
-    // many of each land on the front layer (over the photo + title).
     const layers = [
       { count: 11, size: [4, 7],   blur: 1.6, omin: 0.06, range: 40, front: 0 },
       { count: 9,  size: [8, 12],  blur: 0.6, omin: 0.1,  range: 65, front: 1 },
-      { count: 6,  size: [13, 19], blur: 0,   omin: 0.15, range: 90, front: 2 },
+      { count: 6,  size: [13, 15], blur: 0,   omin: 0.15, range: 90, front: 2 },
     ];
 
     for (const layer of layers) {
@@ -344,7 +309,6 @@
         wrap.className = 'firefly-wrap';
         wrap.style.left = rand(1, 99) + '%';
         wrap.style.top = rand(5, 85) + '%';
-        // Per-firefly rise duration + first-rise stagger delay (see CSS).
         wrap.style.setProperty('--rise-dur', rand(1.6, 2.8).toFixed(2) + 's');
         wrap.style.setProperty('--rise-delay', rand(0, 2.2).toFixed(2) + 's');
 
@@ -360,7 +324,6 @@
           fly.style.setProperty(`--y${k}`, rand(-layer.range * 0.6, layer.range * 0.6).toFixed(0) + 'px');
         }
         fly.style.setProperty('--omin', String(layer.omin));
-        // drift slow (14-28s); pulse quick (2.4-6s); negative delays desync them.
         fly.style.animationDuration = `${rand(14, 28).toFixed(1)}s, ${rand(2.4, 6).toFixed(1)}s`;
         fly.style.animationDelay = `${(-rand(0, 20)).toFixed(1)}s, ${(-rand(0, 4)).toFixed(1)}s`;
 
@@ -369,14 +332,11 @@
       }
     }
 
-    // Reduced motion: just show them, no rise/collapse choreography.
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       layerEls.forEach((c) => c.classList.add('is-in'));
       return;
     }
 
-    // Rise when the hero is in view, collapse (sink away) as it scrolls off to
-    // the next section. First rise staggers; later ones come straight in.
     let risen = false;
     let firstRise = true;
     function rise() {
@@ -394,9 +354,6 @@
       layerEls.forEach((c) => c.classList.remove('stagger', 'is-in'));
     }
 
-    // Sensitive scroll trigger: sink away after a small scroll (the parallax
-    // pins the hero, so scroll position is the reliable cue), rise back near the
-    // top. Viewport-relative with a little hysteresis so it doesn't chatter.
     let ticking = false;
     function evaluate() {
       const y = window.scrollY;
@@ -413,9 +370,6 @@
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll, { passive: true });
 
-    // Replay the rise intro when the user switches into dark mode. The swarm is
-    // hidden in light, so on the flip we reset to collapsed + re-arm the stagger,
-    // then let evaluate() lift them fresh (only if we're near the top).
     let lastDark = document.documentElement.dataset.theme === 'dark';
     new MutationObserver(() => {
       const dark = document.documentElement.dataset.theme === 'dark';
@@ -428,7 +382,6 @@
       lastDark = dark;
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-    // Paint the collapsed state first so the initial rise actually transitions.
     requestAnimationFrame(() => requestAnimationFrame(evaluate));
   })();
 </script>

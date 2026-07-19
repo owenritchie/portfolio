@@ -21,12 +21,9 @@ const { projects } = Astro.props;
   <h2 class="pc-heading" data-reveal="up">Things I've been working on</h2>
 
   <div class="pc-scroll">
-    <!-- Left: project blocks that scroll past; the centered one is "active" -->
     <div class="pc-list">
       {projects.map((p, i) => (
         <article class={`pc-item${i === 0 ? ' active' : ''}`} data-index={i}>
-          <!-- Phone-only inline shot: the sticky crossfade stage is hidden on
-               mobile, so each project carries its own image stacked above it. -->
           <img class="pc-media-inline" src={p.image} alt={p.title} loading="lazy" />
           <h3 class="pc-title">{p.title}</h3>
           <p class="pc-desc">{p.subtitle}</p>
@@ -39,7 +36,6 @@ const { projects } = Astro.props;
       ))}
     </div>
 
-    <!-- Right: sticky screenshot that fades to the active project -->
     <div class="pc-sticky">
       <div class="pc-media-stage">
         {projects.map((p, i) => (
@@ -61,8 +57,6 @@ const { projects } = Astro.props;
   .pc-heading {
     font-family: 'Playfair Display', serif;
     font-weight: 600;
-    /* Lower floor + steeper vw so the long phrase shrinks on phones instead of
-       clipping at the viewport edge; capped at the same desktop size. */
     font-size: clamp(2rem, 7vw, 4.6rem);
     line-height: 1.05;
     color: var(--text);
@@ -77,22 +71,18 @@ const { projects } = Astro.props;
     align-items: start;
   }
 
-  /* ---- Left: scrolling project blocks ---- */
   .pc-list {
     display: flex;
     flex-direction: column;
   }
 
   .pc-item {
-    /* Height matches the sticky image box so the first/last blocks line up
-       vertically with the image at the start and end of the scroll. */
     min-height: 70vh;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     gap: 1.15rem;
-    /* inactive blocks recede; the centered one reads at full strength */
     opacity: 0.32;
     transform: translateY(8px);
     transition:
@@ -118,7 +108,6 @@ const { projects } = Astro.props;
     color: var(--text-muted);
     font-size: clamp(1rem, 1.4vw, 1.15rem);
     line-height: 1.6;
-    /* flex-start column: cap at column width so 42ch can't overrun a phone. */
     max-width: min(42ch, 100%);
     margin: 0;
   }
@@ -135,19 +124,13 @@ const { projects } = Astro.props;
     font-size: 1.15rem;
     letter-spacing: 0.06em;
     color: var(--bg);
-    /* Optical centering: letter-spacing leaves a trailing gap after the last
-       glyph, nudging the label left; a matching indent re-centers it. */
     text-indent: 0.06em;
-    /* Transparent dashed border keeps the box the exact size of .pc-soon,
-       which carries a visible one. */
     border: 1.5px dashed transparent;
     border-radius: 999px;
     text-decoration: none;
     transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  /* Solid accent fill on its own layer, so it can balloon outward on press to
-     meet the dashed ring. */
   .pc-btn::before {
     content: '';
     position: absolute;
@@ -160,8 +143,6 @@ const { projects } = Astro.props;
       filter 0.3s ease;
   }
 
-  /* Dashed ring — encircles the pill on hover, echoing the active work-timeline
-     bar's offset dashed outline. */
   .pc-btn::after {
     content: '';
     position: absolute;
@@ -189,12 +170,10 @@ const { projects } = Astro.props;
     transform: scale(1);
   }
 
-  /* Click: the fill expands out into the encircling ring. */
   .pc-btn:active::before {
     inset: -7px;
   }
 
-  /* Coming soon: same footprint as .pc-btn, permanently dashed, no hover ring. */
   .pc-soon {
     display: inline-flex;
     align-items: center;
@@ -210,11 +189,8 @@ const { projects } = Astro.props;
     border-radius: 999px;
   }
 
-  /* ---- Right: sticky, crossfading screenshot ---- */
   .pc-sticky {
     position: sticky;
-    /* 70vh box centered in the viewport -> image center sits at 50vh, the same
-       line the text blocks (also 70vh) center on, so they stay aligned. */
     top: 15vh;
     align-self: start;
     height: 70vh;
@@ -245,7 +221,6 @@ const { projects } = Astro.props;
     transition: opacity 0.6s ease;
   }
 
-  /* True to size, no crop, with a separated dashed outline */
   .pc-media img {
     display: block;
     max-width: 100%;
@@ -257,7 +232,6 @@ const { projects } = Astro.props;
     outline-offset: 8px;
   }
 
-  /* Desktop keeps the sticky crossfade; the inline per-card image is phone-only. */
   .pc-media-inline {
     display: none;
   }
@@ -267,8 +241,6 @@ const { projects } = Astro.props;
       grid-template-columns: 1fr;
     }
 
-    /* Drop the pinned scrollytelling on phones — it left huge empty gaps and a
-       tiny image. Each project becomes an honest full-width block instead. */
     .pc-sticky {
       display: none;
     }
@@ -278,8 +250,6 @@ const { projects } = Astro.props;
     }
 
     .pc-item {
-      /* No more 62vh spacers or dimmed inactive states — every card reads at
-         full strength, sized to its own content. */
       min-height: 0;
       opacity: 1;
       transform: none;
@@ -326,7 +296,6 @@ const { projects } = Astro.props;
       current = i;
     }
 
-    // A block becomes active when it crosses a thin band at the viewport center.
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {

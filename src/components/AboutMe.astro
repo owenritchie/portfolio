@@ -23,7 +23,6 @@ import AboutMap from './AboutMap.astro';
 </section>
 
 <style>
-  /* Full-bleed light panel with the footer's curved rounded top. */
   .about-me {
     position: relative;
     width: 100vw;
@@ -37,7 +36,6 @@ import AboutMap from './AboutMap.astro';
     overflow: hidden;
   }
 
-  /* Dashed hairline across the curved top, fading down the sides (footer motif). */
   .about-me::after {
     content: "";
     position: absolute;
@@ -88,8 +86,6 @@ import AboutMap from './AboutMap.astro';
     color: var(--text-muted);
     font-size: clamp(1rem, 1.35vw, 1.15rem);
     line-height: 1.7;
-    /* flex-start column: children size to content, so the raw 52ch would
-       overrun a narrow phone. Cap at the column width too. */
     max-width: min(52ch, 100%);
     margin: 0 0 1rem;
   }

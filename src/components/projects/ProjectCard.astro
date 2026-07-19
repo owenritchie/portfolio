@@ -11,7 +11,6 @@ interface Props {
 
 const { title, subtitle, link, image, colorTheme, comingSoon, stack } = Astro.props;
 
-// Coming-soon cards aren't linked, so they render as a plain <div>.
 const Tag = comingSoon ? 'div' : 'a';
 ---
 
@@ -40,15 +39,12 @@ const Tag = comingSoon ? 'div' : 'a';
 </Tag>
 
 <style>
-  /* Unified earthy green for every card in light mode — base bg held in a var
-     so :hover can lift it uniformly. (Per-project hues kept in data, just not used.) */
   .card-theme-orange,
   .card-theme-mint,
   .card-theme-purple,
   .card-theme-blue,
   .card-theme-sand { --card-bg: #0c390a; }
 
-  /* Dark mode: strip inner bg, border lives on the outer card only */
   :global(html[data-theme="dark"]) .project-card-inner {
     --card-bg: transparent;
   }
@@ -70,14 +66,11 @@ const Tag = comingSoon ? 'div' : 'a';
     cursor: default;
   }
 
-  /* settle to `none`, not translateY(0): a lingering transform keeps the card on
-     its own GPU layer and rasterizes the screenshot blurry on subpixel bounds */
   :global(.project-card.visible) {
     opacity: 1;
     transform: none;
   }
 
-  /* Only the entrance (opacity/transform) is staggered — hover stays instant. */
   .project-card:nth-child(1) { transition-delay: 0s, 0s, 0s; }
   .project-card:nth-child(2) { transition-delay: 0.08s, 0.08s, 0s; }
   .project-card:nth-child(3) { transition-delay: 0.16s, 0.16s, 0s; }
@@ -87,7 +80,6 @@ const Tag = comingSoon ? 'div' : 'a';
     border-color: var(--border) !important;
   }
 
-  /* Match the art gallery hover: the inner pulls away from the dashed frame. */
   :global(.project-card.visible:hover) .project-card-inner {
     transform: scale(0.97);
   }
@@ -100,7 +92,6 @@ const Tag = comingSoon ? 'div' : 'a';
     flex-direction: column;
     padding: 1.5rem 1.5rem 0;
     height: 100%;
-    /* Lets the title/subtitle scale with the card width (cqi units below). */
     container-type: inline-size;
     transition: transform 0.3s ease;
   }
@@ -122,8 +113,6 @@ const Tag = comingSoon ? 'div' : 'a';
     min-height: 0;
   }
 
-  /* Full-width screenshot, top-anchored — shows the whole frame instead of a
-     zoomed-in crop. Only the bottom edge tucks behind the card. No shadow. */
   .project-card-image img {
     width: 100%;
     height: 100%;
@@ -135,11 +124,8 @@ const Tag = comingSoon ? 'div' : 'a';
 
   .project-card-title {
     font-family: 'Playfair Display', serif;
-    /* Scales with card width so the longest title (Sub-Saharan Africa) stays on
-       one line on desktop and grows on the wide breakout / single-column cards. */
     font-size: clamp(1.45rem, 4cqi, 2.1rem);
     font-weight: 600;
-    /* Cream, because the card is now forest green (works on the dark page too). */
     color: oklch(0.96 0.022 95);
     margin: 0;
     line-height: 1.15;

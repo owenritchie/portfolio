@@ -1,8 +1,36 @@
 [
   {
+    "title": "Spotify Analytics Tracking my Listening Habits",
+    "short": "Spotify Analytics",
+    "subtitle": "My streaming history pulled incrementally from Spotify's Developer API",
+    "image": "/projects/owens-music.png",
+    "link": "https://owens-music.vercel.app/"
+  },
+  {
+    "title": "The Sprout Company: Plant Ecommerce Store",
+    "short": "The Sprout Co.",
+    "subtitle": "Ecommerce store for selling different types of plants, with filtering, search, and guided checkout",
+    "image": "/projects/the-sprout-co.png",
+    "link": "https://the-sprout-company.vercel.app/"
+  },
+  {
+    "title": "Border Map: A Geography Matching Game",
+    "short": "Border Map",
+    "subtitle": "Match country flags to their borders in order of land area",
+    "image": "/projects/border-map.png",
+    "link": "https://border-map-sepia.vercel.app/"
+  },
+  {
+    "title": "Starry: Satelitte Service Mockup",
+    "short": "Starry",
+    "subtitle": "Basic mockup for a remote internet provider targeting primarily enterprise customers",
+    "image": "/projects/starry.png",
+    "link": "https://starry-black.vercel.app/"
+  },
+  {
     "title": "Mill",
     "short": "Mill",
-    "subtitle": "Hierarchy-based planning tool for delivery via MCP, supporting the Anthropic SDK & Ollama models",
+    "subtitle": "Hierarchy-based planning tool to deliver better, more thought-out plans to platforms like Todoist or Jira via MCP, supporting the Anthropic CLI & Ollama models",
     "image": "/projects/mill.png",
     "colorTheme": "mint",
     "comingSoon": true
@@ -22,13 +50,5 @@
     "link": "https://international.canada.ca/en/global-affairs/corporate/reports/g7-2025-accountability-report",
     "image": "/projects/g7.png",
     "colorTheme": "sand"
-  },
-  {
-    "title": "Digital Transformation in Sub-Saharan Africa",
-    "short": "Sub-Saharan",
-    "subtitle": "Interactive Metabase report exploring tech adoption trends across 40+ countries",
-    "link": "https://www.linkedin.com/posts/owenritchie2004_during-my-last-term-i-wanted-to-expand-my-activity-7331368509077127168-LG6p?utm_source=share&utm_medium=member_desktop&rcm=ACoAAECBpm4BoNLf_-PStFE5vF2wb4wx-Boj9iM",
-    "image": "/projects/africa.jpeg",
-    "colorTheme": "purple"
   }
 ]

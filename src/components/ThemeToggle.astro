@@ -21,8 +21,6 @@
 </button>
 
 <style>
-  /* Mirrors the hero / footer sun-moon toggle so the control reads the same
-     everywhere on the site. */
   .theme-toggle {
     flex-shrink: 0;
     width: clamp(2.5rem, 4vw, 3.3rem);
@@ -60,7 +58,6 @@
 
   :global([data-theme="dark"]) .moon {
     display: block;
-    /* Cool lunar halo so the moon reads as a light source in night mode. */
     color: #eaf2ff;
     filter:
       drop-shadow(0 0 6px rgba(170, 205, 255, 0.55))
