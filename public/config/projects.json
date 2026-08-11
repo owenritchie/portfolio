@@ -1,5 +1,14 @@
 [
   {
+    "title": "Mill",
+    "short": "Mill",
+    "subtitle": "Hierarchy-based planning tool to deliver better, more thought-out plans to platforms like Todoist or Jira via MCP, supporting the Anthropic CLI & Ollama models",
+    "image": "/projects/mill.png",
+    "colorTheme": "mint",
+    "link": "https://github.com/owenritchie/mill",
+    "download": "https://github.com/owenritchie/mill/releases/latest"
+  },
+  {
     "title": "Spotify Analytics Tracking my Listening Habits",
     "short": "Spotify Analytics",
     "subtitle": "My streaming history pulled incrementally from Spotify's Developer API",
@@ -26,14 +35,6 @@
     "subtitle": "Basic mockup for a remote internet provider targeting primarily enterprise customers",
     "image": "/projects/starry.png",
     "link": "https://starry-black.vercel.app/"
-  },
-  {
-    "title": "Mill",
-    "short": "Mill",
-    "subtitle": "Hierarchy-based planning tool to deliver better, more thought-out plans to platforms like Todoist or Jira via MCP, supporting the Anthropic CLI & Ollama models",
-    "image": "/projects/mill.png",
-    "colorTheme": "mint",
-    "comingSoon": true
   },
   {
     "title": "OC Transpo Real-Time Analytics",

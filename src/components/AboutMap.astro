@@ -14,18 +14,26 @@
   <div class="about-map-tint"></div>
 
   <div class="about-map-pin">
-    <span class="about-map-pin-pulse"></span>
-    <span class="about-map-pin-dot"></span>
+    <span class="about-map-pin-ring"></span>
+    <span class="about-map-pin-shape">
+      <span class="about-map-pin-hole"></span>
+    </span>
+    <span class="about-map-pin-shadow"></span>
   </div>
 </div>
 
 <style>
   .about-map {
+    --pin: color-mix(in oklch, var(--card) 80%, var(--border) 20%);
     position: relative;
     height: 100%;
     min-height: clamp(420px, 54vh, 620px);
     border-radius: 20px;
     overflow: hidden;
+  }
+
+  :global([data-theme="dark"]) .about-map {
+    --pin: var(--accent);
   }
 
   @media (max-width: 820px) {
@@ -62,40 +70,70 @@
     position: absolute;
     top: 46%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -100%);
     z-index: 5;
     pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: about-map-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .about-map-pin-dot {
+  .about-map-pin-shape {
     display: block;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 3px solid var(--bg);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    width: 26px;
+    height: 26px;
+    border-radius: 50% 50% 50% 0;
+    background: var(--pin);
+    border: 2px solid var(--bg);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    transform: rotate(-45deg);
     position: relative;
     z-index: 2;
   }
 
-  .about-map-pin-pulse {
+  .about-map-pin-hole {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 46px;
-    height: 46px;
-    transform: translate(-50%, -50%);
+    width: 9px;
+    height: 9px;
+    background: var(--bg);
     border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 45%, transparent) 0%, transparent 70%);
-    animation: about-map-pulse 3s ease-out infinite;
+    transform: translate(-50%, -50%);
+  }
+
+  .about-map-pin-shadow {
+    width: 14px;
+    height: 5px;
+    margin-top: 1px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.4) 0%, transparent 75%);
+    border-radius: 50%;
     z-index: 1;
   }
 
-  @keyframes about-map-pulse {
-    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  .about-map-pin-ring {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    transform: translate(-50%, 45%);
+    border: 1.5px dashed var(--pin);
+    border-radius: 50%;
+    z-index: 1;
+    animation: about-map-ring 3s ease-out infinite;
+  }
+
+  @keyframes about-map-drop {
+    0% { transform: translate(-50%, -160%); opacity: 0; }
+    60% { transform: translate(-50%, -96%); opacity: 1; }
+    100% { transform: translate(-50%, -100%); opacity: 1; }
+  }
+
+  @keyframes about-map-ring {
+    0% { transform: translate(-50%, 45%) scale(0.6); opacity: 0.8; }
+    100% { transform: translate(-50%, 45%) scale(2.2); opacity: 0; }
   }
 
 </style>

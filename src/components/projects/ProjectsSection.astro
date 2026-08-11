@@ -7,6 +7,7 @@ interface Project {
   image: string;
   colorTheme: string;
   comingSoon?: boolean;
+  download?: string;
   stack?: string[];
 }
 
@@ -30,7 +31,36 @@ const { projects } = Astro.props;
           {p.comingSoon ? (
             <span class="pc-soon">Coming soon</span>
           ) : (
-            <a class="pc-btn" href={p.link} target="_blank" rel="noopener">View project</a>
+            <div class="pc-actions">
+              <a class="pc-btn" href={p.link} target="_blank" rel="noopener">View project</a>
+              {p.download && (
+                <a
+                  class="pc-download"
+                  href={p.download}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Download Latest"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 13v8l-4-4" />
+                    <path d="m12 21 4-4" />
+                    <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />
+                  </svg>
+                  <span class="pc-tip">Download Latest</span>
+                </a>
+              )}
+            </div>
           )}
         </article>
       ))}
@@ -172,6 +202,106 @@ const { projects } = Astro.props;
 
   .pc-btn:active::before {
     inset: -7px;
+  }
+
+  :global([data-theme="dark"]) .pc-btn {
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  :global([data-theme="dark"]) .pc-btn::before {
+    background: var(--card);
+  }
+
+  :global([data-theme="dark"]) .pc-btn:hover::before {
+    filter: none;
+    background: color-mix(in oklch, var(--card) 78%, var(--accent) 22%);
+  }
+
+  .pc-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .pc-download {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.4rem;
+    width: 3.1rem;
+    height: 3.1rem;
+    flex: none;
+    border-radius: 999px;
+    background: var(--accent-2);
+    color: var(--bg);
+    text-decoration: none;
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.3s ease;
+  }
+
+  :global([data-theme="dark"]) .pc-download {
+    background: var(--card);
+    color: var(--text);
+    border: 1.5px dashed var(--border);
+  }
+
+  :global([data-theme="dark"]) .pc-download:hover {
+    filter: none;
+    background: color-mix(in oklch, var(--card) 78%, var(--accent-2) 22%);
+  }
+
+  .pc-download::after {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border: 1.5px dashed var(--border);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pc-download:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+  }
+
+  .pc-download:hover::after,
+  .pc-download:focus-visible::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .pc-tip {
+    position: absolute;
+    bottom: calc(100% + 0.85rem);
+    left: 50%;
+    transform: translate(-50%, 4px);
+    padding: 0.35rem 0.7rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: var(--bg);
+    background: var(--text);
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pc-download:hover .pc-tip,
+  .pc-download:focus-visible .pc-tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 
   .pc-soon {
