@@ -91,6 +91,12 @@
     filter: blur(0.4px);
   }
 
+  @media (max-width: 620px) {
+    :global([data-theme="dark"]) .footer-name {
+      filter: none;
+    }
+  }
+
   :global([data-theme="dark"]) .footer-link {
     filter: drop-shadow(0 0 9px oklch(0.82 0.08 286 / 0.4));
   }
