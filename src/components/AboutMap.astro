@@ -48,12 +48,27 @@
     width: 100%;
     height: 100%;
     z-index: 1;
-    filter: grayscale(1) contrast(1.02);
+    filter: grayscale(1);
+    isolation: isolate;
+    transform: translateZ(0);
   }
 
   :global(.about-map .leaflet-control-zoom),
   :global(.about-map .leaflet-control-attribution) {
     display: none !important;
+  }
+
+  :global(.about-map .leaflet-container) {
+    background: var(--card);
+  }
+
+  :global(.about-map .leaflet-tile) {
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  :global(.about-map .leaflet-tile-container) {
+    transform: translateZ(0);
   }
 
   .about-map-tint {
