@@ -59,12 +59,15 @@
   }
 
   :global(.about-map .leaflet-container) {
-    background: var(--card);
+    background: #f2f0ec;
+  }
+
+  :global([data-theme="dark"] .about-map .leaflet-container) {
+    background: #1b1b1b;
   }
 
   :global(.about-map .leaflet-tile) {
     backface-visibility: hidden;
-    will-change: transform;
   }
 
   :global(.about-map .leaflet-tile-container) {
@@ -75,10 +78,15 @@
     position: absolute;
     inset: 0;
     z-index: 2;
-    background: var(--accent-2);
+    background: var(--accent);
     mix-blend-mode: color;
-    opacity: 0.35;
+    opacity: 0.22;
     pointer-events: none;
+  }
+
+  :global([data-theme="dark"]) .about-map-tint {
+    background: var(--accent-2);
+    opacity: 0.35;
   }
 
   .about-map-pin {

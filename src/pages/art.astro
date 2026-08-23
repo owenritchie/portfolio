@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import LampToggle from '../components/LampToggle.astro';
 import FeaturedSection from '../components/art/FeaturedSection.astro';
 import Gallery from '../components/art/Gallery.astro';
 import Lightbox from '../components/art/Lightbox.astro';
@@ -15,9 +15,14 @@ const photoFiles = (await readdir(photosDir))
 
 <Layout title="Art — Owen Ritchie">
   <div class="page">
+    <div class="lamp-anchor">
+      <div class="lamp">
+        <LampToggle restLength={90} maxPull={36} size="46px" class="art-lamp" />
+      </div>
+    </div>
+
     <header class="page-header">
-      <a href="/" class="back-link">← back</a>
-      <ThemeToggle />
+      <a href="/" class="back-link">← Back</a>
     </header>
 
     <FeaturedSection />
@@ -30,24 +35,72 @@ const photoFiles = (await readdir(photosDir))
 <style>
   .page {
     width: 100%;
+    position: relative;
+  }
+
+  .lamp-anchor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    height: 0;
+    pointer-events: none;
+  }
+
+  .lamp {
+    position: absolute;
+    top: -3.5rem;
+    right: 2.5rem;
+    width: 46px;
+    pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    .lamp {
+      top: -2.5rem;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .lamp-anchor {
+      display: none;
+    }
   }
 
   .page-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 2.2rem;
     margin-bottom: 3rem;
   }
 
   .back-link {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    position: relative;
+    font-family: 'Grenze', serif;
+    font-size: clamp(1rem, 1.6vw, 1.3rem);
+    letter-spacing: 0.05em;
+    color: var(--text);
     text-decoration: none;
-    transition: color 0.2s ease;
+    padding-bottom: 0.2rem;
   }
 
-  .back-link:hover {
-    color: var(--text);
+  .back-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .back-link:hover::after {
+    transform: scaleX(1);
   }
 
   @media (max-width: 768px) {

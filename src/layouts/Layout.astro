@@ -7,14 +7,14 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Righteous&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="/favicon/owen.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Righteous&family=Grenze:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon/owen-green.svg" />
     <title>{title}</title>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8RHHBW0QB9"></script>
     <script is:inline>
@@ -36,11 +36,23 @@ const { title } = Astro.props;
         html.dataset.theme = stored;
       }
 
+      function updateFavicon() {
+        const link = document.getElementById('favicon');
+        if (link) {
+          link.setAttribute(
+            'href',
+            html.dataset.theme === 'dark' ? '/favicon/owen-pink.svg' : '/favicon/owen-green.svg'
+          );
+        }
+      }
+      updateFavicon();
+
       window.toggleTheme = () => {
         const current = html.dataset.theme;
         const next = current === 'dark' ? 'light' : 'dark';
         html.dataset.theme = next;
         localStorage.setItem('theme', next);
+        updateFavicon();
       };
     </script>
 
@@ -65,14 +77,24 @@ const { title } = Astro.props;
           p.style.willChange = 'transform';
         });
 
-        const SPEED = 0.7;
+        const DEFAULT_SPEED = 0.7;
+        const SPEED_OVERRIDES = { me: 0.88 };
+        const EASED_START = { me: 0.98 };
         let ticking = false;
 
         function update() {
           for (const p of movers) {
             const top = p.getBoundingClientRect().top;
             const past = Math.min(Math.max(-top, 0), p.offsetHeight);
-            p.style.transform = 'translate3d(0,' + (past * SPEED).toFixed(1) + 'px,0)';
+            const baseSpeed = SPEED_OVERRIDES[p.id] ?? DEFAULT_SPEED;
+            const startSpeed = EASED_START[p.id];
+            let speed = baseSpeed;
+            if (startSpeed !== undefined && p.offsetHeight > 0) {
+              const t = Math.min(1, past / p.offsetHeight);
+              const eased = 1 - Math.pow(1 - t, 2);
+              speed = startSpeed - (startSpeed - baseSpeed) * eased;
+            }
+            p.style.transform = 'translate3d(0,' + (past * speed).toFixed(1) + 'px,0)';
           }
           ticking = false;
         }
@@ -146,13 +168,13 @@ const { title } = Astro.props;
   }
 
   :root {
-    --bg: oklch(0.99 0.005 250);
-    --card: oklch(0.96 0.018 250);
-    --border: oklch(0.82 0.045 252);
-    --text: oklch(0.27 0.05 255);
-    --text-muted: oklch(0.5 0.055 255);
-    --accent: oklch(0.6 0.24 6);
-    --accent-2: oklch(0.52 0.22 273);
+    --bg: oklch(0.98 0.014 122);
+    --card: oklch(0.95 0.025 130);
+    --border: oklch(0.8 0.06 140);
+    --text: oklch(0.26 0.035 145);
+    --text-muted: oklch(0.48 0.05 145);
+    --accent: oklch(0.5 0.16 145);
+    --accent-2: oklch(0.74 0.07 60);
 
     --font-heading: "Inter", system-ui, -apple-system, sans-serif;
     --font-body: "Inter", system-ui, -apple-system, sans-serif;
@@ -233,6 +255,11 @@ const { title } = Astro.props;
     .js-reveal .timeline[data-reveal]:not(.is-in) .timeline-bar {
       animation-play-state: paused;
     }
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
   }
 
   html {

@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import AboutMe from '../components/AboutMe.astro';
 import ProjectsSection from '../components/projects/ProjectsSection.astro';
-import SkillsSection from '../components/SkillsSection.astro';
 import Timeline from '../components/timeline/Timeline.astro';
 import Footer from '../components/Footer.astro';
 import { readFileSync } from 'node:fs';
@@ -51,8 +50,6 @@ const today = new Date().toISOString().slice(0, 10);
     <Timeline now={today} entries={timelineData.entries} />
 
     <ProjectsSection projects={projectsData} />
-
-    <SkillsSection />
 
     <Footer />
   </main>
