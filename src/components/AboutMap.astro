@@ -38,7 +38,7 @@
 
   @media (max-width: 820px) {
     .about-map {
-      min-height: clamp(220px, 34vh, 300px);
+      display: none;
     }
   }
 
@@ -213,6 +213,17 @@
     });
   }
 
-  if (document.readyState !== 'loading') initAboutMap();
-  else document.addEventListener('DOMContentLoaded', initAboutMap);
+  const mobile = window.matchMedia('(max-width: 820px)');
+  let started = false;
+
+  function startAboutMap() {
+    if (started || mobile.matches) return;
+    started = true;
+    initAboutMap();
+  }
+
+  mobile.addEventListener('change', startAboutMap);
+
+  if (document.readyState !== 'loading') startAboutMap();
+  else document.addEventListener('DOMContentLoaded', startAboutMap);
 </script>

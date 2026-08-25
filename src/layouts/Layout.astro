@@ -13,7 +13,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Righteous&family=Grenze:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Righteous&family=Grenze:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
     <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon/owen-green.svg" />
     <title>{title}</title>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8RHHBW0QB9"></script>
@@ -73,14 +73,16 @@ const { title } = Astro.props;
         const movers = panels.filter(
           (p) => p.id !== 'work' && p.id !== 'projects' && p.tagName !== 'FOOTER'
         );
-        movers.forEach((p) => {
-          p.style.willChange = 'transform';
-        });
 
         const DEFAULT_SPEED = 0.7;
         const SPEED_OVERRIDES = { me: 0.88 };
         const EASED_START = { me: 0.98 };
         let ticking = false;
+
+        function snap(v) {
+          const dpr = window.devicePixelRatio || 1;
+          return Math.round(v * dpr) / dpr;
+        }
 
         function update() {
           for (const p of movers) {
@@ -94,7 +96,14 @@ const { title } = Astro.props;
               const eased = 1 - Math.pow(1 - t, 2);
               speed = startSpeed - (startSpeed - baseSpeed) * eased;
             }
-            p.style.transform = 'translate3d(0,' + (past * speed).toFixed(1) + 'px,0)';
+            const y = snap(past * speed);
+            if (y === 0) {
+              p.style.transform = '';
+              p.style.willChange = '';
+            } else {
+              p.style.willChange = 'transform';
+              p.style.transform = 'translate3d(0,' + y + 'px,0)';
+            }
           }
           ticking = false;
         }
@@ -178,6 +187,11 @@ const { title } = Astro.props;
 
     --font-heading: "Inter", system-ui, -apple-system, sans-serif;
     --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  }
+
+  html.menu-open,
+  html.menu-open body {
+    overflow: hidden;
   }
 
   [data-theme="dark"] {

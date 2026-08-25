@@ -181,6 +181,7 @@ const fmtRange = (e: { start: string; end: string }) => {
 
   .timeline::before {
     content: "";
+    display: none;
     position: absolute;
     inset: 0;
     border: 1.5px dashed var(--border);
@@ -189,6 +190,10 @@ const fmtRange = (e: { start: string; end: string }) => {
     pointer-events: none;
     -webkit-mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
     mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+  }
+
+  :global([data-theme="dark"]) .timeline::before {
+    display: block;
   }
 
   .timeline-heading {

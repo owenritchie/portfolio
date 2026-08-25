@@ -1,0 +1,350 @@
+---
+interface Props {
+  icon: 'download' | 'arrow-up' | 'arrow-left';
+  label: string;
+  direction?: 'up' | 'down' | 'left' | 'right';
+  tip?: 'top' | 'left' | 'right';
+  variant?: 'download' | 'to-top' | 'accent';
+  href?: string;
+  id?: string;
+  target?: string;
+  rel?: string;
+}
+
+const {
+  icon,
+  label,
+  direction = 'up',
+  tip = 'top',
+  variant = 'download',
+  href,
+  id,
+  target,
+  rel,
+} = Astro.props;
+
+const paths: Record<Props['icon'], string> = {
+  download:
+    '<path d="M12 13v8l-4-4" /><path d="m12 21 4-4" /><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />',
+  'arrow-up': '<path d="M12 19V5M12 5l-6.5 6.5M12 5l6.5 6.5" />',
+  'arrow-left': '<path d="M19 12H5M5 12l6.5-6.5M5 12l6.5 6.5" />',
+};
+
+const Tag = href ? 'a' : 'button';
+const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
+---
+
+<Tag
+  class="ib"
+  data-dir={direction}
+  data-tip={tip}
+  data-variant={variant}
+  id={id}
+  aria-label={label}
+  {...tagAttrs}
+>
+  <span class="ib-viewport">
+    <span class="ib-icon ib-icon--lead">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+        set:html={paths[icon]}
+      />
+    </span>
+    <span class="ib-icon ib-icon--next">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+        set:html={paths[icon]}
+      />
+    </span>
+  </span>
+  <span class="ib-tip" aria-hidden="true">{label}</span>
+</Tag>
+
+<style>
+  .ib {
+    --ib-size: 3.1rem;
+    --ib-icon: 22px;
+    --ib-travel: 150%;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--ib-size);
+    height: var(--ib-size);
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: var(--ib-bg);
+    color: var(--ib-fg);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .ib[data-dir="up"] {
+    --tx: 0px;
+    --ty: calc(-1 * var(--ib-travel));
+    --rx: 0px;
+    --ry: var(--ib-travel);
+  }
+  .ib[data-dir="down"] {
+    --tx: 0px;
+    --ty: var(--ib-travel);
+    --rx: 0px;
+    --ry: calc(-1 * var(--ib-travel));
+  }
+  .ib[data-dir="left"] {
+    --tx: calc(-1 * var(--ib-travel));
+    --ty: 0px;
+    --rx: var(--ib-travel);
+    --ry: 0px;
+  }
+  .ib[data-dir="right"] {
+    --tx: var(--ib-travel);
+    --ty: 0px;
+    --rx: calc(-1 * var(--ib-travel));
+    --ry: 0px;
+  }
+
+  .ib-viewport {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  .ib-icon {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+
+  .ib-icon--next {
+    transform: translate(var(--rx), var(--ry));
+  }
+
+  .ib:hover .ib-icon--lead,
+  .ib:focus-visible .ib-icon--lead {
+    transform: translate(var(--tx), var(--ty));
+  }
+
+  .ib:hover .ib-icon--next,
+  .ib:focus-visible .ib-icon--next {
+    transform: translate(0, 0);
+  }
+
+  .ib-icon svg {
+    width: var(--ib-icon);
+    height: var(--ib-icon);
+  }
+
+  .ib::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: -7px;
+    border: 1.5px dashed var(--border);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ib:hover::after,
+  .ib:focus-visible::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .ib:focus-visible {
+    outline: none;
+  }
+
+  .ib-tip {
+    position: absolute;
+    z-index: 1;
+    padding: 0.4rem 0.72rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.82rem;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    color: var(--bg);
+    background: color-mix(in oklch, var(--text) 94%, var(--accent));
+    border-radius: 5px;
+    box-shadow: 0 8px 20px -10px oklch(0 0 0 / 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.16s ease,
+      transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ib-tip::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    border-radius: 1px;
+    transform: rotate(45deg);
+  }
+
+  .ib[data-tip="top"] .ib-tip {
+    bottom: calc(100% + 0.7rem);
+    left: 50%;
+    transform: translate(-50%, 5px);
+  }
+
+  .ib[data-tip="top"] .ib-tip::after {
+    top: 100%;
+    left: 50%;
+    margin: -4px 0 0 -4px;
+  }
+
+  .ib[data-tip="top"]:hover .ib-tip,
+  .ib[data-tip="top"]:focus-visible .ib-tip {
+    transform: translate(-50%, 0);
+  }
+
+  .ib[data-tip="left"] .ib-tip {
+    top: 50%;
+    right: calc(100% + 0.7rem);
+    transform: translate(5px, -50%);
+  }
+
+  .ib[data-tip="left"] .ib-tip::after {
+    top: 50%;
+    left: 100%;
+    margin: -4px 0 0 -4px;
+  }
+
+  .ib[data-tip="left"]:hover .ib-tip,
+  .ib[data-tip="left"]:focus-visible .ib-tip {
+    transform: translate(0, -50%);
+  }
+
+  .ib[data-tip="right"] .ib-tip {
+    top: 50%;
+    left: calc(100% + 0.7rem);
+    transform: translate(-5px, -50%);
+  }
+
+  .ib[data-tip="right"] .ib-tip::after {
+    top: 50%;
+    right: 100%;
+    margin: -4px -4px 0 0;
+  }
+
+  .ib[data-tip="right"]:hover .ib-tip,
+  .ib[data-tip="right"]:focus-visible .ib-tip {
+    transform: translate(0, -50%);
+  }
+
+  .ib:hover .ib-tip,
+  .ib:focus-visible .ib-tip {
+    opacity: 1;
+    transition-delay: 0.24s;
+  }
+
+  @media (hover: none) {
+    .ib-tip {
+      display: none;
+    }
+  }
+
+  .ib[data-variant="download"] {
+    --ib-bg: var(--accent-2);
+    --ib-fg: var(--bg);
+    margin-top: 0.4rem;
+  }
+
+  .ib[data-variant="download"]:hover {
+    --ib-bg: color-mix(in oklch, var(--accent-2) 88%, var(--bg));
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="download"] {
+    --ib-bg: var(--card);
+    --ib-fg: var(--text);
+    border: 1.5px dashed var(--border);
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="download"]:hover {
+    --ib-bg: color-mix(in oklch, var(--card) 78%, var(--accent-2) 22%);
+  }
+
+  .ib[data-variant="accent"],
+  .ib[data-variant="to-top"] {
+    --ib-size: 48px;
+    --ib-bg: var(--accent);
+    --ib-fg: oklch(0.99 0.004 130);
+    box-shadow: 0 6px 18px -6px oklch(0 0 0 / 0.45);
+  }
+
+  .ib[data-variant="accent"]:hover,
+  .ib[data-variant="to-top"]:hover {
+    --ib-bg: color-mix(in oklch, var(--accent) 88%, var(--bg));
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="accent"],
+  :global([data-theme="dark"]) .ib[data-variant="to-top"] {
+    --ib-bg: color-mix(in oklch, var(--accent) 82%, black);
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="accent"]:hover,
+  :global([data-theme="dark"]) .ib[data-variant="to-top"]:hover {
+    --ib-bg: var(--accent);
+  }
+
+  .ib[data-variant="to-top"] {
+    position: fixed;
+    right: clamp(1rem, 3vw, 1.75rem);
+    bottom: clamp(1rem, 3vw, 1.75rem);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 10px;
+    transition:
+      background 0.3s ease,
+      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      translate 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.28s;
+  }
+
+  .ib[data-variant="to-top"].is-visible {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    transition-delay: 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ib,
+    .ib::after,
+    .ib-icon,
+    .ib-tip {
+      transition: none;
+    }
+  }
+</style>

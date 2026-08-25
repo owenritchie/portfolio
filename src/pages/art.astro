@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import IconLoopButton from '../components/IconLoopButton.astro';
 import LampToggle from '../components/LampToggle.astro';
 import FeaturedSection from '../components/art/FeaturedSection.astro';
 import Gallery from '../components/art/Gallery.astro';
@@ -22,7 +23,14 @@ const photoFiles = (await readdir(photosDir))
     </div>
 
     <header class="page-header">
-      <a href="/" class="back-link">← Back</a>
+      <IconLoopButton
+        icon="arrow-left"
+        label="Back"
+        direction="left"
+        tip="right"
+        variant="accent"
+        href="/"
+      />
     </header>
 
     <FeaturedSection />
@@ -74,33 +82,6 @@ const photoFiles = (await readdir(photosDir))
     justify-content: space-between;
     min-height: 2.2rem;
     margin-bottom: 3rem;
-  }
-
-  .back-link {
-    position: relative;
-    font-family: 'Grenze', serif;
-    font-size: clamp(1rem, 1.6vw, 1.3rem);
-    letter-spacing: 0.05em;
-    color: var(--text);
-    text-decoration: none;
-    padding-bottom: 0.2rem;
-  }
-
-  .back-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 2px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .back-link:hover::after {
-    transform: scaleX(1);
   }
 
   @media (max-width: 768px) {
