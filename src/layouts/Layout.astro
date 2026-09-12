@@ -26,6 +26,18 @@ const { title } = Astro.props;
     <script is:inline>
       document.documentElement.classList.add('js-reveal');
     </script>
+    <script is:inline>
+      (function () {
+        var ua = navigator.userAgent || '';
+        var ios =
+          /iPad|iPhone|iPod/.test(ua) ||
+          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        var android = /Android/i.test(ua);
+        if (ios || android) {
+          document.documentElement.classList.add('no-pendulum');
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
@@ -56,70 +68,6 @@ const { title } = Astro.props;
       };
     </script>
 
-    <script>
-      (function () {
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-        const panels = Array.from(
-          document.querySelectorAll('main > header, main > section, main > footer')
-        );
-        if (panels.length < 2) return;
-
-        panels.forEach((p, i) => {
-          p.style.position = 'relative';
-          p.style.zIndex = String(i + 1);
-        });
-
-        const movers = panels.filter(
-          (p) => p.id !== 'work' && p.id !== 'projects' && p.tagName !== 'FOOTER'
-        );
-
-        const DEFAULT_SPEED = 0.7;
-        const SPEED_OVERRIDES = { me: 0.88 };
-        const EASED_START = { me: 0.98 };
-        let ticking = false;
-
-        function snap(v) {
-          const dpr = window.devicePixelRatio || 1;
-          return Math.round(v * dpr) / dpr;
-        }
-
-        function update() {
-          for (const p of movers) {
-            const top = p.getBoundingClientRect().top;
-            const past = Math.min(Math.max(-top, 0), p.offsetHeight);
-            const baseSpeed = SPEED_OVERRIDES[p.id] ?? DEFAULT_SPEED;
-            const startSpeed = EASED_START[p.id];
-            let speed = baseSpeed;
-            if (startSpeed !== undefined && p.offsetHeight > 0) {
-              const t = Math.min(1, past / p.offsetHeight);
-              const eased = 1 - Math.pow(1 - t, 2);
-              speed = startSpeed - (startSpeed - baseSpeed) * eased;
-            }
-            const y = snap(past * speed);
-            if (y === 0) {
-              p.style.transform = '';
-              p.style.willChange = '';
-            } else {
-              p.style.willChange = 'transform';
-              p.style.transform = 'translate3d(0,' + y + 'px,0)';
-            }
-          }
-          ticking = false;
-        }
-
-        function onScroll() {
-          if (!ticking) {
-            requestAnimationFrame(update);
-            ticking = true;
-          }
-        }
-
-        addEventListener('scroll', onScroll, { passive: true });
-        addEventListener('resize', onScroll, { passive: true });
-        update();
-      })();
-    </script>
 
     <script>
       (function () {
@@ -185,6 +133,15 @@ const { title } = Astro.props;
     --accent: oklch(0.5 0.16 145);
     --accent-2: oklch(0.74 0.07 60);
 
+    --dash-width: 1.5px;
+    --dash-color: oklch(0.8 0 0);
+
+    --btn: oklch(0.36 0.11 145);
+    --btn-hover: oklch(0.5 0.16 145);
+    --btn-fg: oklch(0.99 0.004 130);
+    --btn-2: var(--accent-2);
+    --btn-2-hover: oklch(0.82 0.06 60);
+
     --font-heading: "Inter", system-ui, -apple-system, sans-serif;
     --font-body: "Inter", system-ui, -apple-system, sans-serif;
   }
@@ -192,6 +149,10 @@ const { title } = Astro.props;
   html.menu-open,
   html.menu-open body {
     overflow: hidden;
+  }
+
+  html.no-pendulum .lamp-anchor {
+    display: none;
   }
 
   [data-theme="dark"] {
@@ -202,6 +163,14 @@ const { title } = Astro.props;
     --text-muted: oklch(0.72 0.06 286);
     --accent: oklch(0.64 0.19 320);
     --accent-2: oklch(0.62 0.2 268);
+
+    --dash-color: oklch(0.5 0 0);
+
+    --btn: var(--card);
+    --btn-hover: color-mix(in oklch, var(--card) 78%, var(--accent) 22%);
+    --btn-fg: var(--text);
+    --btn-2: var(--card);
+    --btn-2-hover: color-mix(in oklch, var(--card) 78%, var(--accent-2) 22%);
   }
 
   [data-theme="dark"] .hero-name,
@@ -229,10 +198,6 @@ const { title } = Astro.props;
     filter: drop-shadow(0 0 12px oklch(0.9 0.05 288 / 0.5));
   }
 
-  /* A blur filter forces these headings onto their own composited layer and
-     re-rasterises them while scrolling, which stutters badly in WebKit where
-     two of them meet at the About Me / timeline boundary. The 0.4px softening
-     is imperceptible on a phone anyway. */
   @media (max-width: 720px) {
     [data-theme="dark"] .hero-name,
     [data-theme="dark"] .about-me-heading,
@@ -277,6 +242,52 @@ const { title } = Astro.props;
     .js-reveal .timeline[data-reveal]:not(.is-in) .timeline-row,
     .js-reveal .timeline[data-reveal]:not(.is-in) .timeline-bar {
       animation-play-state: paused;
+    }
+  }
+
+  main > header,
+  main > section,
+  main > footer {
+    position: relative;
+  }
+
+  .hero { z-index: 1; }
+  #me { z-index: 2; }
+  #work { z-index: 3; }
+  #projects { z-index: 4; }
+  .site-footer { z-index: 5; }
+
+  @keyframes hero-lag {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, 70%, 0); }
+  }
+
+  @keyframes me-lag {
+    0% { transform: translate3d(0, 0, 0); }
+    25% { transform: translate3d(0, 23.41%, 0); }
+    50% { transform: translate3d(0, 45.25%, 0); }
+    75% { transform: translate3d(0, 66.47%, 0); }
+    100% { transform: translate3d(0, 88%, 0); }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero,
+      #me {
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: exit;
+      }
+
+      .hero {
+        animation-name: hero-lag;
+      }
+
+      #me {
+        animation-name: me-lag;
+      }
     }
   }
 

@@ -304,7 +304,7 @@ const navLinks = [
   }
 
   .hero-menu-list li + li {
-    border-top: 1.5px dashed var(--border);
+    border-top: var(--dash-width) dashed var(--dash-color);
   }
 
   .hero-menu-list a {
@@ -356,13 +356,15 @@ const navLinks = [
     }
   }
 
+  @media (max-width: 1024px), (pointer: coarse) {
+    .lamp-anchor {
+      display: none;
+    }
+  }
+
   @media (max-width: 620px) {
     .hero {
       min-height: 0;
-    }
-
-    .lamp-anchor {
-      display: none;
     }
 
     .hero-top {

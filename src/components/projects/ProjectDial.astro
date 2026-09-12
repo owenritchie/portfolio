@@ -1,0 +1,683 @@
+---
+import IconLoopButton from '../IconLoopButton.astro';
+
+interface Project {
+  title: string;
+  short?: string;
+  subtitle: string;
+  link?: string;
+  image: string;
+  colorTheme?: string;
+  comingSoon?: boolean;
+  download?: string;
+  stack?: string[];
+}
+
+interface Props {
+  projects: Project[];
+  heading?: string;
+}
+
+const { projects, heading = "Things I've been working on" } = Astro.props;
+
+const count = projects.length;
+const SPAN = 160;
+const half = SPAN / 2;
+const step = count > 1 ? SPAN / (count - 1) : 0;
+const station = (i: number) => -(i * step - half);
+
+const slug = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+---
+
+<section id="projects" class="dial" style={`--count:${count};`} data-span={SPAN}>
+  <h2 class="dial-heading" data-reveal="up">{heading}</h2>
+
+  <div class="dial-track">
+    <div class="dial-stage" style={`--rot:${-half}deg`}>
+      <div class="dial-readout">
+        {projects.map((p, i) => (
+          <article
+            class={`dial-panel${i === 0 ? ' is-active' : ''}`}
+            role="tabpanel"
+            id={`panel-${slug(p.title)}`}
+            aria-labelledby={`spoke-${slug(p.title)}`}
+            data-panel={i}
+          >
+            <figure class="dial-shot">
+              <img src={p.image} alt={`${p.title} screenshot`} loading={i === 0 ? 'eager' : 'lazy'} />
+            </figure>
+            <h3 class="dial-title">{p.title}</h3>
+            <p class="dial-desc">{p.subtitle}</p>
+            {p.comingSoon ? (
+              <span class="dial-soon">Coming soon</span>
+            ) : (
+              <div class="dial-actions">
+                <a class="dial-btn" href={p.link} target="_blank" rel="noopener">View project</a>
+                {p.download && (
+                  <IconLoopButton
+                    icon="download"
+                    label="Download latest"
+                    direction="down"
+                    variant="download"
+                    href={p.download}
+                    target="_blank"
+                    rel="noopener"
+                  />
+                )}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <div class="dial-well">
+        <div class="dial-arc" aria-hidden="true"></div>
+
+        <div class="dial-wheel" role="tablist" aria-label="Projects">
+          {projects.map((p, i) => (
+            <button
+              type="button"
+              class={`dial-spoke${i === 0 ? ' is-active' : ''}`}
+              role="tab"
+              id={`spoke-${slug(p.title)}`}
+              aria-controls={`panel-${slug(p.title)}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+              data-spoke={i}
+              style={`--a:${station(i)}deg`}
+            >
+              <span class="dial-label">{p.short ?? p.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dial-fallback">
+    {projects.map((p) => (
+      <article class="fb-item" id={slug(p.title)}>
+        <img class="fb-media" src={p.image} alt={`${p.title} screenshot`} loading="lazy" />
+        <h3 class="dial-title">{p.title}</h3>
+        <p class="dial-desc">{p.subtitle}</p>
+        {p.comingSoon ? (
+          <span class="dial-soon">Coming soon</span>
+        ) : (
+          <div class="dial-actions">
+            <a class="dial-btn" href={p.link} target="_blank" rel="noopener">View project</a>
+            {p.download && (
+              <IconLoopButton
+                icon="download"
+                label="Download latest"
+                direction="down"
+                variant="download"
+                href={p.download}
+                target="_blank"
+                rel="noopener"
+              />
+            )}
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .dial {
+    --vh-per: 32vh;
+    --title-fs: clamp(1.35rem, 2vw, 1.95rem);
+    --R: min(30vw, calc((100vh - 10rem) / 2));
+    --overhang: 8.5rem;
+    --inset: 5.5rem;
+    --card-w: min(100%, 46rem, 72vh);
+    --desc-fs: clamp(0.95rem, 1.05vw, 1.05rem);
+    --gap-shot: clamp(0.9rem, 2vh, 1.4rem);
+    --gap-title: clamp(0.45rem, 1vh, 0.75rem);
+    --gap-act: clamp(0.6rem, 1.4vh, 1rem);
+    --slab: clamp(28px, 5vw, 52px);
+    --label: oklch(0.36 0.11 145);
+    --label-active: var(--btn);
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: calc(-1 * var(--slab));
+    background: var(--bg);
+    border-radius: var(--slab) var(--slab) 0 0;
+    padding: clamp(2rem, 5vw, 3.25rem) max((100vw - 1240px) / 2, clamp(1.5rem, 5vw, 4rem)) 0;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .dial::before {
+    content: '';
+    display: none;
+    position: absolute;
+    inset: 0;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-bottom: none;
+    border-radius: inherit;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+    mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+  }
+
+  :global([data-theme='dark']) .dial::before {
+    display: block;
+  }
+
+  :global([data-theme='dark']) .dial {
+    --label: var(--text-muted);
+    --label-active: var(--accent);
+  }
+
+  .dial-heading {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(2rem, 7vw, 4.6rem);
+    line-height: 1.05;
+    color: var(--text);
+    text-align: center;
+    margin: 0 0 clamp(1.25rem, 3vw, 2.25rem);
+    opacity: var(--head-o, 1);
+    translate: 0 calc((1 - var(--head-o, 1)) * -1.5rem);
+  }
+
+
+  .dial-track {
+    height: calc(100vh + (var(--count) - 1) * var(--vh-per));
+  }
+
+  .dial-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    column-gap: clamp(0.75rem, 1.8vw, 1.75rem);
+    align-items: center;
+    padding: clamp(1rem, 3vh, 2rem) 0;
+    box-sizing: border-box;
+  }
+
+
+  .dial-readout {
+    display: grid;
+    align-content: start;
+    width: var(--card-w);
+    min-height: calc(
+      var(--card-w) / 1.515 + var(--gap-shot)
+      + var(--title-fs) * 2.6
+      + var(--gap-title) + var(--desc-fs) * 4.8
+      + var(--gap-act) + 3.1rem
+    );
+  }
+
+  .dial-panel {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 8px;
+    transition:
+      opacity 0.16s ease,
+      translate 0s linear 0.16s,
+      visibility 0s linear 0.16s;
+  }
+
+  .dial-panel.is-active {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    transition:
+      opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      translate 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dial-shot {
+    width: 100%;
+    aspect-ratio: 1.515;
+    margin: 0 0 var(--gap-shot);
+    display: grid;
+    place-items: end center;
+  }
+
+  .dial-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 8px;
+    outline: var(--dash-width) dashed var(--dash-color);
+    outline-offset: 6px;
+  }
+
+  .dial-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: var(--title-fs);
+    line-height: 1.12;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .dial-desc {
+    margin: var(--gap-title) 0 0;
+    color: var(--text-muted);
+    font-size: var(--desc-fs);
+    line-height: 1.6;
+  }
+
+  .dial-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: var(--gap-act);
+  }
+
+  .dial-actions :global(.ib) {
+    margin-top: 0;
+  }
+
+  .dial-soon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--gap-act);
+    padding: 0.85rem 1.9rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-indent: 0.06em;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+
+  .dial-well {
+    position: relative;
+    width: calc(var(--R) + var(--overhang) + var(--inset));
+    height: calc(var(--R) * 2 + 2.5rem);
+    overflow: hidden;
+  }
+
+  .dial-arc {
+    position: absolute;
+    right: var(--inset);
+    top: 50%;
+    width: var(--R);
+    height: calc(var(--R) * 2);
+    translate: 0 -50%;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-right: 0;
+    border-radius: 100% 0 0 100% / 50% 0 0 50%;
+    pointer-events: none;
+  }
+
+  .dial-wheel {
+    position: absolute;
+    right: var(--inset);
+    top: 50%;
+    width: 0;
+    height: 0;
+  }
+
+  .dial-spoke {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+    transform:
+      rotate(calc(var(--a) + var(--rot) - 90deg))
+      translateY(calc(-1 * var(--R)))
+      rotate(calc(90deg - var(--a) - var(--rot)))
+      translate(-50%, -50%);
+    appearance: none;
+    background: var(--bg);
+    border: 0;
+    padding: 0.3rem 0.4rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    cursor: pointer;
+    opacity: var(--o, 1);
+    z-index: var(--z, 1);
+    font: inherit;
+    color: var(--label);
+    transition: color 0.3s ease;
+  }
+
+  .dial-spoke:hover {
+    color: var(--text);
+  }
+
+  .dial-spoke:focus-visible {
+    outline: var(--dash-width) dashed var(--accent);
+    outline-offset: 3px;
+  }
+
+  .dial-label {
+    display: block;
+    transform: scale(var(--s, 1));
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .dial-spoke.is-active {
+    color: oklch(0.99 0.006 300);
+  }
+
+  .dial-spoke.is-active .dial-label {
+    background: var(--label-active);
+  }
+
+
+  .dial-btn {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.1rem;
+    padding: 0 1.9rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+    color: var(--btn-fg);
+    text-indent: 0.06em;
+    border: var(--dash-width) dashed transparent;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .dial-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--btn);
+    border-radius: 999px;
+    transition:
+      inset 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      background 0.3s ease;
+  }
+
+  .dial-btn::after {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    z-index: -1;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dial-btn:hover::before,
+  .dial-btn:focus-visible::before {
+    background: var(--btn-hover);
+  }
+
+  .dial-btn:hover::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .dial-btn:active::before {
+    inset: -7px;
+  }
+
+  :global([data-theme='dark']) .dial-btn {
+    border-color: var(--dash-color);
+  }
+
+
+  .dial-fallback {
+    display: none;
+    flex-direction: column;
+    gap: clamp(3rem, 11vw, 4.5rem);
+  }
+
+  .fb-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    scroll-margin-top: 4rem;
+  }
+
+  .fb-media {
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+    outline: var(--dash-width) dashed var(--dash-color);
+    outline-offset: 4px;
+  }
+
+  .fb-item .dial-title {
+    display: block;
+    min-height: 0;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+
+  .fb-item .dial-desc {
+    min-height: 0;
+    margin-top: 0;
+  }
+
+  @media (max-width: 1023px), (max-height: 620px) {
+    .dial-track {
+      display: none;
+    }
+
+    .dial-fallback {
+      display: flex;
+    }
+
+    .dial-heading {
+      opacity: 1;
+      translate: none;
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dial-track {
+      display: none;
+    }
+
+    .dial-fallback {
+      display: flex;
+    }
+
+    .dial-heading {
+      opacity: 1;
+      translate: none;
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    }
+  }
+</style>
+
+<script>
+  function initDial() {
+    const root = document.querySelector<HTMLElement>('.dial');
+    if (!root) return;
+
+    const track = root.querySelector<HTMLElement>('.dial-track');
+    const stage = root.querySelector<HTMLElement>('.dial-stage');
+    const head = root.querySelector<HTMLElement>('.dial-heading');
+    const spokes = Array.from(root.querySelectorAll<HTMLButtonElement>('.dial-spoke'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('.dial-panel'));
+    if (!track || !stage || spokes.length === 0) return;
+
+    const count = spokes.length;
+    const span = Number(root.dataset.span) || 160;
+    const half = span / 2;
+    const step = count > 1 ? span / (count - 1) : 0;
+
+    const CUT_IN = 84;
+    const CUT_OUT = 96;
+
+    const station = (i: number) => -(i * step - half);
+
+    let active = 0;
+    let target = 0;
+    let rot = -half;
+    let raf = 0;
+    let queued = false;
+
+
+    function paint() {
+      stage!.style.setProperty('--rot', `${rot}deg`);
+
+      for (let i = 0; i < count; i++) {
+        const angle = Math.abs(station(i) + rot);
+        const spoke = spokes[i];
+
+        if (angle >= CUT_OUT) {
+          spoke.style.setProperty('--o', '0');
+          spoke.style.visibility = 'hidden';
+          continue;
+        }
+
+        const fade = Math.min(1, (CUT_OUT - angle) / (CUT_OUT - CUT_IN));
+        const t = Math.min(1, angle / 90);
+
+        spoke.style.visibility = 'visible';
+        spoke.style.setProperty('--o', fade.toFixed(3));
+        spoke.style.setProperty('--s', (1.25 - 0.4 * t).toFixed(3));
+        spoke.style.setProperty('--z', String(100 - Math.round(t * 100)));
+      }
+    }
+
+    function setActive(i: number) {
+      if (i === active) return;
+      const prev = active;
+      active = i;
+
+      spokes[prev]?.classList.remove('is-active');
+      spokes[prev]?.setAttribute('aria-selected', 'false');
+      spokes[prev]?.setAttribute('tabindex', '-1');
+      panels[prev]?.classList.remove('is-active');
+
+      spokes[i]?.classList.add('is-active');
+      spokes[i]?.setAttribute('aria-selected', 'true');
+      spokes[i]?.setAttribute('tabindex', '0');
+      panels[i]?.classList.add('is-active');
+    }
+
+
+    function tick() {
+      const want = target * step - half;
+      const delta = want - rot;
+
+      if (Math.abs(delta) < 0.02) {
+        rot = want;
+        paint();
+        raf = 0;
+        return;
+      }
+
+      rot += delta * 0.14;
+      paint();
+      raf = requestAnimationFrame(tick);
+    }
+
+    function animate() {
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+
+
+    function measure() {
+      const rect = track!.getBoundingClientRect();
+      const top = rect.top + window.scrollY;
+      const travel = track!.offsetHeight - stage!.offsetHeight;
+      return { top, travel };
+    }
+
+    function fadeHeading() {
+      if (!head) return;
+      const vh = window.innerHeight;
+      const top = head.getBoundingClientRect().top;
+      const o = Math.min(1, Math.max(0, (top - vh * 0.08) / (vh * 0.3)));
+      head.style.setProperty('--head-o', o.toFixed(3));
+    }
+
+    function onScroll() {
+      queued = false;
+      fadeHeading();
+      if (!track!.offsetHeight) return;
+
+      const { top, travel } = measure();
+      if (travel <= 0) return;
+
+      const p = Math.min(1, Math.max(0, (window.scrollY - top) / travel));
+      const next = Math.round(p * (count - 1));
+
+      if (next !== target) {
+        target = next;
+        setActive(next);
+        animate();
+      }
+    }
+
+    function schedule() {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(onScroll);
+      }
+    }
+
+
+    function scrollToIndex(i: number) {
+      const { top, travel } = measure();
+      if (travel <= 0) return;
+      window.scrollTo({
+        top: top + (i / (count - 1)) * travel,
+        behavior: 'smooth',
+      });
+    }
+
+    spokes.forEach((spoke, i) => {
+      spoke.addEventListener('click', () => scrollToIndex(i));
+      spoke.addEventListener('keydown', (e) => {
+        const dir = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1
+          : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1
+          : 0;
+        if (!dir) return;
+        e.preventDefault();
+        const next = Math.min(count - 1, Math.max(0, i + dir));
+        scrollToIndex(next);
+        spokes[next]?.focus();
+      });
+    });
+
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+    paint();
+    onScroll();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDial);
+  } else {
+    initDial();
+  }
+</script>

@@ -1,4 +1,8 @@
 ---
+import { cartoTiles } from '../lib/carto';
+
+const tileLight = cartoTiles('light_all');
+const tileDark = cartoTiles('dark_all');
 ---
 
 <link
@@ -10,7 +14,12 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <div class="about-map" data-reveal="fade">
-  <div id="about-map-canvas" class="about-map-canvas"></div>
+  <div
+    id="about-map-canvas"
+    class="about-map-canvas"
+    data-tile-light={tileLight}
+    data-tile-dark={tileDark}
+  ></div>
   <div class="about-map-tint"></div>
 
   <div class="about-map-pin">
@@ -142,7 +151,7 @@
     width: 28px;
     height: 28px;
     transform: translate(-50%, 45%);
-    border: 1.5px dashed var(--pin);
+    border: var(--dash-width) dashed var(--pin);
     border-radius: 50%;
     z-index: 1;
     animation: about-map-ring 3s ease-out infinite;
@@ -192,9 +201,8 @@
     let tiles: any = null;
     function setTiles() {
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const url = dark
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+      const url = dark ? el.dataset.tileDark : el.dataset.tileLight;
+      if (!url) return;
       if (tiles) map.removeLayer(tiles);
       tiles = L.tileLayer(url, { maxZoom: 18, opacity: 1 }).addTo(map);
     }

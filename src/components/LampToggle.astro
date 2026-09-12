@@ -93,6 +93,15 @@ const midY = (ANCHOR_Y + restKnobY) / 2;
     let lastFrameTime = 0;
     let bendCurrent = 0;
     let bendVel = 0;
+    let running = false;
+    let lastPath = '';
+
+    function start() {
+      if (running) return;
+      running = true;
+      lastFrameTime = 0;
+      requestAnimationFrame(frame);
+    }
 
     function svgPoint(e: PointerEvent) {
       const rect = svg!.getBoundingClientRect();
@@ -112,6 +121,7 @@ const midY = (ANCHOR_Y + restKnobY) / 2;
       lastMoveTime = performance.now();
       hit!.setPointerCapture(e.pointerId);
       root.classList.add('is-dragging');
+      start();
     }
 
     function onPointerMove(e: PointerEvent) {
@@ -143,6 +153,7 @@ const midY = (ANCHOR_Y + restKnobY) / 2;
 
       extraTarget = 0;
       angularVel = velSmooth;
+      start();
     }
 
     hit.addEventListener('pointerdown', onPointerDown);
@@ -155,6 +166,7 @@ const midY = (ANCHOR_Y + restKnobY) / 2;
         e.preventDefault();
         (window as any).toggleTheme();
         angularVel += angle >= 0 ? -0.6 : 0.6;
+        start();
       }
     });
 
@@ -184,32 +196,63 @@ const midY = (ANCHOR_Y + restKnobY) / 2;
         extra += (extraTarget - extra) * Math.min(1, dt * 16);
       }
 
-      const length = Math.max(8, REST_LENGTH + extra);
-      const kx = ANCHOR.x + length * Math.sin(angle);
-      const ky = ANCHOR.y + length * Math.cos(angle);
-
-      const dx = kx - ANCHOR.x;
-      const dy = ky - ANCHOR.y;
-      const segLen = Math.hypot(dx, dy) || 1;
-      const perpX = -dy / segLen;
-      const perpY = dx / segLen;
+      const preLength = Math.max(8, REST_LENGTH + extra);
+      const preKx = ANCHOR.x + preLength * Math.sin(angle);
+      const preKy = ANCHOR.y + preLength * Math.cos(angle);
+      const preDx = preKx - ANCHOR.x;
+      const preDy = preKy - ANCHOR.y;
+      const preSeg = Math.hypot(preDx, preDy) || 1;
       const whipTarget = Math.max(-38, Math.min(38, angularVel * 8));
       const springK = 170;
       const springD = 9;
       const springAccel = (whipTarget - bendCurrent) * springK - bendVel * springD;
       bendVel += springAccel * dt;
       bendCurrent += bendVel * dt;
+
+      const atRest =
+        !dragging &&
+        !introActive &&
+        Math.abs(angle) < 0.0015 &&
+        Math.abs(angularVel) < 0.0015 &&
+        Math.abs(bendCurrent) < 0.02 &&
+        Math.abs(bendVel) < 0.02 &&
+        Math.abs(extraTarget - extra) < 0.02;
+
+      if (atRest) {
+        angle = 0;
+        angularVel = 0;
+        bendCurrent = 0;
+        bendVel = 0;
+        extra = extraTarget;
+      }
+
+      const length = atRest ? Math.max(8, REST_LENGTH + extra) : preLength;
+      const kx = atRest ? ANCHOR.x : preKx;
+      const ky = atRest ? ANCHOR.y + length : preKy;
+      const segLen = atRest ? length : preSeg;
+      const perpX = -(ky - ANCHOR.y) / segLen;
+      const perpY = (kx - ANCHOR.x) / segLen;
+
       const bend = bendCurrent;
       const midX = (ANCHOR.x + kx) / 2 + perpX * bend;
       const midY = (ANCHOR.y + ky) / 2 + perpY * bend;
 
-      cord!.setAttribute('d', `M ${ANCHOR.x} ${ANCHOR.y} Q ${midX} ${midY} ${kx} ${ky}`);
-      knobGroup!.setAttribute('transform', `translate(${kx},${ky})`);
+      const d = `M ${ANCHOR.x} ${ANCHOR.y} Q ${midX} ${midY} ${kx} ${ky}`;
+      if (d !== lastPath) {
+        lastPath = d;
+        cord!.setAttribute('d', d);
+        knobGroup!.setAttribute('transform', `translate(${kx},${ky})`);
+      }
+
+      if (atRest) {
+        running = false;
+        return;
+      }
 
       requestAnimationFrame(frame);
     }
 
-    requestAnimationFrame(frame);
+    start();
   }
 
   document.querySelectorAll<HTMLElement>('.lamp-toggle').forEach(initLamp);
@@ -242,7 +285,6 @@ const midY = (ANCHOR_Y + restKnobY) / 2;
 
   .lamp-knob {
     fill: oklch(0.38 0.11 145);
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.22));
   }
 
   :global([data-theme="dark"]) .lamp-knob {

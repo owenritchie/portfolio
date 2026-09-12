@@ -62,7 +62,7 @@ import AboutMap from './AboutMap.astro';
   }
 
   :global([data-theme="dark"]) .about-me::after {
-    border: 1.5px dashed var(--border);
+    border: var(--dash-width) dashed var(--dash-color);
     border-bottom: none;
     -webkit-mask-image: linear-gradient(to bottom, black 0, black 3%, transparent 14%);
     mask-image: linear-gradient(to bottom, black 0, black 3%, transparent 14%);

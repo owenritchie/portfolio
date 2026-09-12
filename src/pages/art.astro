@@ -27,7 +27,6 @@ const photoFiles = (await readdir(photosDir))
         icon="arrow-left"
         label="Back"
         direction="left"
-        tip="right"
         variant="accent"
         href="/"
       />
@@ -70,7 +69,7 @@ const photoFiles = (await readdir(photosDir))
     }
   }
 
-  @media (max-width: 620px) {
+  @media (max-width: 1024px), (pointer: coarse) {
     .lamp-anchor {
       display: none;
     }

@@ -18,15 +18,32 @@ interface Props {
 }
 
 const { projects } = Astro.props;
+
+const slug = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 ---
 
 <section id="projects" class="pc">
   <h2 class="pc-heading" data-reveal="up">Things I've been working on</h2>
 
+  <nav class="pc-nav" aria-label="Jump to project">
+    <ul class="pc-nav-list">
+      {projects.map((p, i) => (
+        <li>
+          <a
+            class={`pc-pill${i === 0 ? ' active' : ''}`}
+            href={`#${slug(p.title)}`}
+            aria-current={i === 0 ? 'true' : undefined}
+          >{p.short ?? p.title}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
   <div class="pc-scroll">
     <div class="pc-list">
       {projects.map((p, i) => (
-        <article class={`pc-item${i === 0 ? ' active' : ''}`} data-index={i}>
+        <article class={`pc-item${i === 0 ? ' active' : ''}`} id={slug(p.title)} data-index={i}>
           <img class="pc-media-inline" src={p.image} alt={p.title} loading="lazy" />
           <h3 class="pc-title">{p.title}</h3>
           <p class="pc-desc">{p.subtitle}</p>
@@ -40,7 +57,6 @@ const { projects } = Astro.props;
                   icon="download"
                   label="Download latest"
                   direction="down"
-                  tip="top"
                   variant="download"
                   href={p.download}
                   target="_blank"
@@ -68,7 +84,8 @@ const { projects } = Astro.props;
 <style>
   .pc {
     margin-top: 1rem;
-    scroll-margin-top: 1rem;
+
+    scroll-margin-top: clamp(2.5rem, 6vw, 4.5rem);
   }
 
   .pc-heading {
@@ -78,7 +95,52 @@ const { projects } = Astro.props;
     line-height: 1.05;
     color: var(--text);
     text-align: center;
-    margin: clamp(2.5rem, 6vw, 4.5rem) 0 1rem;
+
+    margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .pc-nav {
+    position: sticky;
+    top: clamp(1.5rem, 5vh, 3rem);
+    z-index: 5;
+    padding: 0.9rem 0 1rem;
+    margin-bottom: clamp(0.5rem, 2vw, 1.25rem);
+  }
+
+  .pc-nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pc-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.95rem;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .pc-pill.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: transparent;
+  }
+
+  :global([data-theme="dark"]) .pc-pill.active {
+    background: var(--card);
+    color: var(--text);
   }
 
   .pc-scroll {
@@ -141,9 +203,9 @@ const { projects } = Astro.props;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.15rem;
     letter-spacing: 0.06em;
-    color: var(--bg);
+    color: var(--btn-fg);
     text-indent: 0.06em;
-    border: 1.5px dashed transparent;
+    border: var(--dash-width) dashed transparent;
     border-radius: 999px;
     text-decoration: none;
   }
@@ -153,11 +215,11 @@ const { projects } = Astro.props;
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: var(--accent);
+    background: var(--btn);
     border-radius: 999px;
     transition:
       inset 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 0.3s ease;
+      background 0.3s ease;
   }
 
   .pc-btn::after {
@@ -165,7 +227,7 @@ const { projects } = Astro.props;
     position: absolute;
     inset: -7px;
     z-index: -1;
-    border: 1.5px dashed var(--border);
+    border: var(--dash-width) dashed var(--dash-color);
     border-radius: 999px;
     opacity: 0;
     transform: scale(0.9);
@@ -174,8 +236,9 @@ const { projects } = Astro.props;
       transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .pc-btn:hover::before {
-    filter: brightness(1.08);
+  .pc-btn:hover::before,
+  .pc-btn:focus-visible::before {
+    background: var(--btn-hover);
   }
 
   .pc-btn:hover::after {
@@ -188,17 +251,7 @@ const { projects } = Astro.props;
   }
 
   :global([data-theme="dark"]) .pc-btn {
-    color: var(--text);
-    border-color: var(--border);
-  }
-
-  :global([data-theme="dark"]) .pc-btn::before {
-    background: var(--card);
-  }
-
-  :global([data-theme="dark"]) .pc-btn:hover::before {
-    filter: none;
-    background: color-mix(in oklch, var(--card) 78%, var(--accent) 22%);
+    border-color: var(--dash-color);
   }
 
   .pc-actions {
@@ -219,7 +272,7 @@ const { projects } = Astro.props;
     letter-spacing: 0.06em;
     color: var(--text-muted);
     text-indent: 0.06em;
-    border: 1.5px dashed var(--border);
+    border: var(--dash-width) dashed var(--dash-color);
     border-radius: 999px;
   }
 
@@ -262,7 +315,7 @@ const { projects } = Astro.props;
     width: auto;
     height: auto;
     border-radius: 8px;
-    outline: 1.5px dashed var(--border);
+    outline: var(--dash-width) dashed var(--dash-color);
     outline-offset: 8px;
   }
 
@@ -271,6 +324,10 @@ const { projects } = Astro.props;
   }
 
   @media (max-width: 820px) {
+    .pc-nav {
+      display: none;
+    }
+
     .pc-scroll {
       grid-template-columns: 1fr;
     }
@@ -296,7 +353,7 @@ const { projects } = Astro.props;
       height: auto;
       margin-bottom: 0.5rem;
       border-radius: 10px;
-      outline: 1.5px dashed var(--border);
+      outline: var(--dash-width) dashed var(--dash-color);
       outline-offset: 4px;
     }
   }
@@ -315,6 +372,7 @@ const { projects } = Astro.props;
 
     const items = Array.from(root.querySelectorAll<HTMLElement>('.pc-item'));
     const medias = Array.from(root.querySelectorAll<HTMLElement>('.pc-media'));
+    const pills = Array.from(root.querySelectorAll<HTMLAnchorElement>('.pc-pill'));
     if (!items.length) return;
     let current = 0;
 
@@ -323,12 +381,28 @@ const { projects } = Astro.props;
       items[current]?.classList.remove('active');
       medias[current]?.classList.remove('active');
       medias[current]?.setAttribute('aria-hidden', 'true');
+      pills[current]?.classList.remove('active');
+      pills[current]?.removeAttribute('aria-current');
 
       items[i]?.classList.add('active');
       medias[i]?.classList.add('active');
       medias[i]?.setAttribute('aria-hidden', 'false');
+      pills[i]?.classList.add('active');
+      pills[i]?.setAttribute('aria-current', 'true');
       current = i;
     }
+
+    pills.forEach((pill, i) => {
+      pill.addEventListener('click', (e) => {
+        const target = items[i];
+        if (!target) return;
+        e.preventDefault();
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+        history.replaceState(null, '', `#${target.id}`);
+        activate(i);
+      });
+    });
 
     const io = new IntersectionObserver(
       (entries) => {

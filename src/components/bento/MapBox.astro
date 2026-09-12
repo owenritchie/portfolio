@@ -1,4 +1,8 @@
 ---
+import { cartoTiles } from '../../lib/carto';
+
+const tileLight = cartoTiles('light_all');
+const tileDark = cartoTiles('dark_all');
 ---
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -6,7 +10,7 @@
 
 <div class="box map-box animate-in-scale animate-delay-3">
   <div class="map-container">
-    <div id="map" class="map-leaflet"></div>
+    <div id="map" class="map-leaflet" data-tile-light={tileLight} data-tile-dark={tileDark}></div>
     <div class="map-overlay"></div>
     <div class="map-pin">
       <div class="pin-pulse"></div>
@@ -223,6 +227,12 @@
   let marker: any;
   let currentTileLayer: any;
 
+  function tileUrl(): string {
+    const el = document.getElementById('map');
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+    return (isDarkMode ? el?.dataset.tileDark : el?.dataset.tileLight) ?? '';
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     initializeMap();
     observeThemeChanges();
@@ -250,12 +260,7 @@
       map.removeLayer(currentTileLayer);
     }
 
-    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-    const tileUrl = isDarkMode
-      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-    currentTileLayer = (window as any).L.tileLayer(tileUrl, {
+    currentTileLayer = (window as any).L.tileLayer(tileUrl(), {
       attribution: '',
       maxZoom: 18,
       opacity: 0.9
@@ -283,12 +288,7 @@
       trackResize: true
     });
 
-    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-    const tileUrl = isDarkMode
-      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-    currentTileLayer = L.tileLayer(tileUrl, {
+    currentTileLayer = L.tileLayer(tileUrl(), {
       attribution: '',
       maxZoom: 18,
       minZoom: 15,

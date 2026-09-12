@@ -38,7 +38,7 @@
   },
   {
     "title": "OC Transpo Real-Time Analytics",
-    "short": "OC Transpo",
+    "short": "OC Transpo Analytics",
     "subtitle": "End-to-end automated transit pipeline & visualization dashboard for Ottawa's fleet of 750+ busses",
     "link": "https://oc-transpo.streamlit.app/",
     "image": "/projects/oc-transpo.png",

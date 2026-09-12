@@ -184,7 +184,7 @@ const fmtRange = (e: { start: string; end: string }) => {
     display: none;
     position: absolute;
     inset: 0;
-    border: 1.5px dashed var(--border);
+    border: var(--dash-width) dashed var(--dash-color);
     border-bottom: none;
     border-radius: inherit;
     pointer-events: none;
@@ -218,7 +218,7 @@ const fmtRange = (e: { start: string; end: string }) => {
     top: 2.5rem;
     box-sizing: border-box;
     padding: 1.6rem 1.7rem;
-    border: 1.5px dashed var(--border);
+    border: var(--dash-width) dashed var(--dash-color);
     border-radius: 16px;
   }
 
@@ -447,7 +447,7 @@ const fmtRange = (e: { start: string; end: string }) => {
   }
 
   .timeline-row.is-active .timeline-bar {
-    outline: 1.5px dashed var(--border);
+    outline: var(--dash-width) dashed var(--dash-color);
     outline-offset: 4px;
   }
 
@@ -473,7 +473,7 @@ const fmtRange = (e: { start: string; end: string }) => {
 
   .timeline-separator {
     border: none;
-    border-top: 1.5px dashed var(--border);
+    border-top: var(--dash-width) dashed var(--dash-color);
     margin: 2rem 0 0;
   }
 
@@ -481,6 +481,11 @@ const fmtRange = (e: { start: string; end: string }) => {
     .timeline-shell {
       flex-direction: column;
       gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .timeline-chart {
+      width: 100%;
     }
 
     .timeline-side {
@@ -514,7 +519,7 @@ const fmtRange = (e: { start: string; end: string }) => {
     }
 
     .timeline-row + .timeline-row {
-      border-top: 1.5px dashed var(--border);
+      border-top: var(--dash-width) dashed var(--dash-color);
       margin-top: 1.6rem;
       padding-top: 1.6rem;
     }
