@@ -150,26 +150,19 @@ const slug = (s: string) =>
     scroll-margin-top: 1.5rem;
   }
 
-  .dial::before {
+  .dial::after {
     content: '';
-    display: none;
     position: absolute;
-    inset: 0;
-    border: var(--dash-width) dashed var(--dash-color);
-    border-bottom: none;
-    border-radius: inherit;
-    pointer-events: none;
-    -webkit-mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
-    mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
-  }
-
-  :global([data-theme='dark']) .dial::before {
-    display: block;
+    top: 0;
+    left: max((100vw - 1240px) / 2, clamp(1.5rem, 5vw, 4rem));
+    right: max((100vw - 1240px) / 2, clamp(1.5rem, 5vw, 4rem));
+    border-top: var(--dash-width) dashed var(--dash-color);
   }
 
   :global([data-theme='dark']) .dial {
     --label: var(--text-muted);
     --label-active: var(--accent);
+    border-radius: 0;
   }
 
   .dial-heading {

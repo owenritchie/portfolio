@@ -106,6 +106,42 @@ const { title } = Astro.props;
         addEventListener('scroll', flush, { passive: true });
       })();
     </script>
+
+    <script>
+      document.addEventListener('click', (e) => {
+        const projectsLink = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href="#projects"]');
+        if (projectsLink) {
+          const section = document.getElementById('projects');
+          if (!section) return;
+
+          const fbItem = section.querySelector<HTMLElement>('.fb-item');
+          const track = section.querySelector<HTMLElement>('.dial-track');
+          const target = fbItem && fbItem.offsetParent ? fbItem : track;
+          if (!target) return;
+
+          e.preventDefault();
+          const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          history.replaceState(null, '', '#projects');
+          return;
+        }
+
+        const meLink = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href="#me"]');
+        if (meLink) {
+          const section = document.getElementById('me');
+          if (!section) return;
+
+          e.preventDefault();
+          const scrollMarginTop = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+          const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({
+            top: section.offsetTop - scrollMarginTop,
+            behavior: reduced ? 'auto' : 'smooth',
+          });
+          history.replaceState(null, '', '#me');
+        }
+      });
+    </script>
   </body>
 </html>
 
@@ -171,42 +207,6 @@ const { title } = Astro.props;
     --btn-fg: var(--text);
     --btn-2: var(--card);
     --btn-2-hover: color-mix(in oklch, var(--card) 78%, var(--accent-2) 22%);
-  }
-
-  [data-theme="dark"] .hero-name,
-  [data-theme="dark"] .hero-nav a,
-  [data-theme="dark"] .about-me-heading,
-  [data-theme="dark"] .timeline-heading,
-  [data-theme="dark"] .timeline-side-title,
-  [data-theme="dark"] .pc-heading,
-  [data-theme="dark"] .pc-title {
-    text-shadow:
-      0 0 14px oklch(0.92 0.03 288 / 0.5),
-      0 0 34px oklch(0.85 0.07 285 / 0.28);
-  }
-
-  [data-theme="dark"] .hero-name,
-  [data-theme="dark"] .about-me-heading,
-  [data-theme="dark"] .timeline-heading,
-  [data-theme="dark"] .timeline-side-title,
-  [data-theme="dark"] .pc-heading,
-  [data-theme="dark"] .pc-title {
-    filter: blur(0.4px);
-  }
-
-  [data-theme="dark"] .hero-toggle {
-    filter: drop-shadow(0 0 12px oklch(0.9 0.05 288 / 0.5));
-  }
-
-  @media (max-width: 720px) {
-    [data-theme="dark"] .hero-name,
-    [data-theme="dark"] .about-me-heading,
-    [data-theme="dark"] .timeline-heading,
-    [data-theme="dark"] .timeline-side-title,
-    [data-theme="dark"] .pc-heading,
-    [data-theme="dark"] .pc-title {
-      filter: none;
-    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
