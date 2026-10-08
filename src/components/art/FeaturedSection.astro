@@ -1,7 +1,7 @@
 ---
 const featuredLogos = [
-  { file: 'globe.webp', name: 'The Globe and Mail', classes: 'logo-grayscale' },
   { file: 'parks_canada.png', name: 'Parks Canada', classes: 'logo-large logo-invert' },
+  { file: 'globe.webp', name: 'The Globe and Mail', classes: 'logo-solid' },
   { file: 'rom.png', name: 'Royal Ontario Museum', classes: 'logo-invert' },
 ];
 ---
@@ -59,8 +59,13 @@ const featuredLogos = [
     height: 80px;
   }
 
-  .featured-logo-wrap img.logo-grayscale {
-    filter: grayscale(1);
+  /* White-on-transparent artwork: black tile in light mode, bare text in dark. */
+  .featured-logo-wrap img.logo-solid {
+    background: #000;
+  }
+
+  :global([data-theme="dark"]) .featured-logo-wrap img.logo-solid {
+    background: none;
   }
 
   :global([data-theme="dark"]) .featured-logo-wrap img.logo-invert {
