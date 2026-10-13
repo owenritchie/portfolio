@@ -33,7 +33,7 @@ const tileDark = cartoTiles('dark_all');
 
 <style>
   .about-map {
-    --pin: color-mix(in oklch, var(--card) 80%, var(--border) 20%);
+    --pin: var(--accent);
     position: relative;
     height: 100%;
     min-height: clamp(420px, 54vh, 620px);
@@ -68,11 +68,7 @@ const tileDark = cartoTiles('dark_all');
   }
 
   :global(.about-map .leaflet-container) {
-    background: #f2f0ec;
-  }
-
-  :global([data-theme="dark"] .about-map .leaflet-container) {
-    background: #1b1b1b;
+    background: color-mix(in oklch, var(--card) 70%, black);
   }
 
   :global(.about-map .leaflet-tile) {
@@ -89,7 +85,7 @@ const tileDark = cartoTiles('dark_all');
     z-index: 2;
     background: var(--accent);
     mix-blend-mode: color;
-    opacity: 0.22;
+    opacity: 0.55;
     pointer-events: none;
   }
 
@@ -200,8 +196,7 @@ const tileDark = cartoTiles('dark_all');
 
     let tiles: any = null;
     function setTiles() {
-      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const url = dark ? el.dataset.tileDark : el.dataset.tileLight;
+      const url = el.dataset.tileDark;
       if (!url) return;
       if (tiles) map.removeLayer(tiles);
       tiles = L.tileLayer(url, { maxZoom: 18, opacity: 1 }).addTo(map);

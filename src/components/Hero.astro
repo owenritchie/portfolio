@@ -36,6 +36,7 @@ const navLinks = [
       </svg>
     </button>
   </div>
+  <div class="hero-tilt">
   <div class="hero-media" data-reveal="scale" style="--rd:0.06s">
     <img
       class="hero-img hero-img-light"
@@ -49,6 +50,8 @@ const navLinks = [
       alt="Stone staircase climbing a Mayan pyramid at dusk"
       fetchpriority="high"
     />
+    <span class="hero-shine" aria-hidden="true"></span>
+  </div>
   </div>
 </header>
 
@@ -322,6 +325,79 @@ const navLinks = [
     overflow: hidden;
     position: relative;
     z-index: 1;
+  }
+
+  .hero-tilt {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-shine {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background:
+      linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.5) 50%, transparent 65%) no-repeat 0 0 / 250% 100%,
+      linear-gradient(to bottom, rgb(255 255 255 / 0.22), transparent 55%);
+    background-position: 120% 0, 0 0;
+    mix-blend-mode: soft-light;
+  }
+
+  @keyframes hero-tilt {
+    from { transform: perspective(900px) rotateX(0deg) scale(1); }
+    to { transform: perspective(900px) rotateX(48deg) scale(0.94); }
+  }
+
+  @keyframes hero-wipe {
+    from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+    to { -webkit-mask-position: 0 0; mask-position: 0 0; }
+  }
+
+  @keyframes hero-shine {
+    0% { opacity: 0; background-position: 120% 0, 0 0; }
+    35% { opacity: 1; }
+    100% { opacity: 1; background-position: -20% 0, 0 0; }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-tilt,
+      .hero-shine {
+        animation-timeline: scroll(root);
+        animation-range: 0 85vh;
+        animation-fill-mode: both;
+        animation-timing-function: linear;
+        animation-duration: 1ms;
+      }
+
+      .hero-tilt {
+        animation-name: hero-tilt;
+        transform-origin: 50% 100%;
+        will-change: transform;
+      }
+
+      .hero-shine {
+        animation-name: hero-shine;
+      }
+
+      .hero-top {
+        --wipe: linear-gradient(90deg, transparent 0%, transparent 33%, #000 50%, #000 100%);
+        -webkit-mask-image: var(--wipe);
+        mask-image: var(--wipe);
+        -webkit-mask-size: 300% 100%;
+        mask-size: 300% 100%;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        animation-name: hero-wipe;
+        animation-timeline: scroll(root);
+        animation-range: 0 40vh;
+        animation-fill-mode: both;
+        animation-timing-function: ease-in-out;
+        animation-duration: 1ms;
+      }
+    }
   }
 
   .hero-img {
