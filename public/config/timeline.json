@@ -9,7 +9,7 @@
       "link": "https://www.uottawa.ca/",
       "logo": "/timeline/uottawa.png",
       "logoZoom": 1.4,
-      "description": "Honours student in his last semester of Computer Science (2026). Classes include Design & Analysis of Algorithms, Operating Systems, User Interfaces, Requirements Engineering and Data Structures & Algorithms, among many more."
+      "description": "Honours Computer Science student on the Dean's List. Coursework includes Modelling & Simulation, Design & Analysis of Algorithms, Artificial Intelligence and Cybersecurity. Building the EECS department's first honours project portal as my CSI 4900 honours project. Likely pursuing a master's in data science at another institution after graduation."
     },
     {
       "title": "Poisson Consulting",
@@ -25,6 +25,7 @@
     },
     {
       "title": "City of Ottawa",
+      "hidden": true,
       "role": "Pool Attendant",
       "start": "2024-06",
       "end": "2024-08",
@@ -35,6 +36,7 @@
     },
     {
       "title": "Ottawa Senators",
+      "hidden": true,
       "role": "Sales Representative",
       "start": "2024-09",
       "end": "2024-12",
@@ -47,7 +49,7 @@
     },
     {
       "title": "Global Affairs Canada",
-      "role": "Data Analytics Intern",
+      "role": "Data Analyst Intern",
       "start": "2025-01",
       "end": "2025-07",
       "color": "sand",

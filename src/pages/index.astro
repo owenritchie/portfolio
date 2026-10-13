@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import AboutMe from '../components/AboutMe.astro';
-import ProjectDial from '../components/projects/ProjectDial.astro';
+import ProjectGrid from '../components/projects/ProjectGrid.astro';
 import Timeline from '../components/timeline/Timeline.astro';
 import Footer from '../components/Footer.astro';
 import { readFileSync } from 'node:fs';
@@ -20,6 +20,8 @@ const projectsData = JSON.parse(
   comingSoon?: boolean;
   download?: string;
   stack?: string[];
+  kind?: string;
+  hidden?: boolean;
 }[];
 
 const timelineData = JSON.parse(
@@ -45,17 +47,33 @@ const today = new Date().toISOString().slice(0, 10);
 
 <Layout title="Owen Ritchie">
   <main>
-    <Hero />
+    <div class="cover-stack">
+      <Hero />
 
-    <AboutMe />
+      <AboutMe />
 
-    <Timeline now={today} entries={timelineData.entries} />
+      <Timeline now={today} entries={timelineData.entries} />
 
-    <ProjectDial projects={projectsData} />
+      <ProjectGrid projects={projectsData} />
+    </div>
 
     <Footer />
   </main>
 </Layout>
+
+<script>
+  const pinned = document.querySelectorAll<HTMLElement>('.cover-stack > .about-me, .cover-stack > .timeline');
+  const wide = matchMedia('(min-width: 861px)');
+  const fit = () => {
+    pinned.forEach((el) => {
+      el.style.top = wide.matches ? `${Math.min(0, innerHeight - el.offsetHeight)}px` : '';
+    });
+  };
+  wide.addEventListener('change', fit);
+  fit();
+  addEventListener('resize', fit);
+  pinned.forEach((el) => new ResizeObserver(fit).observe(el));
+</script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
@@ -102,6 +120,33 @@ const today = new Date().toISOString().slice(0, 10);
     max-width: 1320px;
     margin: 0 auto;
     position: relative;
+  }
+
+  .cover-stack {
+    position: relative;
+  }
+
+  @media (min-width: 861px) {
+    .cover-stack > :global(.hero) {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  @media (min-width: 861px) {
+    .cover-stack > :global(.about-me),
+    .cover-stack > :global(.timeline) {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  .cover-stack > :global(.timeline) {
+    z-index: 2;
+  }
+
+  .cover-stack > :global(.pgrid) {
+    z-index: 3;
   }
 
   main > :global(.theme-toggle) {

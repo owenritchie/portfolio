@@ -5,6 +5,7 @@ import LampToggle from '../components/LampToggle.astro';
 import FeaturedSection from '../components/art/FeaturedSection.astro';
 import Gallery from '../components/art/Gallery.astro';
 import Lightbox from '../components/art/Lightbox.astro';
+import Footer from '../components/Footer.astro';
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -28,6 +29,7 @@ const photoFiles = (await readdir(photosDir))
         label="Back"
         direction="left"
         variant="accent"
+        tone="page"
         href="/"
       />
     </header>
@@ -36,7 +38,10 @@ const photoFiles = (await readdir(photosDir))
     <Gallery photos={photoFiles} />
   </div>
 
+  <Footer rounded />
+
   <Lightbox />
+
 </Layout>
 
 <style>
@@ -46,12 +51,12 @@ const photoFiles = (await readdir(photosDir))
   }
 
   .lamp-anchor {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 2rem;
     left: 0;
     width: 100vw;
-    margin-left: calc(50% - 50vw);
     height: 0;
+    z-index: 150;
     pointer-events: none;
   }
 

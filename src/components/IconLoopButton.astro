@@ -4,6 +4,7 @@ interface Props {
   label: string;
   direction?: 'up' | 'down' | 'left' | 'right';
   variant?: 'download' | 'to-top' | 'accent';
+  tone?: 'green' | 'page';
   href?: string;
   id?: string;
   target?: string;
@@ -15,6 +16,7 @@ const {
   label,
   direction = 'up',
   variant = 'download',
+  tone = 'green',
   href,
   id,
   target,
@@ -36,6 +38,7 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
   class="ib"
   data-dir={direction}
   data-variant={variant}
+  data-tone={tone}
   id={id}
   aria-label={label}
   {...tagAttrs}
@@ -219,6 +222,38 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
       opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
       translate 0.28s cubic-bezier(0.22, 1, 0.36, 1),
       visibility 0s linear 0.28s;
+  }
+
+  .ib[data-variant="to-top"] {
+    --ib-bg: oklch(0.3 0.09 145);
+    --ib-fg: oklch(0.88 0.07 140);
+    border: var(--dash-width) dashed oklch(1 0 0 / 0.32);
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="to-top"] {
+    --ib-bg: oklch(0.21 0.045 280);
+    --ib-fg: oklch(0.84 0.07 295);
+    border-color: var(--dash-color);
+  }
+
+  .ib[data-variant="accent"],
+  .ib[data-variant="to-top"][data-tone="page"] {
+    --ib-bg: var(--bg);
+    --ib-fg: var(--text);
+    border: var(--dash-width) dashed var(--dash-color);
+  }
+
+  .ib[data-variant="accent"]:hover,
+  .ib[data-variant="accent"]:focus-visible,
+  .ib[data-variant="to-top"][data-tone="page"]:hover,
+  .ib[data-variant="to-top"][data-tone="page"]:focus-visible {
+    --ib-bg: var(--bg);
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="to-top"][data-tone="page"] {
+    --ib-bg: var(--bg);
+    --ib-fg: var(--text);
+    border-color: var(--dash-color);
   }
 
   .ib[data-variant="to-top"].is-visible {

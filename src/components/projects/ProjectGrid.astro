@@ -1,0 +1,611 @@
+---
+interface Project {
+  title: string;
+  short?: string;
+  subtitle: string;
+  link?: string;
+  image: string;
+  comingSoon?: boolean;
+  download?: string;
+  kind?: string;
+  hidden?: boolean;
+}
+
+interface Props {
+  projects: Project[];
+  heading?: string;
+}
+
+const { projects, heading = "Things I've been working on" } = Astro.props;
+const shown = projects.filter((p) => !p.hidden);
+
+const arrow = '<path d="M7 17 17 7M8 7h9v9" />';
+const dl =
+  '<path d="M12 13v8l-4-4" /><path d="m12 21 4-4" /><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />';
+---
+
+<section id="projects" class="pgrid" style={`--n:${shown.length}`}>
+  <h2 class="pgrid-heading" data-reveal="up">{heading}</h2>
+
+  <div class="pbrowser" data-active="0" data-reveal="up" style="--rd:0.1s">
+    <div class="ptabs" role="tablist" aria-label="Projects">
+      {shown.map((p, i) => (
+        <button
+          type="button"
+          class={`ptab${i === 0 ? ' is-active' : ''}`}
+          role="tab"
+          id={`tab-${i}`}
+          aria-controls={`panel-${i}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab={i}
+        >
+          <span class="ptab-title">{p.short ?? p.title}</span>
+          {p.kind && <span class="ptab-kind">{p.kind}</span>}
+        </button>
+      ))}
+    </div>
+
+    <div class="ppanels">
+      {shown.map((p, i) => (
+        <article
+          class={`ppanel${i === 0 ? ' is-active' : ''}`}
+          role="tabpanel"
+          id={`panel-${i}`}
+          aria-labelledby={`tab-${i}`}
+          hidden={i !== 0}
+        >
+          <header class="ppanel-head">
+            <h3 class="ppanel-title">{p.short ?? p.title}</h3>
+            {p.link && !p.comingSoon && (
+              <a class="ppanel-arrow" href={p.link} target="_blank" rel="noopener" aria-label={`Open ${p.short ?? p.title}`}>
+                <span class="ib-icon ib-lead">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={arrow} />
+                </span>
+                <span class="ib-icon ib-next">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={arrow} />
+                </span>
+              </a>
+            )}
+          </header>
+
+          {p.kind && <p class="ppanel-kind">{p.kind}</p>}
+
+          <div class="ppanel-row">
+            <p class="ppanel-desc">{p.subtitle}{p.comingSoon ? ' Coming soon.' : ''}</p>
+            {p.download && (
+              <a class="ppanel-download" href={p.download} target="_blank" rel="noopener">
+                <span class="pd-icon" aria-hidden="true">
+                  <span class="pd-viewport">
+                    <span class="ib-icon ib-lead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" set:html={dl} />
+                    </span>
+                    <span class="ib-icon ib-next">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" set:html={dl} />
+                    </span>
+                  </span>
+                </span>
+                <span class="pd-label">Download latest</span>
+              </a>
+            )}
+          </div>
+
+          {p.link && !p.comingSoon ? (
+            <a class="ppanel-shot" href={p.link} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src={p.image} alt="" loading={i === 0 ? 'eager' : 'lazy'} />
+            </a>
+          ) : (
+            <div class="ppanel-shot">
+              <img src={p.image} alt={`${p.title} screenshot`} loading="lazy" />
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const browser = document.querySelector<HTMLElement>('.pbrowser');
+
+  if (browser) {
+    const tabs = Array.from(browser.querySelectorAll<HTMLButtonElement>('.ptab'));
+    const panels = Array.from(browser.querySelectorAll<HTMLElement>('.ppanel'));
+
+    const select = (i: number, focus = false) => {
+      browser.dataset.active = String(i);
+      tabs.forEach((tab, idx) => {
+        const on = idx === i;
+        tab.classList.toggle('is-active', on);
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach((panel, idx) => {
+        const on = idx === i;
+        panel.hidden = !on;
+        panel.classList.toggle('is-active', on);
+      });
+      if (focus) tabs[i].focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (e) => {
+        const last = tabs.length - 1;
+        let next = -1;
+        if (e.key === 'ArrowRight') next = i === last ? 0 : i + 1;
+        else if (e.key === 'ArrowLeft') next = i === 0 ? last : i - 1;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = last;
+        if (next >= 0) {
+          e.preventDefault();
+          select(next, true);
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .pgrid {
+    --slab: clamp(28px, 5vw, 52px);
+    --gutter: max((100vw - 1120px) / 2, clamp(1.5rem, 5vw, 5rem));
+    --sec: oklch(0.3 0.09 145);
+    --card: oklch(0.23 0.07 145);
+    --ink: oklch(0.95 0.02 130);
+    --ink-soft: oklch(0.82 0.035 130);
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: calc(-1 * var(--slab));
+    background: var(--sec);
+    color: var(--ink);
+    border-radius: var(--slab) var(--slab) 0 0;
+    padding: clamp(2.5rem, 6vw, 4.5rem) var(--gutter) clamp(1rem, 2vw, 1.5rem);
+    scroll-margin-top: 1.5rem;
+  }
+
+  :global([data-theme='dark']) .pgrid {
+    --sec: oklch(0.21 0.045 280);
+    --card: oklch(0.125 0.03 280);
+    --ink: oklch(0.95 0.02 290);
+    --ink-soft: oklch(0.8 0.04 285);
+  }
+
+  :global([data-theme='dark']) .pgrid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-bottom: none;
+    border-radius: inherit;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+    mask-image: linear-gradient(to bottom, black 0, black 6px, transparent 64px);
+  }
+
+  .pgrid-heading {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    line-height: 1.05;
+    color: var(--ink);
+    text-align: left;
+    margin: 0 0 clamp(2.75rem, 6.5vw, 4.5rem);
+  }
+
+  .pbrowser {
+    --r: clamp(16px, 1.8vw, 24px);
+    width: 100%;
+    max-width: 76rem;
+    margin: 0 auto;
+  }
+
+  .ptabs {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    border-bottom: 1.5px solid color-mix(in oklch, var(--ink) 20%, transparent);
+  }
+
+  .ptab {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 0.4rem 1.5rem 1.15rem 0;
+    border: none;
+    background: none;
+    color: color-mix(in oklch, var(--ink) 55%, transparent);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.25s ease;
+  }
+
+  .ptab::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 1.5rem;
+    bottom: -1.5px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ptab.is-active {
+    color: var(--ink);
+  }
+
+  .ptab.is-active::after {
+    transform: scaleX(1);
+  }
+
+  .ptab:not(.is-active):hover {
+    color: var(--ink);
+  }
+
+  .ptab:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  .ptab-title {
+    max-width: 100%;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(1.05rem, 1.55vw, 1.4rem);
+    line-height: 1.1;
+  }
+
+  .ptab-kind {
+    max-width: 100%;
+    font-family: 'Grenze', serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .ppanels {
+    background: var(--card);
+    border-radius: var(--r);
+    height: clamp(40rem, 86vh, 52rem);
+  }
+
+  .ppanel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vh, 1.5rem);
+    padding: clamp(1.4rem, 2.6vw, 2.2rem);
+  }
+
+  .ppanel[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ppanel.is-active {
+      animation: panel-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+
+  @keyframes panel-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .ppanel-head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ppanel-title {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+    line-height: 1.1;
+  }
+
+  .ib-icon {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+
+  .ib-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .ppanel-arrow {
+    position: relative;
+    overflow: hidden;
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--card);
+  }
+
+  .ppanel-arrow .ib-next {
+    transform: translate(-150%, 150%);
+  }
+
+  .ppanel-arrow:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .ppanel-row {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .ppanel-desc {
+    margin: 0;
+    max-width: 62ch;
+    font-size: clamp(0.98rem, 1.2vw, 1.1rem);
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  .ppanel-download {
+    --ib-travel: 150%;
+    position: relative;
+    isolation: isolate;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 3rem;
+    padding: 0 1.2rem 0 0.35rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--card);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .pd-icon {
+    position: relative;
+    flex: none;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .pd-viewport {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ppanel-download .ib-next {
+    transform: translate(0, calc(-1 * var(--ib-travel)));
+  }
+
+  .ppanel-download::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -7px;
+    border: var(--dash-width) dashed var(--ink-soft);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ppanel-download:focus-visible {
+    outline: none;
+  }
+
+  .ppanel-shot {
+    flex: 1;
+    min-height: 0;
+    display: block;
+    overflow: hidden;
+    border-radius: clamp(12px, 1.4vw, 18px);
+    background: color-mix(in oklch, var(--ink) 8%, var(--card));
+  }
+
+  .ppanel-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+
+  @media (hover: hover) {
+    .ppanel-arrow:hover .ib-lead,
+    .ppanel-arrow:focus-visible .ib-lead,
+    .ppanel:hover .ppanel-arrow .ib-lead {
+      transform: translate(150%, -150%);
+    }
+
+    .ppanel-arrow:hover .ib-next,
+    .ppanel-arrow:focus-visible .ib-next,
+    .ppanel:hover .ppanel-arrow .ib-next {
+      transform: translate(0, 0);
+    }
+  }
+
+  .ppanel-download:hover .ib-lead,
+  .ppanel-download:focus-visible .ib-lead {
+    transform: translate(0, var(--ib-travel));
+  }
+
+  .ppanel-download:hover .ib-next,
+  .ppanel-download:focus-visible .ib-next {
+    transform: translate(0, 0);
+  }
+
+  .ppanel-download:hover::after,
+  .ppanel-download:focus-visible::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ptab,
+    .ib-icon,
+    .ppanel-download::after {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .ptabs {
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .ptabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ptab {
+      flex: 0 0 auto;
+      min-width: 9.5rem;
+    }
+
+    .ppanels {
+      height: auto;
+    }
+
+    .ppanel {
+      height: auto;
+    }
+
+    .ppanel-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .ppanel-shot {
+      flex: none;
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  .ppanel-kind {
+    display: none;
+  }
+
+  @media (max-width: 1080px) {
+    .pgrid {
+      padding-bottom: clamp(2.5rem, 6vw, 4rem);
+    }
+
+    .ppanels,
+    .ppanel {
+      height: auto;
+    }
+
+    .ppanel-shot {
+      flex: none;
+    }
+
+    .pgrid-heading {
+      margin-bottom: 1.5rem;
+    }
+
+    .ptabs {
+      flex-wrap: wrap;
+      overflow: visible;
+      gap: 0.5rem;
+      border-bottom: none;
+      margin-bottom: 1rem;
+    }
+
+    .ptab {
+      flex: 0 0 auto;
+      min-width: 0;
+      padding: 0.55rem 1rem;
+      border: var(--dash-width) dashed var(--dash-color);
+      border-radius: 999px;
+      color: var(--ink-soft);
+      transition: color 0.25s ease, background 0.25s ease;
+    }
+
+    .ptab::after,
+    .ptab-kind {
+      display: none;
+    }
+
+    .ptab-title {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .ptab.is-active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--sec);
+    }
+
+    .ppanel {
+      gap: 0.9rem;
+      padding: 1.1rem;
+    }
+
+    .ppanel-title {
+      font-size: 1.6rem;
+    }
+
+    .ppanel-kind {
+      display: block;
+      margin: -0.4rem 0 0;
+      font-family: 'Grenze', serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .ppanel-shot {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .ppanel-download {
+      align-self: stretch;
+      justify-content: center;
+    }
+
+    .ppanel-shot {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

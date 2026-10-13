@@ -10,12 +10,6 @@ const navLinks = [
 ---
 
 <header class="hero">
-  <div class="lamp-anchor">
-    <div class="lamp">
-      <LampToggle restLength={90} maxPull={36} size="46px" class="hero-lamp" />
-    </div>
-  </div>
-
   <div class="hero-top">
     <a class="hero-name" href="/" data-reveal="up">Owen Ritchie</a>
 
@@ -54,6 +48,12 @@ const navLinks = [
   </div>
   </div>
 </header>
+
+<div class="lamp-anchor">
+  <div class="lamp">
+    <LampToggle restLength={90} maxPull={36} size="46px" class="hero-lamp" />
+  </div>
+</div>
 
 <div class="hero-menu" id="hero-menu">
   <div class="hero-menu-bar">
@@ -143,12 +143,12 @@ const navLinks = [
   }
 
   .lamp-anchor {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 2rem;
     left: 0;
     width: 100vw;
-    margin-left: calc(50% - 50vw);
     height: 0;
+    z-index: 150;
     pointer-events: none;
   }
 
@@ -433,11 +433,13 @@ const navLinks = [
     }
   }
 
-  @media (max-width: 620px) {
+  @media (max-width: 860px) {
     .hero {
       min-height: 0;
     }
+  }
 
+  @media (max-width: 680px) {
     .hero-top {
       --name-fs: clamp(2.4rem, 11cqw, 3.4rem);
     }
@@ -455,9 +457,12 @@ const navLinks = [
       transform: translateY(calc(var(--name-fs) * -0.1));
     }
 
-    .hero-media {
-      flex: none;
-      aspect-ratio: 3 / 2;
+    .hero-tilt {
+      display: none;
+    }
+
+    .hero-top {
+      margin-bottom: 0;
     }
   }
 </style>
