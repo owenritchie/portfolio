@@ -110,7 +110,7 @@ const fmtRange = (e: { start: string; end: string }) => {
               </span>
               <span class="timeline-logo">
                 {bar.logo
-                  ? <img class="timeline-logo-img" src={bar.logo} alt={bar.title} loading="lazy" style={logoStyle || undefined} />
+                  ? <img class="timeline-logo-img" src={bar.logo} alt={bar.title} width="64" height="64" loading="lazy" style={logoStyle || undefined} />
                   : <span class="timeline-logo-mono">{bar.initial}</span>}
               </span>
             </span>
@@ -146,7 +146,7 @@ const fmtRange = (e: { start: string; end: string }) => {
         {resolveSkills(lead?.skills).map((s) => (
           s.icon && (
             <li class="timeline-skill">
-              <img class="timeline-skill-icon" src={s.icon} alt={s.name} title={s.name} loading="lazy" />
+              <img class="timeline-skill-icon" src={s.icon} alt={`${s.name} logo`} title={s.name} width="36" height="36" loading="lazy" />
             </li>
           )
         ))}
@@ -628,7 +628,9 @@ const fmtRange = (e: { start: string; end: string }) => {
           const img = document.createElement('img');
           img.className = 'timeline-skill-icon';
           img.src = s.icon;
-          img.alt = s.name;
+          img.alt = `${s.name} logo`;
+          img.width = 36;
+          img.height = 36;
           img.title = s.name;
           img.loading = 'lazy';
           li.appendChild(img);

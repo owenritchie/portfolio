@@ -92,11 +92,11 @@ const dl =
 
           {p.link && !p.comingSoon ? (
             <a class="ppanel-shot" href={p.link} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src={p.image} alt="" loading={i === 0 ? 'eager' : 'lazy'} />
+              <img src={p.image} alt={`${p.title} screenshot`} width="1600" height="1000" loading="lazy" />
             </a>
           ) : (
             <div class="ppanel-shot">
-              <img src={p.image} alt={`${p.title} screenshot`} loading="lazy" />
+              <img src={p.image} alt={`${p.title} screenshot`} width="1600" height="1000" loading="lazy" />
             </div>
           )}
         </article>

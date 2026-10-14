@@ -7,7 +7,7 @@
       "end": "present",
       "color": "blue",
       "link": "https://www.uottawa.ca/",
-      "logo": "/timeline/uottawa.png",
+      "logo": "/timeline/uottawa.webp",
       "logoZoom": 1.4,
       "description": "Honours Computer Science student on the Dean's List. Coursework includes Modelling & Simulation, Design & Analysis of Algorithms, Artificial Intelligence and Cybersecurity. Building the EECS department's first honours project portal as my CSI 4900 honours project. Likely pursuing a master's in data science at another institution after graduation."
     },
@@ -18,7 +18,7 @@
       "end": "2023-09",
       "color": "purple",
       "link": "https://www.poissonconsulting.ca/",
-      "logo": "/timeline/poisson.png",
+      "logo": "/timeline/poisson.webp",
       "logoZoom": 1,
       "description": "Performed quality assurance in R to replace deprecated functions within analyses scripts, and mapped 1000s of salmon redds (fish eggs) in the Lower Columbia river to reduce mortality rates during water-level fluctuations from the dam upstream.",
       "skills": ["R", "Tidyverse", "Postgres"]
@@ -31,7 +31,7 @@
       "end": "2024-08",
       "color": "orange",
       "link": "https://ottawa.ca/",
-      "logo": "/timeline/ottawa.png",
+      "logo": "/timeline/ottawa.webp",
       "description": "Sandy Hill's wading pool has never been cleaner. Chlorine has never been more optimized."
     },
     {
@@ -42,7 +42,7 @@
       "end": "2024-12",
       "color": "blue",
       "link": "https://www.nhl.com/senators/",
-      "logo": "/timeline/senators.png",
+      "logo": "/timeline/senators.webp",
       "logoZoom": 0.85,
       "logoFit": "contain",
       "description": "Sold dozens of Tim Stützle jerseys — fortunately they never found out I'm a Leafs fan."
@@ -54,7 +54,7 @@
       "end": "2025-07",
       "color": "sand",
       "link": "https://www.international.gc.ca/",
-      "logo": "/timeline/gac.png",
+      "logo": "/timeline/gac.webp",
       "description": "Developed an interactive tool allowing executives to model Official Development Assistance against our current commitments, as well as contributing significantly to statistics found in Canada's G7 Comprehensive Accountability Report for the 2025 Kananaskis summit. Additionally conducted analyses and built reports for countries in the CARICOM and Sahel.",
       "skills": ["Power BI", "Python", "Pandas"]
     },
