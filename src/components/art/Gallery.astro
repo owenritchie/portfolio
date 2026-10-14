@@ -10,7 +10,7 @@ const { photos } = Astro.props;
   {photos.map((photo) => (
     <button class="photo-item" onclick={`openLightbox('/photos/${photo}')`} aria-label="View photo">
       <div class="photo-inner">
-        <img src={`/photos/${photo}`} alt="" loading="lazy" />
+        <img src={`/photos/${photo}`} alt="" loading="lazy" decoding="async" />
       </div>
     </button>
   ))}
@@ -88,6 +88,16 @@ const { photos } = Astro.props;
 </style>
 
 <script>
+  function preloadGallery() {
+    const imgs = document.querySelectorAll<HTMLImageElement>('.photo-item img[loading="lazy"]');
+    const run = () => imgs.forEach((img) => { img.loading = 'eager'; });
+    if ('requestIdleCallback' in window) (window as any).requestIdleCallback(run, { timeout: 2000 });
+    else setTimeout(run, 500);
+  }
+
+  if (document.readyState === 'complete') preloadGallery();
+  else addEventListener('load', preloadGallery, { once: true });
+
   function initGalleryCards() {
     const items = document.querySelectorAll('.photo-item');
 
