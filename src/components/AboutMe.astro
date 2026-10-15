@@ -7,9 +7,9 @@ import AboutMap from './AboutMap.astro';
     <figure class="about-me-figure" data-reveal="up">
       <img
         class="about-me-portrait"
-        src="/me/owen-960.webp"
-        srcset="/me/owen-480.webp 480w, /me/owen-960.webp 960w"
-        sizes="(min-width: 861px) 460px, 100vw"
+        src="/me/owen-1440.webp"
+        srcset="/me/owen-480.webp 480w, /me/owen-960.webp 960w, /me/owen-1440.webp 1440w"
+        sizes="(min-width: 861px) 720px, 100vw"
         width="960"
         height="1280"
         alt="Owen Ritchie"
@@ -26,7 +26,7 @@ import AboutMap from './AboutMap.astro';
         philosophy &amp; engineering, playing music, and photography (photojournalism, wildlife).
       </p>
       <p data-reveal="up" style="--rd:0.18s">
-        Always happy to talk, so feel free to <a href="mailto:owenritchie04@gmail.com">reach out</a>!
+        Always happy to talk, so feel free to <a href="mailto:owenritchie04@gmail.com">reach out<svg class="mail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 7 8.5 6.5L20.5 7" /></svg></a>!
       </p>
 
       <AboutMap />
@@ -38,7 +38,7 @@ import AboutMap from './AboutMap.astro';
   .about-me {
     --card: oklch(0.3 0.09 145);
     --border: oklch(0.55 0.07 145);
-    --dash-color: oklch(1 0 0 / 0.32);
+    --dash-color: oklch(1 0 0 / 0.55);
     --text: oklch(0.95 0.02 130);
     --text-muted: oklch(0.75 0.04 130);
     --accent: oklch(0.7 0.15 150);
@@ -142,9 +142,38 @@ import AboutMap from './AboutMap.astro';
 
   .about-me-content p a {
     color: var(--text);
-    text-decoration: underline;
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 0.2em;
+    text-decoration: none;
+    padding-bottom: 0.1rem;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1.5px;
+    transition: background-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .about-me-content p a .mail-icon {
+    display: inline-block;
+    width: 0;
+    height: 0.95em;
+    margin-left: 0;
+    vertical-align: -0.12em;
+    opacity: 0;
+    transition:
+      width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      margin-left 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .about-me-content p a:hover .mail-icon,
+  .about-me-content p a:focus-visible .mail-icon {
+    width: 0.95em;
+    margin-left: 0.3em;
+    opacity: 1;
+  }
+
+  .about-me-content p a:hover,
+  .about-me-content p a:focus-visible {
+    background-size: 100% 1.5px;
   }
 
   .about-me-content p:last-of-type {

@@ -19,7 +19,6 @@ interface Props {
 const { projects, heading = "Things I've been working on" } = Astro.props;
 const shown = projects.filter((p) => !p.hidden);
 
-const arrow = '<path d="M7 17 17 7M8 7h9v9" />';
 const dl =
   '<path d="M12 13v8l-4-4" /><path d="m12 21 4-4" /><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />';
 ---
@@ -56,17 +55,13 @@ const dl =
           hidden={i !== 0}
         >
           <header class="ppanel-head">
-            <h3 class="ppanel-title">{p.short ?? p.title}</h3>
-            {p.link && !p.comingSoon && (
-              <a class="ppanel-arrow" href={p.link} target="_blank" rel="noopener" aria-label={`Open ${p.short ?? p.title}`}>
-                <span class="ib-icon ib-lead">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={arrow} />
-                </span>
-                <span class="ib-icon ib-next">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={arrow} />
-                </span>
-              </a>
-            )}
+            <h3 class="ppanel-title">
+              {p.link && !p.comingSoon ? (
+                <a class="ppanel-link" href={p.link} target="_blank" rel="noopener">{p.short ?? p.title}</a>
+              ) : (
+                p.short ?? p.title
+              )}
+            </h3>
           </header>
 
           {p.kind && <p class="ppanel-kind">{p.kind}</p>}
@@ -90,17 +85,32 @@ const dl =
             )}
           </div>
 
-          {p.link && !p.comingSoon ? (
-            <a class="ppanel-shot" href={p.link} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src={p.image} alt={`${p.title} screenshot`} width="1600" height="1000" loading="lazy" />
-            </a>
-          ) : (
-            <div class="ppanel-shot">
-              <img src={p.image} alt={`${p.title} screenshot`} width="1600" height="1000" loading="lazy" />
-            </div>
-          )}
+          <div class="ppanel-stage">
+            {p.link && !p.comingSoon ? (
+              <a class="ppanel-shot" href={p.link} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+                <img src={p.image} alt={`${p.title} screenshot`} width="1600" height="1000" loading="lazy" />
+              </a>
+            ) : (
+              <div class="ppanel-shot">
+                <img src={p.image} alt={`${p.title} screenshot`} width="1600" height="1000" loading="lazy" />
+              </div>
+            )}
+            {p.link && !p.comingSoon && (
+              <a class="ppanel-go" href={p.link} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3 20C3 13 9.5 13 9 17.2 8.6 20.5 4.8 18 7 12.5 9 8 13 6 19 5.5" /><path d="M14.5 2.2 19.3 5.5 15.2 9.7" /></svg>
+              </a>
+            )}
+          </div>
         </article>
       ))}
+      <div class="pnotch">
+        <a class="pnotch-gh" href="https://github.com/owenritchie" target="_blank" rel="noopener" aria-label="Owen's GitHub profile">
+          <span class="pnotch-viewport">
+            <span class="pnotch-icon pnotch-lead"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg></span>
+            <span class="pnotch-icon pnotch-next"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg></span>
+          </span>
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -279,6 +289,11 @@ const dl =
   }
 
   .ppanels {
+    --nw: 6.25rem;
+    --pink: oklch(0.78 0.09 60);
+    --nh: 5rem;
+    --fr: var(--r);
+    position: relative;
     background: var(--card);
     border-radius: var(--r);
     height: clamp(40rem, 86vh, 52rem);
@@ -309,6 +324,7 @@ const dl =
 
   .ppanel-head {
     flex: none;
+    padding-right: calc(var(--nw) - 1rem);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -336,22 +352,116 @@ const dl =
     height: 22px;
   }
 
-  .ppanel-arrow {
-    position: relative;
+  .ppanel-link,
+  .ppanel-link:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ppanel-link {
+    padding-bottom: 0.1rem;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 2px;
+    transition: background-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ppanel-link:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .pnotch {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--nw);
+    height: var(--nh);
+    display: grid;
+    place-items: center;
+    background: var(--sec);
+    border-bottom-left-radius: var(--r);
+  }
+
+  .pnotch::before,
+  .pnotch::after {
+    content: '';
+    position: absolute;
+    width: var(--fr);
+    height: var(--fr);
+    background: radial-gradient(circle at bottom left, transparent calc(var(--fr) - 0.5px), var(--sec) calc(var(--fr) - 0.5px));
+    pointer-events: none;
+  }
+
+  .pnotch::before {
+    right: 0;
+    top: 100%;
+  }
+
+  .pnotch::after {
+    right: 100%;
+    top: 0;
+  }
+
+  .pnotch-gh {
+    --g: 0.5rem;
+    isolation: isolate;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: calc(var(--nw) - var(--g));
+    height: calc(var(--nh) - var(--g));
+    border-radius: var(--r) var(--r) var(--r) calc(var(--r) - var(--g));
+    transition: background 0.3s ease, color 0.3s ease;
+    background: var(--card);
+    color: var(--ink);
+  }
+
+  .pnotch-viewport {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
     overflow: hidden;
-    flex: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 999px;
-    background: var(--ink);
+  }
+
+  .pnotch-icon {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+
+  .pnotch-next {
+    transform: translateY(-150%);
+  }
+
+  .pnotch-icon svg {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+
+  .pnotch-gh:hover,
+  .pnotch-gh:focus-visible {
+    background: var(--pink);
     color: var(--card);
   }
 
-  .ppanel-arrow .ib-next {
-    transform: translate(-150%, 150%);
+  .pnotch-gh:hover .pnotch-lead,
+  .pnotch-gh:focus-visible .pnotch-lead {
+    transform: translateY(150%);
   }
 
-  .ppanel-arrow:focus-visible {
+  .pnotch-gh:hover .pnotch-next,
+  .pnotch-gh:focus-visible .pnotch-next {
+    transform: translateY(0);
+  }
+
+  .pnotch-gh:focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 3px;
   }
@@ -425,10 +535,25 @@ const dl =
     outline: none;
   }
 
-  .ppanel-shot {
+  .ppanel-stage {
+    --pink: oklch(0.78 0.09 60);
+    container-type: inline-size;
     flex: 1;
     min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    column-gap: 0;
+    transition: grid-template-columns 0.55s cubic-bezier(0.32, 0.72, 0, 1), column-gap 0.55s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  :global([data-theme='dark']) .ppanel-stage,
+  :global([data-theme='dark']) .ppanels {
+    --pink: var(--accent);
+  }
+
+  .ppanel-shot {
     display: block;
+    min-width: 0;
     overflow: hidden;
     border-radius: clamp(12px, 1.4vw, 18px);
     background: color-mix(in oklch, var(--ink) 8%, var(--card));
@@ -436,24 +561,59 @@ const dl =
 
   .ppanel-shot img {
     display: block;
-    width: 100%;
+    width: 100cqw;
+    max-width: none;
     height: 100%;
     object-fit: cover;
     object-position: top left;
   }
 
+  .ppanel-go {
+    min-width: 0;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border-radius: clamp(12px, 1.4vw, 18px);
+    background: var(--pink);
+    color: var(--card);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ppanel-go svg {
+    flex: none;
+    width: clamp(4rem, 8vw, 7rem);
+    height: clamp(4rem, 8vw, 7rem);
+  }
+
   @media (hover: hover) {
-    .ppanel-arrow:hover .ib-lead,
-    .ppanel-arrow:focus-visible .ib-lead,
-    .ppanel:hover .ppanel-arrow .ib-lead {
-      transform: translate(150%, -150%);
+    .ppanel-link:hover {
+      background-size: 100% 2px;
     }
 
-    .ppanel-arrow:hover .ib-next,
-    .ppanel-arrow:focus-visible .ib-next,
-    .ppanel:hover .ppanel-arrow .ib-next {
-      transform: translate(0, 0);
+    .ppanel:has(.ppanel-link:hover, .ppanel-stage:hover) .ppanel-stage {
+      grid-template-columns: 3fr 1fr;
+      column-gap: clamp(0.6rem, 1vw, 0.9rem);
     }
+
+    .ppanel:has(.ppanel-link:hover, .ppanel-stage:hover) .ppanel-go {
+      opacity: 1;
+      transition: opacity 0.35s ease 0.1s;
+    }
+  }
+
+  .ppanel:has(.ppanel-link:focus-visible) .ppanel-link {
+    background-size: 100% 2px;
+  }
+
+  .ppanel:has(.ppanel-link:focus-visible) .ppanel-stage {
+    grid-template-columns: 3fr 1fr;
+    column-gap: clamp(0.6rem, 1vw, 0.9rem);
+  }
+
+  .ppanel:has(.ppanel-link:focus-visible) .ppanel-go {
+    opacity: 1;
+    transition: opacity 0.35s ease 0.1s;
   }
 
   .ppanel-download:hover .ib-lead,
@@ -475,6 +635,10 @@ const dl =
   @media (prefers-reduced-motion: reduce) {
     .ptab,
     .ib-icon,
+    .ppanel-stage,
+    .ppanel-link,
+    .pnotch-gh,
+    .pnotch-icon,
     .ppanel-download::after {
       transition: none;
     }
@@ -508,7 +672,7 @@ const dl =
       align-items: flex-start;
     }
 
-    .ppanel-shot {
+    .ppanel-stage {
       flex: none;
       aspect-ratio: 16 / 10;
     }
@@ -528,7 +692,7 @@ const dl =
       height: auto;
     }
 
-    .ppanel-shot {
+    .ppanel-stage {
       flex: none;
     }
 
@@ -593,7 +757,7 @@ const dl =
       color: var(--ink-soft);
     }
 
-    .ppanel-shot {
+    .ppanel-stage {
       aspect-ratio: 16 / 10;
     }
   }
@@ -604,7 +768,7 @@ const dl =
       justify-content: center;
     }
 
-    .ppanel-shot {
+    .ppanel-stage {
       aspect-ratio: 4 / 3;
     }
   }

@@ -81,6 +81,9 @@ const fmtRange = (e: { start: string; end: string }) => {
 
 <section id="work" class="timeline" aria-label="Work timeline" data-reveal="trigger">
   <h2 class="timeline-heading" data-reveal="up">Where I've done my work</h2>
+  <div class="timeline-sub" data-reveal="up" style="--rd:0.06s">
+    <a class="timeline-side-resume" href="/resume/owen-ritchie.pdf" target="_blank" rel="noopener">View my resume<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M8 13h8M8 17h5" /></svg></a>
+  </div>
 
   <div class="timeline-shell">
     <div class="timeline-chart">
@@ -202,7 +205,12 @@ const fmtRange = (e: { start: string; end: string }) => {
     font-size: clamp(2.4rem, 5vw, 3.8rem);
     line-height: 1.05;
     color: var(--text);
-    text-align: left;
+    text-align: center;
+    margin: 0 0 0.9rem;
+  }
+
+  .timeline-sub {
+    text-align: center;
     margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
   }
 
@@ -231,9 +239,67 @@ const fmtRange = (e: { start: string; end: string }) => {
     margin: 0;
   }
 
+  .timeline-side-resume {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.1rem;
+    color: var(--text);
+    font-family: 'Grenze', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1.5px;
+    transition: background-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .timeline-side-resume svg {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    width: 1.05em;
+    height: 1.05em;
+    margin: -0.55em 0 0 0.1em;
+    opacity: 0;
+    transform: translateX(-0.25em);
+    transition:
+      opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .timeline-side-resume:hover,
+  .timeline-side-resume:focus-visible {
+    background-size: 100% 1.5px;
+  }
+
+  .timeline-side-resume:hover svg,
+  .timeline-side-resume:focus-visible svg {
+    opacity: 1;
+    transform: none;
+  }
+
+  .timeline-skill-icon {
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .timeline-skill-icon:hover {
+    transform: rotate(360deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-side-resume,
+    .timeline-side-resume svg,
+    .timeline-skill-icon {
+      transition: none;
+    }
+  }
+
   .timeline-side-role {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
+    font-family: 'Grenze', serif;
+    font-size: 1.1rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -261,6 +327,11 @@ const fmtRange = (e: { start: string; end: string }) => {
 
   :global(html[data-theme="dark"]) .timeline-side-link:hover {
     color: var(--text-muted);
+  }
+
+  .timeline-side-link:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 4px;
   }
 
   .timeline-side-desc {
@@ -314,7 +385,7 @@ const fmtRange = (e: { start: string; end: string }) => {
     flex-direction: column;
     gap: 0.4rem;
     padding-top: 1rem;
-    padding-bottom: 1.9rem;
+    padding-bottom: 2.6rem;
   }
 
   .timeline-row {
@@ -365,9 +436,11 @@ const fmtRange = (e: { start: string; end: string }) => {
   }
 
   .timeline-label-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Grenze', serif;
+    font-weight: 500;
     font-size: 1.25rem;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--text);
     text-wrap: balance;
     overflow-wrap: anywhere;
@@ -461,18 +534,19 @@ const fmtRange = (e: { start: string; end: string }) => {
     left: var(--plot-left);
     right: 0;
     bottom: 0;
-    height: 1.4rem;
+    height: 1.9rem;
   }
 
   .timeline-axis-year {
     position: absolute;
     bottom: 0;
     transform: translateX(-50%);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.78rem;
+    font-family: 'Grenze', serif;
+    font-weight: 500;
+    font-size: 1.2rem;
     letter-spacing: 0.06em;
-    color: var(--text-muted);
-    opacity: 0.7;
+    color: var(--text);
+    opacity: 1;
     font-feature-settings: 'tnum';
   }
 
@@ -556,7 +630,7 @@ const fmtRange = (e: { start: string; end: string }) => {
 
     .timeline-label-role {
       display: block;
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: 'Grenze', serif;
       font-size: 0.85rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -565,7 +639,7 @@ const fmtRange = (e: { start: string; end: string }) => {
 
     .timeline-label-dates {
       display: block;
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: 'Grenze', serif;
       font-size: 0.8rem;
       letter-spacing: 0.08em;
       color: var(--text-muted);
