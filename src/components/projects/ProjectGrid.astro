@@ -164,6 +164,9 @@ const dl =
     --card: oklch(0.91 0.05 140);
     --ink: oklch(0.26 0.035 145);
     --ink-soft: oklch(0.45 0.04 145);
+    --btn-fill: var(--ink);
+    --btn-fg: var(--card);
+    --btn-ring: var(--ink-soft);
     position: relative;
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -181,6 +184,9 @@ const dl =
     --card: oklch(0.17 0.03 278);
     --ink: oklch(0.95 0.02 290);
     --ink-soft: oklch(0.8 0.04 285);
+    --btn-fill: oklch(0.3 0.055 280);
+    --btn-fg: oklch(0.88 0.04 285);
+    --btn-ring: var(--dash-color);
   }
 
   :global([data-theme='dark']) .pgrid::after {
@@ -446,8 +452,8 @@ const dl =
 
   .pnotch-gh:hover,
   .pnotch-gh:focus-visible {
-    background: var(--ink);
-    color: var(--card);
+    background: var(--btn-fill);
+    color: var(--btn-fg);
   }
 
   .pnotch-gh:hover .pnotch-lead,
@@ -492,8 +498,8 @@ const dl =
     height: 3rem;
     padding: 0 1.2rem 0 0.35rem;
     border-radius: 999px;
-    background: var(--ink);
-    color: var(--card);
+    background: var(--btn-fill);
+    color: var(--btn-fg);
     font-size: 0.95rem;
     font-weight: 600;
     text-decoration: none;
@@ -523,7 +529,7 @@ const dl =
     position: absolute;
     z-index: -1;
     inset: -7px;
-    border: var(--dash-width) dashed var(--ink-soft);
+    border: var(--dash-width) dashed var(--btn-ring);
     border-radius: 999px;
     opacity: 0;
     transform: scale(0.94);
@@ -567,8 +573,8 @@ const dl =
     display: grid;
     place-items: center;
     border-radius: clamp(12px, 1.4vw, 18px);
-    background: var(--ink);
-    color: var(--card);
+    background: var(--btn-fill);
+    color: var(--btn-fg);
     opacity: 0;
     transition: opacity var(--dur-base) var(--ease-out);
   }
