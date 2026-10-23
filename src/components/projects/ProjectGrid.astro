@@ -160,10 +160,10 @@ const dl =
   .pgrid {
     --slab: clamp(28px, 5vw, 52px);
     --gutter: max((100vw - 1120px) / 2, clamp(1.5rem, 5vw, 5rem));
-    --sec: oklch(0.3 0.09 145);
-    --card: oklch(0.23 0.07 145);
-    --ink: oklch(0.95 0.02 130);
-    --ink-soft: oklch(0.82 0.035 130);
+    --sec: oklch(0.955 0.01 110);
+    --card: oklch(0.91 0.05 140);
+    --ink: oklch(0.26 0.035 145);
+    --ink-soft: oklch(0.45 0.04 145);
     position: relative;
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -177,8 +177,8 @@ const dl =
   }
 
   :global([data-theme='dark']) .pgrid {
-    --sec: oklch(0.21 0.045 280);
-    --card: oklch(0.125 0.03 280);
+    --sec: oklch(0.22 0.04 280);
+    --card: oklch(0.17 0.03 278);
     --ink: oklch(0.95 0.02 290);
     --ink-soft: oklch(0.8 0.04 285);
   }
@@ -235,7 +235,7 @@ const dl =
     font: inherit;
     text-align: left;
     cursor: pointer;
-    transition: color 0.25s ease;
+    transition: color var(--dur-base) var(--ease-out);
   }
 
   .ptab::after {
@@ -249,7 +249,7 @@ const dl =
     background: var(--ink);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--dur-base) var(--ease-out);
   }
 
   .ptab.is-active {
@@ -290,7 +290,6 @@ const dl =
 
   .ppanels {
     --nw: 6.25rem;
-    --pink: oklch(0.78 0.09 60);
     --nh: 5rem;
     --fr: var(--r);
     position: relative;
@@ -313,7 +312,7 @@ const dl =
 
   @media (prefers-reduced-motion: no-preference) {
     .ppanel.is-active {
-      animation: panel-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: panel-in var(--dur-slow) var(--ease-out);
     }
   }
 
@@ -344,7 +343,7 @@ const dl =
     inset: 0;
     display: grid;
     place-items: center;
-    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+    transition: transform var(--dur-slow) var(--ease-out);
   }
 
   .ib-icon svg {
@@ -364,7 +363,7 @@ const dl =
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 0% 2px;
-    transition: background-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: background-size var(--dur-base) var(--ease-out);
   }
 
   .ppanel-link:focus-visible {
@@ -416,7 +415,7 @@ const dl =
     width: calc(var(--nw) - var(--g));
     height: calc(var(--nh) - var(--g));
     border-radius: var(--r) var(--r) var(--r) calc(var(--r) - var(--g));
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
     background: var(--card);
     color: var(--ink);
   }
@@ -433,7 +432,7 @@ const dl =
     inset: 0;
     display: grid;
     place-items: center;
-    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+    transition: transform var(--dur-slow) var(--ease-out);
   }
 
   .pnotch-next {
@@ -447,7 +446,7 @@ const dl =
 
   .pnotch-gh:hover,
   .pnotch-gh:focus-visible {
-    background: var(--pink);
+    background: var(--ink);
     color: var(--card);
   }
 
@@ -528,7 +527,7 @@ const dl =
     border-radius: 999px;
     opacity: 0;
     transform: scale(0.94);
-    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
   }
 
   .ppanel-download:focus-visible {
@@ -536,19 +535,13 @@ const dl =
   }
 
   .ppanel-stage {
-    --pink: oklch(0.78 0.09 60);
     container-type: inline-size;
     flex: 1;
     min-height: 0;
     display: grid;
     grid-template-columns: 1fr 0fr;
     column-gap: 0;
-    transition: grid-template-columns 0.55s cubic-bezier(0.32, 0.72, 0, 1), column-gap 0.55s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  :global([data-theme='dark']) .ppanel-stage,
-  :global([data-theme='dark']) .ppanels {
-    --pink: var(--accent);
+    transition: grid-template-columns var(--dur-slow) var(--ease-out), column-gap var(--dur-slow) var(--ease-out);
   }
 
   .ppanel-shot {
@@ -574,10 +567,10 @@ const dl =
     display: grid;
     place-items: center;
     border-radius: clamp(12px, 1.4vw, 18px);
-    background: var(--pink);
+    background: var(--ink);
     color: var(--card);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--dur-base) var(--ease-out);
   }
 
   .ppanel-go svg {
@@ -598,7 +591,7 @@ const dl =
 
     .ppanel:has(.ppanel-link:hover, .ppanel-stage:hover) .ppanel-go {
       opacity: 1;
-      transition: opacity 0.35s ease 0.1s;
+      transition: opacity var(--dur-base) var(--ease-out) 0.1s;
     }
   }
 
@@ -613,7 +606,7 @@ const dl =
 
   .ppanel:has(.ppanel-link:focus-visible) .ppanel-go {
     opacity: 1;
-    transition: opacity 0.35s ease 0.1s;
+    transition: opacity var(--dur-base) var(--ease-out) 0.1s;
   }
 
   .ppanel-download:hover .ib-lead,
@@ -630,18 +623,6 @@ const dl =
   .ppanel-download:focus-visible::after {
     opacity: 1;
     transform: scale(1);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ptab,
-    .ib-icon,
-    .ppanel-stage,
-    .ppanel-link,
-    .pnotch-gh,
-    .pnotch-icon,
-    .ppanel-download::after {
-      transition: none;
-    }
   }
 
   @media (max-width: 800px) {
@@ -715,7 +696,7 @@ const dl =
       border: var(--dash-width) dashed var(--dash-color);
       border-radius: 999px;
       color: var(--ink-soft);
-      transition: color 0.25s ease, background 0.25s ease;
+      transition: color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
     }
 
     .ptab::after,

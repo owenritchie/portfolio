@@ -93,7 +93,7 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
     color: var(--ib-fg);
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background var(--dur-base) var(--ease-out);
   }
 
   .ib[data-dir="up"] {
@@ -133,7 +133,7 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
     inset: 0;
     display: grid;
     place-items: center;
-    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+    transition: transform var(--dur-slow) var(--ease-out);
   }
 
   .ib-icon--next {
@@ -165,8 +165,8 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
     opacity: 0;
     transform: scale(0.9);
     transition:
-      opacity 0.3s ease,
-      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
   }
 
   .ib:hover::after,
@@ -218,28 +218,38 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
     visibility: hidden;
     translate: 0 10px;
     transition:
-      background 0.3s ease,
-      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      translate 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 0.28s;
+      background var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out),
+      translate var(--dur-base) var(--ease-out),
+      visibility 0s linear var(--dur-base);
   }
 
   .ib[data-variant="to-top"] {
-    --ib-bg: oklch(0.3 0.09 145);
-    --ib-fg: oklch(0.88 0.07 140);
-    border: var(--dash-width) dashed oklch(1 0 0 / 0.32);
+    --ib-bg: transparent;
+    --ib-fg: oklch(0.42 0.06 70);
+    border: var(--dash-width) dashed var(--dash-color);
+  }
+
+  :global(:root:not([data-theme="dark"])) .ib[data-variant="to-top"]:hover,
+  :global(:root:not([data-theme="dark"])) .ib[data-variant="to-top"]:focus-visible {
+    --ib-bg: color-mix(in oklch, var(--dash-color) 25%, transparent);
   }
 
   :global([data-theme="dark"]) .ib[data-variant="to-top"] {
-    --ib-bg: oklch(0.21 0.045 280);
+    --ib-bg: transparent;
     --ib-fg: oklch(0.84 0.07 295);
     border-color: var(--dash-color);
   }
 
+  :global([data-theme="dark"]) .ib[data-variant="to-top"]:hover,
+  :global([data-theme="dark"]) .ib[data-variant="to-top"]:focus-visible {
+    --ib-bg: color-mix(in oklch, var(--dash-color) 25%, transparent);
+  }
+
   .ib[data-variant="accent"],
   .ib[data-variant="to-top"][data-tone="page"] {
-    --ib-bg: var(--bg);
-    --ib-fg: var(--text);
+    --ib-bg: transparent;
+    --ib-fg: oklch(0.42 0.06 70);
     border: var(--dash-width) dashed var(--dash-color);
   }
 
@@ -247,13 +257,21 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
   .ib[data-variant="accent"]:focus-visible,
   .ib[data-variant="to-top"][data-tone="page"]:hover,
   .ib[data-variant="to-top"][data-tone="page"]:focus-visible {
-    --ib-bg: var(--bg);
+    --ib-bg: color-mix(in oklch, var(--dash-color) 25%, transparent);
   }
 
+  :global([data-theme="dark"]) .ib[data-variant="accent"],
   :global([data-theme="dark"]) .ib[data-variant="to-top"][data-tone="page"] {
-    --ib-bg: var(--bg);
-    --ib-fg: var(--text);
+    --ib-bg: transparent;
+    --ib-fg: oklch(0.84 0.07 295);
     border-color: var(--dash-color);
+  }
+
+  :global([data-theme="dark"]) .ib[data-variant="accent"]:hover,
+  :global([data-theme="dark"]) .ib[data-variant="accent"]:focus-visible,
+  :global([data-theme="dark"]) .ib[data-variant="to-top"][data-tone="page"]:hover,
+  :global([data-theme="dark"]) .ib[data-variant="to-top"][data-tone="page"]:focus-visible {
+    --ib-bg: color-mix(in oklch, var(--dash-color) 25%, transparent);
   }
 
   .ib[data-variant="to-top"].is-visible {
@@ -261,13 +279,5 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
     visibility: visible;
     translate: 0 0;
     transition-delay: 0s;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ib,
-    .ib::after,
-    .ib-icon {
-      transition: none;
-    }
   }
 </style>

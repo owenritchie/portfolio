@@ -20,6 +20,7 @@ const featuredLogos = [
 <style>
   .featured-section {
     margin-bottom: 3rem;
+    text-align: center;
   }
 
   .featured-title {
@@ -27,13 +28,18 @@ const featuredLogos = [
     font-weight: 600;
     font-size: clamp(2rem, 5vw, 3rem);
     line-height: 1.05;
-    color: var(--text);
+    color: #000;
     margin: 0 0 1.75rem;
+  }
+
+  :global([data-theme="dark"]) .featured-title {
+    color: var(--text);
   }
 
   .featured-logos {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 2.5rem;
     flex-wrap: wrap;
   }
@@ -42,7 +48,7 @@ const featuredLogos = [
     display: flex;
     align-items: center;
     opacity: 0.8;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--dur-base) var(--ease-out);
   }
 
   .featured-logo-wrap:hover {

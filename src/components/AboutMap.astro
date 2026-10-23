@@ -107,7 +107,7 @@ const tileDark = cartoTiles('dark_all');
     display: flex;
     flex-direction: column;
     align-items: center;
-    animation: about-map-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: about-map-drop var(--dur-slow) var(--ease-out) both;
   }
 
   .about-map-pin-shape {
@@ -153,7 +153,7 @@ const tileDark = cartoTiles('dark_all');
     border: var(--dash-width) dashed var(--pin);
     border-radius: 50%;
     z-index: 1;
-    animation: about-map-ring 3s ease-out infinite;
+    animation: about-map-ring 3s var(--ease-out) infinite;
   }
 
   @keyframes about-map-drop {

@@ -134,6 +134,17 @@ const navLinks = [
       }
     });
   }
+
+  const hero = document.querySelector('.hero');
+  const artLink = document.querySelector('.hero-nav a[href="/art"]');
+  const glint = document.querySelector('.hero-glint');
+
+  if (hero && artLink && glint) {
+    artLink.addEventListener('mouseenter', () => hero.classList.add('is-glinting'));
+    glint.addEventListener('animationend', (e: AnimationEvent) => {
+      if (e.animationName === 'hero-glint') hero.classList.remove('is-glinting');
+    });
+  }
 </script>
 
 <style>
@@ -218,7 +229,7 @@ const navLinks = [
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 0% 2px;
-    transition: background-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: background-size var(--dur-base) var(--ease-out);
   }
 
   .hero-nav a:hover {
@@ -261,8 +272,8 @@ const navLinks = [
     opacity: 0;
     visibility: hidden;
     transition:
-      opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 0.3s;
+      opacity var(--dur-base) var(--ease-out),
+      visibility 0s linear var(--dur-base);
   }
 
   .hero-menu.is-open {
@@ -366,12 +377,12 @@ const navLinks = [
 
   @keyframes hero-glint {
     0% { opacity: 1; background-position: 120% 0; }
-    100% { opacity: 1; background-position: -20% 0; }
+    100% { opacity: 0; background-position: -20% 0; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .hero:has(.hero-nav a[href="/art"]:hover) .hero-glint {
-      animation: hero-glint 0.9s ease-out;
+    .hero.is-glinting .hero-glint {
+      animation: hero-glint var(--dur-slow) var(--ease-out);
     }
   }
 
@@ -449,12 +460,6 @@ const navLinks = [
 
   :global([data-theme="dark"]) .hero-img-dark {
     display: block;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-menu {
-      transition: none;
-    }
   }
 
   @media (max-width: 1024px), (pointer: coarse) {

@@ -2,7 +2,7 @@
   {
     "title": "Mill",
     "short": "Mill",
-    "subtitle": "Hierarchy-based planning tool to deliver better, more thought-out plans to platforms like Todoist or Jira via MCP, supporting the Anthropic CLI & Ollama models",
+    "subtitle": "A local-first thinking tool for working through decisions, with a node canvas, table and text editor, plus optional AI help through Ollama or Claude",
     "image": "/projects/mill.webp",
     "colorTheme": "mint",
     "link": "https://github.com/owenritchie/mill",
@@ -12,7 +12,7 @@
   {
     "title": "Spotify Analytics Tracking my Listening Habits",
     "short": "Spotify Analytics",
-    "subtitle": "My streaming history pulled incrementally from Spotify's Developer API",
+    "subtitle": "My Spotify listening history, pulled from the Developer API and charted by artist, album, time of day and track length",
     "image": "/projects/owens-music.webp",
     "link": "https://owens-music.vercel.app/",
     "kind": "Data & Analytics"
@@ -20,7 +20,7 @@
   {
     "title": "The Sprout Company: Plant Ecommerce Store",
     "short": "The Sprout Co.",
-    "subtitle": "Ecommerce store for selling different types of plants, with filtering, search, and guided checkout",
+    "subtitle": "Plant ecommerce store with faceted search, a price slider and multi-step checkout, plus a short star-rating survey",
     "image": "/projects/the-sprout-co.webp",
     "link": "https://the-sprout-company.vercel.app/",
     "kind": "Ecommerce store"
@@ -28,7 +28,7 @@
   {
     "title": "Border Map: A Geography Matching Game",
     "short": "Border Map",
-    "subtitle": "Match country flags to their borders in order of land area",
+    "subtitle": "A country memory game: name every land neighbour of a given country, ordered by area, using Wordle-style hints across three levels",
     "image": "/projects/border-map.webp",
     "link": "https://border-map-sepia.vercel.app/",
     "kind": "Game",
@@ -37,7 +37,7 @@
   {
     "title": "Starry: Satellite Service Mockup",
     "short": "Starry",
-    "subtitle": "Basic mockup for a remote internet provider targeting primarily enterprise customers",
+    "subtitle": "A satellite internet mockup for homes, vehicles and work sites, with four plan tiers, bulk pricing and a technician booking form",
     "image": "/projects/starry.webp",
     "link": "https://starry-black.vercel.app/",
     "kind": "Mockup",
@@ -46,7 +46,7 @@
   {
     "title": "OC Transpo Real-Time Analytics",
     "short": "OC Transpo Analytics",
-    "subtitle": "End-to-end automated transit pipeline & visualization dashboard for Ottawa's fleet of 750+ busses",
+    "subtitle": "Automated pipeline and live dashboard for Ottawa's OC Transpo buses: vehicle positions pulled hourly, modelled with dbt, and shown on a live map with weather and transit trends",
     "link": "https://oc-transpo.streamlit.app/",
     "image": "/projects/oc-transpo.webp",
     "colorTheme": "orange",
@@ -55,7 +55,7 @@
   {
     "title": "G7 Canada 2025 Accountability Report",
     "short": "G7 Report",
-    "subtitle": "Accountability report detailing G7 commitments and action in various socioeconomic areas. Released under Canada's 2025 G7 presidency",
+    "subtitle": "Canada's 2025 G7 Accountability Report tracking progress on 43 development commitments across health, education, climate, gender equality and more",
     "link": "https://international.canada.ca/en/global-affairs/corporate/reports/g7-2025-accountability-report",
     "image": "/projects/g7.webp",
     "colorTheme": "sand",

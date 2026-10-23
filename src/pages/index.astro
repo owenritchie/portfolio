@@ -78,44 +78,6 @@ const today = new Date().toISOString().slice(0, 10);
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 
-  @keyframes fadeSlideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeScale {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  :global(.animate-in) {
-    opacity: 0;
-    animation: fadeSlideUp 0.6s ease-out forwards;
-  }
-
-  :global(.animate-in-scale) {
-    opacity: 0;
-    animation: fadeScale 0.6s ease-out forwards;
-  }
-
-  :global(.animate-delay-1) { animation-delay: 0.1s; }
-  :global(.animate-delay-2) { animation-delay: 0.2s; }
-  :global(.animate-delay-3) { animation-delay: 0.3s; }
-  :global(.animate-delay-4) { animation-delay: 0.4s; }
-  :global(.animate-delay-5) { animation-delay: 0.5s; }
-
   main {
     max-width: 1320px;
     margin: 0 auto;
@@ -149,69 +111,4 @@ const today = new Date().toISOString().slice(0, 10);
     z-index: 3;
   }
 
-  main > :global(.theme-toggle) {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
-    z-index: 100;
-  }
-
-  .bento {
-    display: grid;
-    grid-template-areas:
-      "header header header photo"
-      "about about about photo"
-      "about about about map"
-      "about about about art";
-    grid-template-columns: 1fr 1fr 1fr 280px;
-    grid-template-rows: auto 1fr 1fr 80px;
-    gap: 1rem;
-    min-height: 600px;
-  }
-
-  :global(.box) {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    position: relative;
-    overflow: hidden;
-  }
-
-  @media (max-width: 1024px) {
-    .bento {
-      grid-template-columns: 1fr 1fr 1fr 240px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .bento {
-      grid-template-areas:
-        "header header"
-        "photo photo"
-        "map map"
-        "about about"
-        "art art";
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto 200px auto auto auto;
-      min-height: auto;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .bento {
-      grid-template-areas:
-        "header"
-        "photo"
-        "map"
-        "about"
-        "art";
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 220px auto auto auto;
-      gap: 0.75rem;
-    }
-  }
 </style>

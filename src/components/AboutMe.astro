@@ -14,6 +14,7 @@ import AboutMap from './AboutMap.astro';
         height="1280"
         alt="Owen Ritchie"
         loading="lazy"
+        draggable="false"
       />
     </figure>
 
@@ -36,13 +37,12 @@ import AboutMap from './AboutMap.astro';
 
 <style>
   .about-me {
-    --card: oklch(0.3 0.09 145);
-    --border: oklch(0.55 0.07 145);
-    --dash-color: oklch(1 0 0 / 0.55);
-    --text: oklch(0.95 0.02 130);
-    --text-muted: oklch(0.75 0.04 130);
-    --accent: oklch(0.7 0.15 150);
-    --accent-2: oklch(0.78 0.09 60);
+    --card: oklch(0.955 0.01 110);
+    --border: oklch(0.85 0.01 120);
+    --text: oklch(0.26 0.035 145);
+    --text-muted: oklch(0.48 0.04 145);
+    --accent: oklch(0.5 0.16 145);
+    --accent-2: oklch(0.74 0.07 60);
     position: relative;
     z-index: 1;
     width: 100vw;
@@ -59,7 +59,6 @@ import AboutMap from './AboutMap.astro';
   :global([data-theme="dark"]) .about-me {
     --card: inherit;
     --border: inherit;
-    --dash-color: inherit;
     --text: inherit;
     --text-muted: inherit;
     --accent: inherit;
@@ -96,6 +95,15 @@ import AboutMap from './AboutMap.astro';
     padding: 12px;
     border: var(--dash-width) dashed var(--dash-color);
     border-radius: calc(clamp(20px, 3vw, 32px) + 12px);
+  }
+
+  .about-me-figure.is-jelly {
+    cursor: grab;
+  }
+
+  .about-me-figure.is-held {
+    cursor: grabbing;
+    user-select: none;
   }
 
   .about-me-portrait {
@@ -148,7 +156,7 @@ import AboutMap from './AboutMap.astro';
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 0% 1.5px;
-    transition: background-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: background-size var(--dur-base) var(--ease-out);
   }
 
   .about-me-content p a .mail-icon {
@@ -159,9 +167,9 @@ import AboutMap from './AboutMap.astro';
     vertical-align: -0.12em;
     opacity: 0;
     transition:
-      width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-      margin-left 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      width var(--dur-base) var(--ease-out),
+      margin-left var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out);
   }
 
   .about-me-content p a:hover .mail-icon,
@@ -214,3 +222,105 @@ import AboutMap from './AboutMap.astro';
     }
   }
 </style>
+
+<script>
+  type Spring = { x: number; y: number; vx: number; vy: number; k: number; c: number };
+
+  const fig = document.querySelector<HTMLElement>('.about-me-figure');
+  const img = fig?.querySelector<HTMLImageElement>('.about-me-portrait');
+
+  if (fig && img && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    const frame: Spring = { x: 0, y: 0, vx: 0, vy: 0, k: 170, c: 7 };
+    const photo: Spring = { x: 0, y: 0, vx: 0, vy: 0, k: 110, c: 6 };
+    const MAX_PULL = 16;
+    const WOBBLE = 0.0018;
+
+    let tx = 0;
+    let ty = 0;
+    let held = false;
+    let raf = 0;
+    let last = 0;
+    let originX = 0;
+    let originY = 0;
+
+    const step = (s: Spring, dt: number) => {
+      s.vx += (-s.k * (s.x - tx) - s.c * s.vx) * dt;
+      s.vy += (-s.k * (s.y - ty) - s.c * s.vy) * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+    };
+
+    const resting = (s: Spring) =>
+      Math.abs(s.x) < 0.01 && Math.abs(s.y) < 0.01 && Math.abs(s.vx) < 0.05 && Math.abs(s.vy) < 0.05;
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 1 / 30) / 2;
+      last = now;
+      for (let i = 0; i < 2; i++) {
+        step(frame, dt);
+        step(photo, dt);
+      }
+
+      if (!held && tx === 0 && ty === 0 && resting(frame) && resting(photo)) {
+        fig.style.transform = '';
+        img.style.transform = '';
+        frame.x = frame.y = frame.vx = frame.vy = 0;
+        photo.x = photo.y = photo.vx = photo.vy = 0;
+        raf = 0;
+        return;
+      }
+
+      const ax = Math.abs(frame.x);
+      const ay = Math.abs(frame.y);
+      const sx = 1 + (ax - 0.5 * ay) * WOBBLE;
+      const sy = 1 + (ay - 0.5 * ax) * WOBBLE;
+      fig.style.transform =
+        `translate(${frame.x}px, ${frame.y}px) rotate(${frame.x * 0.02}deg) ` +
+        `skew(${-frame.y * 0.03}deg, ${frame.x * 0.03}deg) scale(${sx}, ${sy})`;
+      img.style.transform = `translate(${photo.x - frame.x}px, ${photo.y - frame.y}px)`;
+      raf = requestAnimationFrame(tick);
+    };
+
+    const wake = () => {
+      if (raf) return;
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const release = () => {
+      if (!held) return;
+      held = false;
+      tx = ty = 0;
+      fig.classList.remove('is-held');
+      wake();
+    };
+
+    fig.classList.add('is-jelly');
+    fig.addEventListener('dragstart', (e) => e.preventDefault());
+
+    fig.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch' || e.button !== 0) return;
+      held = true;
+      originX = e.clientX;
+      originY = e.clientY;
+      fig.setPointerCapture(e.pointerId);
+      fig.classList.add('is-held');
+      wake();
+    });
+
+    fig.addEventListener('pointermove', (e) => {
+      if (!held) return;
+      const dx = e.clientX - originX;
+      const dy = e.clientY - originY;
+      const mag = Math.hypot(dx, dy);
+      if (!mag) return;
+      const pull = MAX_PULL * Math.tanh(mag / (MAX_PULL * 2.5));
+      tx = (dx / mag) * pull;
+      ty = (dy / mag) * pull;
+    });
+
+    fig.addEventListener('pointerup', release);
+    fig.addEventListener('pointercancel', release);
+    fig.addEventListener('lostpointercapture', release);
+  }
+</script>
