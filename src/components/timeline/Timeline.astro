@@ -162,7 +162,8 @@ const fmtRange = (e: { start: string; end: string }) => {
 <style>
   .timeline {
     --bar: oklch(0.26 0.035 145);
-    --rail: oklch(0.72 0.05 80);
+    --bead: oklch(0.91 0.05 140);
+    --rail: oklch(0.93 0.02 90);
     --label-col: 34%;
     --col-gap: 1.5rem;
     --row-h: 116px;
@@ -180,6 +181,7 @@ const fmtRange = (e: { start: string; end: string }) => {
 
   :global([data-theme="dark"]) .timeline {
     --bar: var(--accent);
+    --bead: var(--accent);
     --rail: color-mix(in oklab, var(--text) 11%, transparent);
   }
 
@@ -507,7 +509,7 @@ const fmtRange = (e: { start: string; end: string }) => {
     height: 52px;
     min-width: 18px;
     border-radius: 999px;
-    background: var(--bar);
+    background: var(--bead);
     transform-origin: left center;
     transform: translateY(-50%) scaleX(0);
     animation: barIn var(--dur-slow) var(--ease-out) forwards;
