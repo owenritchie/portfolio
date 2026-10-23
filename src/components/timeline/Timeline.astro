@@ -215,6 +215,13 @@ const fmtRange = (e: { start: string; end: string }) => {
     margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
   }
 
+  @media (max-width: 860px) {
+    .timeline-heading,
+    .timeline-sub {
+      text-align: left;
+    }
+  }
+
   .timeline-shell {
     display: flex;
     gap: 2.5rem;

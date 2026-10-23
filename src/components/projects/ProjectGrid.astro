@@ -207,8 +207,14 @@ const dl =
     font-size: clamp(2.4rem, 5vw, 3.8rem);
     line-height: 1.05;
     color: var(--ink);
-    text-align: left;
+    text-align: center;
     margin: 0 0 clamp(2.75rem, 6.5vw, 4.5rem);
+  }
+
+  @media (max-width: 860px) {
+    .pgrid-heading {
+      text-align: left;
+    }
   }
 
   .pbrowser {

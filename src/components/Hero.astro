@@ -137,7 +137,7 @@ const navLinks = [
 
   const hero = document.querySelector('.hero');
   const artLink = document.querySelector('.hero-nav a[href="/art"]');
-  const glint = document.querySelector('.hero-glint');
+  const glint = document.querySelector<HTMLElement>('.hero-glint');
 
   if (hero && artLink && glint) {
     artLink.addEventListener('mouseenter', () => hero.classList.add('is-glinting'));
@@ -377,12 +377,13 @@ const navLinks = [
 
   @keyframes hero-glint {
     0% { opacity: 1; background-position: 120% 0; }
+    70% { opacity: 1; }
     100% { opacity: 0; background-position: -20% 0; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .hero.is-glinting .hero-glint {
-      animation: hero-glint var(--dur-slow) var(--ease-out);
+      animation: hero-glint calc(var(--dur-slow) * 0.9) ease-in-out;
     }
   }
 
