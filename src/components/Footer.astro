@@ -163,7 +163,7 @@ const year = new Date().getFullYear();
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-bottom: calc(-1 * var(--band-pad));
-    padding: 0 clamp(1.5rem, 5vw, 5rem) var(--band-pad);
+    padding: 0 clamp(1.5rem, 5vw, 5rem) calc(var(--band-pad) + env(safe-area-inset-bottom, 0px));
     --band-bg: oklch(0.955 0.01 110);
     background: var(--band-bg);
   }

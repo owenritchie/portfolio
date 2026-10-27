@@ -10,7 +10,7 @@ const { title } = Astro.props;
 <html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Righteous&family=Grenze:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
@@ -249,6 +249,7 @@ const { title } = Astro.props;
     font-size: 90%;
     background: var(--bg);
     color: var(--text);
+    overscroll-behavior-y: none;
     scroll-behavior: smooth;
     transition: background var(--dur-base), color var(--dur-base);
     font-weight: 400;
@@ -259,15 +260,16 @@ const { title } = Astro.props;
   }
 
   body {
+    --pad: 2rem;
     min-height: 100vh;
-    padding: 2rem;
+    padding: max(var(--pad), env(safe-area-inset-top)) max(var(--pad), env(safe-area-inset-right)) var(--pad) max(var(--pad), env(safe-area-inset-left));
     overflow-x: hidden;
     background: var(--bg);
   }
 
   @media (max-width: 480px) {
     body {
-      padding: 1rem;
+      --pad: 1rem;
     }
   }
 </style>
