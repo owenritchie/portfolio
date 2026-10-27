@@ -71,6 +71,18 @@ const { title } = Astro.props;
 
     <script>
       (function () {
+        const root = document.documentElement;
+        const check = () => {
+          root.classList.toggle('at-end', innerHeight + scrollY >= root.scrollHeight - 80);
+        };
+        addEventListener('scroll', check, { passive: true });
+        addEventListener('resize', check);
+        check();
+      })();
+    </script>
+
+    <script>
+      (function () {
         const els = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
         if (!els.length) return;
 
@@ -249,7 +261,6 @@ const { title } = Astro.props;
     font-size: 90%;
     background: var(--bg);
     color: var(--text);
-    overscroll-behavior-y: none;
     scroll-behavior: smooth;
     transition: background var(--dur-base), color var(--dur-base);
     font-weight: 400;
@@ -257,6 +268,11 @@ const { title } = Astro.props;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* No rubber-band past the footer (it reveals the canvas); pull-to-refresh at the top stays */
+  html.at-end {
+    overscroll-behavior-y: none;
   }
 
   body {

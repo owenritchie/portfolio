@@ -423,6 +423,21 @@ const year = new Date().getFullYear();
   }
 
   @media (max-width: 900px) {
+    /* Fade the footer colour into the page colour at the very bottom so there is never a hard edge */
+    .footer-band {
+      padding-bottom: calc(var(--band-pad) + 1.5rem + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to bottom, var(--band-bg) calc(100% - 3.5rem), var(--bg) 100%);
+    }
+
+    :global(html:root),
+    :global(html[data-theme="dark"]:root) {
+      background: var(--bg);
+    }
+
+    :global(#to-top) {
+      display: none;
+    }
+
     .site-footer {
       margin-top: 2rem;
       padding: 1.75rem 1.5rem 1.1rem;
