@@ -651,10 +651,14 @@ const fmtRange = (e: { start: string; end: string }) => {
       grid-area: 1 / 1;
       padding: 1.15rem;
       border-radius: 20px;
-      border: var(--dash-width) dashed var(--dash-color);
+      background: oklch(0.955 0.01 110);
       animation: none;
       opacity: 1;
       transform: none;
+    }
+
+    :global([data-theme="dark"]) .timeline-row {
+      background: oklch(0.22 0.04 280);
     }
 
     .timeline-row:not(.is-active) {
