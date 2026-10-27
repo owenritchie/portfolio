@@ -643,6 +643,8 @@ const fmtRange = (e: { start: string; end: string }) => {
 
     .timeline-chart {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      touch-action: pan-y;
     }
 
     .timeline-row {

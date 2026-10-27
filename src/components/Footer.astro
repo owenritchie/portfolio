@@ -173,11 +173,11 @@ const year = new Date().getFullYear();
   }
 
   :global([data-theme="dark"]) .footer-band {
-    background: oklch(0.22 0.04 280);
+    --band-bg: oklch(0.22 0.04 280);
   }
 
   .footer-band.is-flush {
-    background: var(--bg);
+    --band-bg: var(--bg);
   }
 
   .footer-band.is-flush .site-footer {
