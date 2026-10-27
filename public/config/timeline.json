@@ -10,7 +10,8 @@
       "logo": "/timeline/uottawa.webp",
       "cardColor": "#8f001a",
       "logoZoom": 1.4,
-      "description": "Honours Computer Science student on the Dean's List. Coursework includes Modelling & Simulation, Design & Analysis of Algorithms, Artificial Intelligence and Cybersecurity. Building the EECS department's first honours project portal as my CSI 4900 honours project. Likely pursuing a master's in data science at another institution after graduation."
+      "description": "Honours Computer Science student on the Dean's List. Coursework includes Modelling & Simulation, Design & Analysis of Algorithms, Artificial Intelligence and Cybersecurity. Building the EECS department's first honours project portal as my CSI 4900 honours project. Likely pursuing a master's in data science at another institution after graduation.",
+      "skills": ["Java", "Python", "Postgres"]
     },
     {
       "title": "Poisson Consulting",

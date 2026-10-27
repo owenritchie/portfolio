@@ -791,6 +791,39 @@ const fmtRange = (e: { start: string; end: string }) => {
       margin-top: 0.5rem;
       max-width: none;
     }
+
+    /* Logo + title block on top, description and skills run the full card width underneath */
+    .timeline-label {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.15rem 0.9rem;
+      align-items: start;
+      width: 100%;
+    }
+
+    .timeline-label-text {
+      display: contents;
+    }
+
+    .timeline-logo {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+    }
+
+    .timeline-label-title,
+    .timeline-label-role,
+    .timeline-label-dates {
+      grid-column: 2;
+    }
+
+    .timeline-label-desc,
+    .timeline-label-skills {
+      grid-column: 1 / -1;
+    }
+
+    .timeline-label-desc {
+      margin-top: 0.7rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

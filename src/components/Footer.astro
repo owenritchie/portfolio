@@ -164,7 +164,21 @@ const year = new Date().getFullYear();
     margin-left: calc(50% - 50vw);
     margin-bottom: calc(-1 * var(--band-pad));
     padding: 0 clamp(1.5rem, 5vw, 5rem) var(--band-pad);
+    --band-bg: oklch(0.955 0.01 110);
+    background: var(--band-bg);
+  }
+
+  /* The canvas colour is what shows under the mobile browser toolbar and on overscroll at the bottom: match the footer so there is no hard edge (body paints the page colour above it) */
+  :global(html:root) {
     background: oklch(0.955 0.01 110);
+  }
+
+  :global(html[data-theme="dark"]:root) {
+    background: oklch(0.22 0.04 280);
+  }
+
+  :global(html:root:has(.footer-band.is-flush)) {
+    background: var(--bg);
   }
 
   .footer-band.is-rounded {
