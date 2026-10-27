@@ -12,6 +12,7 @@ interface Entry {
   logo?: string;
   logoZoom?: number;
   logoFit?: 'cover' | 'contain';
+  cardColor?: string;
   description?: string;
   skills?: string[];
   hidden?: boolean;
@@ -80,7 +81,7 @@ const fmtRange = (e: { start: string; end: string }) => {
 ---
 
 <section id="work" class="timeline" aria-label="Work timeline" data-reveal="trigger">
-  <h2 class="timeline-heading" data-reveal="up">Where I've done my work</h2>
+  <h2 class="timeline-heading" data-reveal="up"><span class="th-long">Where I've done my work</span><span class="th-short">Work</span></h2>
   <div class="timeline-sub" data-reveal="up" style="--rd:0.06s">
     <a class="timeline-side-resume" href="/resume/owen-ritchie.pdf" target="_blank" rel="noopener">View my resume<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M8 13h8M8 17h5" /></svg></a>
   </div>
@@ -96,7 +97,7 @@ const fmtRange = (e: { start: string; end: string }) => {
           <button
             type="button"
             class={`timeline-row${i === 0 ? ' is-active' : ''}`}
-            style={`--i:${i};`}
+            style={`--i:${i};${bar.cardColor ? `--card-color:${bar.cardColor};` : ''}`}
             aria-pressed={i === 0 ? 'true' : 'false'}
             data-title={bar.title}
             data-role={bar.role}
@@ -110,6 +111,13 @@ const fmtRange = (e: { start: string; end: string }) => {
                 <span class="timeline-label-role">{bar.role}</span>
                 <span class="timeline-label-dates">{fmtRange(bar)}</span>
                 {bar.description && <span class="timeline-label-desc">{bar.description}</span>}
+                {resolveSkills(bar.skills).some((k) => k.icon) && (
+                  <span class="timeline-label-skills">
+                    {resolveSkills(bar.skills).map((k) => k.icon && (
+                      <img src={k.icon} alt={`${k.name} logo`} title={k.name} width="22" height="22" loading="lazy" />
+                    ))}
+                  </span>
+                )}
               </span>
               <span class="timeline-logo">
                 {bar.logo
@@ -130,6 +138,18 @@ const fmtRange = (e: { start: string; end: string }) => {
           <span class="timeline-axis-year" style={`left:${t.left}%;`}>{t.year}</span>
         ))}
       </div>
+
+      <nav class="tl-nav" aria-label="Browse work">
+        <button type="button" class="tl-arrow" data-step="-1" aria-label="Previous job">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        {bars.map((bar, i) => (
+          <button type="button" class={`tl-dot${i === 0 ? ' is-active' : ''}`} data-go={i} aria-label={`${bar.title}`}><span></span></button>
+        ))}
+        <button type="button" class="tl-arrow" data-step="1" aria-label="Next job">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </nav>
     </div>
 
     <aside class="timeline-side" aria-live="polite">
@@ -212,10 +232,20 @@ const fmtRange = (e: { start: string; end: string }) => {
     margin: 0 0 0.9rem;
   }
 
+  .th-short {
+    display: none;
+  }
+
+  .tl-nav,
+  .timeline-label-skills {
+    display: none;
+  }
+
   .timeline-sub {
     text-align: center;
     margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
   }
+
 
   @media (max-width: 860px) {
     .timeline-heading,
@@ -407,6 +437,11 @@ const fmtRange = (e: { start: string; end: string }) => {
     transition: opacity var(--dur-base) var(--ease-out);
   }
 
+  @keyframes tlFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   @keyframes tlIn {
     to { opacity: 1; transform: translateY(0); }
   }
@@ -439,7 +474,14 @@ const fmtRange = (e: { start: string; end: string }) => {
     text-transform: uppercase;
     color: var(--text);
     text-wrap: balance;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+  }
+
+  /* Small-desktop / tablet landscape: the 34% label column is too narrow for "Consulting" */
+  @media (min-width: 861px) and (max-width: 1100px) {
+    .timeline {
+      --label-col: 44%;
+    }
   }
 
   .timeline-label-role,
@@ -591,10 +633,106 @@ const fmtRange = (e: { start: string; end: string }) => {
       cursor: default;
     }
 
-    .timeline-row + .timeline-row {
-      border-top: var(--dash-width) dashed var(--dash-color);
-      margin-top: 1.6rem;
-      padding-top: 1.6rem;
+    .th-long {
+      display: none;
+    }
+
+    .th-short {
+      display: inline;
+    }
+
+    .timeline-chart {
+      display: grid;
+    }
+
+    .timeline-row {
+      grid-area: 1 / 1;
+      padding: 1.15rem;
+      border-radius: 20px;
+      border: var(--dash-width) dashed var(--dash-color);
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .timeline-row:not(.is-active) {
+      visibility: hidden;
+    }
+
+    .timeline-row.is-active {
+      animation: tlFade var(--dur-slow) var(--ease-out);
+    }
+
+    .timeline-label-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      height: 22px;
+      overflow: hidden;
+      margin-top: 0.8rem;
+    }
+
+    .timeline-label-skills img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    .tl-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.75rem;
+    }
+
+    .tl-dot,
+    .tl-arrow {
+      display: grid;
+      place-items: center;
+      height: 44px;
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    .tl-dot {
+      width: 28px;
+    }
+
+    .tl-arrow {
+      width: 44px;
+      color: var(--text-muted);
+    }
+
+    .tl-arrow svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .tl-arrow:active {
+      color: var(--text);
+    }
+
+    .tl-dot span {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--text) 28%, transparent);
+      transition: width var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+    }
+
+    .tl-dot.is-active span {
+      width: 22px;
+      background: var(--text);
+    }
+
+    .tl-dot:focus-visible,
+    .tl-arrow:focus-visible {
+      outline: 2px solid var(--text);
+      outline-offset: -4px;
+      border-radius: 8px;
     }
 
     .timeline-label {
@@ -649,7 +787,7 @@ const fmtRange = (e: { start: string; end: string }) => {
       color: var(--text);
       opacity: 0.82;
       margin-top: 0.5rem;
-      max-width: min(60ch, 100%);
+      max-width: none;
     }
   }
 
@@ -729,5 +867,44 @@ const fmtRange = (e: { start: string; end: string }) => {
     rows.forEach((row) => {
       row.addEventListener('click', () => select(row));
     });
+  });
+</script>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.timeline').forEach((root) => {
+    const rows = Array.from(root.querySelectorAll<HTMLElement>('.timeline-row'));
+    const dots = Array.from(root.querySelectorAll<HTMLElement>('.tl-dot'));
+    const chart = root.querySelector('.timeline-chart');
+    if (!rows.length || !dots.length) return;
+
+    const current = () => Math.max(0, rows.findIndex((r) => r.classList.contains('is-active')));
+
+    const go = (i: number) => {
+      const n = (i + rows.length) % rows.length;
+      rows[n].click();
+      dots.forEach((d, idx) => {
+        d.classList.toggle('is-active', idx === n);
+        if (idx === n) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
+    };
+
+    dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+    root.querySelectorAll<HTMLElement>('.tl-arrow').forEach((a) => {
+      a.addEventListener('click', () => go(current() + Number(a.dataset.step)));
+    });
+
+    let sx = 0;
+    let sy = 0;
+    chart?.addEventListener('touchstart', (e) => {
+      const t = (e as TouchEvent).touches[0];
+      sx = t.clientX;
+      sy = t.clientY;
+    }, { passive: true });
+    chart?.addEventListener('touchend', (e) => {
+      const t = (e as TouchEvent).changedTouches[0];
+      const dx = t.clientX - sx;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(t.clientY - sy) * 1.5) go(current() + (dx < 0 ? 1 : -1));
+    }, { passive: true });
   });
 </script>

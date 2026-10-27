@@ -27,6 +27,7 @@ const columns: {
       { label: 'Email', href: 'mailto:owenritchie04@gmail.com', external: false },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/owenritchie2004/', external: true },
       { label: 'GitHub', href: 'https://github.com/owenritchie', external: true },
+      { label: 'Resume', href: '/resume/owen-ritchie.pdf', external: true, note: 'Hire me!' },
     ],
   },
   {
@@ -43,24 +44,24 @@ const columns: {
       { label: 'Me', href: '/#me', external: false },
       { label: 'My Art', href: '/art', external: false },
       { label: 'My Experience', href: '/#work', external: false },
-      { label: 'Resume', href: '/resume/owen-ritchie.pdf', external: true, note: 'Hire me!' },
     ],
   },
 ];
 
 const { rounded = false, flush = false } = Astro.props as { rounded?: boolean; flush?: boolean };
+const icons: Record<string, string> = {"Email": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/>", "LinkedIn": "<path d=\"M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z\"/><rect x=\"2\" y=\"9\" width=\"4\" height=\"12\"/><circle cx=\"4\" cy=\"4\" r=\"2\"/>", "GitHub": "<path d=\"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22\"/>", "Resume": "<path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><path d=\"M14 2v6h6M16 13H8M16 17H8\"/>", "Me": "<path d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>", "My Art": "<path d=\"M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A3.6 3.6 0 0 0 21 12.8 9 9 0 0 0 12 3z\"/><circle cx=\"7.5\" cy=\"11\" r=\"1\"/><circle cx=\"10.5\" cy=\"7\" r=\"1\"/><circle cx=\"15.5\" cy=\"7.5\" r=\"1\"/>", "My Experience": "<rect x=\"2\" y=\"7\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/>", "Mill": "<circle cx=\"12\" cy=\"12\" r=\"9\"/>"};
 const year = new Date().getFullYear();
 ---
 
 <div class={`footer-band${rounded ? ' is-rounded' : ''}${flush ? ' is-flush' : ''}`}>
-<footer class="site-footer" data-reveal="up">
+<footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-top">
       <div class="footer-identity">
-        <span class="footer-brand" data-reveal="up" style="--rd:0.12s">Owen Ritchie</span>
-        <p class="footer-note" data-reveal="up" style="--rd:0.2s">Data Science &amp; Engineering</p>
+        <span class="footer-brand">Owen Ritchie</span>
+        <p class="footer-note">Data Science &amp; Engineering</p>
 
-        <div class="footer-actions" data-reveal="up" style="--rd:0.28s">
+        <div class="footer-actions">
           <button type="button" class="footer-switch" id="footer-theme" role="switch" aria-checked="false" aria-label="Dark mode">
             <span class="footer-switch-knob">
               <svg class="footer-switch-icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -77,16 +78,22 @@ const year = new Date().getFullYear();
 
       <div class="footer-columns">
         {columns.map((col, c) => (
-          <div class="footer-col">
-            <h3 class="footer-heading" data-reveal="up" style={`--rd:${(0.2 + c * 0.09).toFixed(2)}s`}>{col.heading}</h3>
+          <div class={`footer-col${col.heading === 'Projects' ? ' footer-col-projects' : col.heading === 'About' ? ' footer-col-about' : ''}`}>
+            <h3 class="footer-heading">{col.heading}</h3>
             <ul class="footer-links">
               {col.links.map((link, i) => (
-                <li data-reveal="up" style={`--rd:${(0.28 + c * 0.09 + i * 0.05).toFixed(2)}s`}>
+                <li>
                   <a
                     href={link.href}
                     target={link.external ? '_blank' : undefined}
                     rel={link.external ? 'noopener' : undefined}
-                  >{link.label}</a>
+                  >
+                    <span class="footer-icon" aria-hidden="true">
+                      <span class="fi fi-lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={icons[link.label] ?? ''} /></span>
+                      <span class="fi fi-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={icons[link.label] ?? ''} /></span>
+                    </span>
+                    <span class="footer-label">{link.label}</span>
+                  </a>
                   {link.note && <span class="footer-mark">{link.note}</span>}
                 </li>
               ))}
@@ -96,7 +103,7 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <div class="footer-base" data-reveal="fade" style="--rd:0.5s">
+    <div class="footer-base">
       <span>&copy; {year} Owen Ritchie</span>
     </div>
   </div>
@@ -156,7 +163,7 @@ const year = new Date().getFullYear();
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-bottom: calc(-1 * var(--band-pad));
-    padding: 0 clamp(1rem, 4vw, 2rem) var(--band-pad);
+    padding: 0 clamp(1.5rem, 5vw, 5rem) var(--band-pad);
     background: oklch(0.955 0.01 110);
   }
 
@@ -240,7 +247,7 @@ const year = new Date().getFullYear();
 
   .footer-columns {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(1rem, 2.5vw, 1.75rem);
   }
 
@@ -263,9 +270,9 @@ const year = new Date().getFullYear();
     flex: none;
   }
 
+  .footer-switch:focus,
   .footer-switch:focus-visible {
-    outline: 2px solid var(--footer-ink);
-    outline-offset: 3px;
+    outline: none;
   }
 
   .footer-switch-knob {
@@ -344,6 +351,10 @@ const year = new Date().getFullYear();
     color: var(--footer-mark);
   }
 
+  .footer-icon {
+    display: none;
+  }
+
   .footer-links a {
     position: relative;
     display: inline-block;
@@ -395,29 +406,150 @@ const year = new Date().getFullYear();
     left: 0;
     right: 0;
     border-top: var(--dash-width) dashed var(--dash-color);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--dur-slow) var(--ease-out) 0.55s;
   }
 
-  .footer-base.is-in::before {
-    transform: scaleX(1);
-  }
+  @media (max-width: 900px) {
+    .site-footer {
+      margin-top: 2rem;
+      padding: 1.75rem 1.5rem 1.1rem;
+    }
 
-  @media (max-width: 700px) {
     .footer-top {
       grid-template-columns: 1fr;
-      gap: clamp(1.75rem, 6vw, 2.5rem);
+      gap: 1.5rem;
+    }
+
+    .footer-identity {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "brand toggle"
+        "note toggle";
+      align-items: center;
+      column-gap: 1rem;
+    }
+
+    .footer-brand {
+      grid-area: brand;
+      font-size: clamp(2rem, 9vw, 2.8rem);
     }
 
     .footer-note {
-      max-width: 34ch;
+      grid-area: note;
+      margin-top: 0.5rem;
+      font-size: 0.88rem;
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .footer-base::before {
-      transform: scaleX(1);
+    .footer-actions {
+      grid-area: toggle;
+      margin-top: 0;
+    }
+
+    .footer-columns {
+      grid-template-columns: minmax(0, 1fr);
+      padding-top: 1.5rem;
+      border-top: var(--dash-width) dashed var(--dash-color);
+    }
+
+    .footer-col-projects,
+    .footer-col-about,
+    .footer-heading {
+      display: none;
+    }
+
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .footer-links li {
+      justify-content: center;
+    }
+
+    .footer-links a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0;
+      background-image: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+    }
+
+    .footer-icon {
+      position: relative;
+      display: block;
+      flex: none;
+      width: 48px;
+      height: 48px;
+      overflow: hidden;
+      border: var(--dash-width) dashed var(--dash-color);
+      border-radius: 50%;
+      transition: background-color var(--dur-base) var(--ease-out);
+    }
+
+    .fi {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      transition: transform var(--dur-slow) var(--ease-out);
+    }
+
+    .fi svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .fi-next {
+      transform: translateY(-150%);
+    }
+
+    .footer-links a:active .footer-icon {
+      background-color: color-mix(in oklch, var(--dash-color) 25%, transparent);
+    }
+
+    .footer-links a:active .fi-lead {
+      transform: translateY(150%);
+    }
+
+    .footer-links a:active .fi-next {
+      transform: translateY(0);
+    }
+
+    @media (hover: hover) {
+      .footer-links a:hover .footer-icon {
+        background-color: color-mix(in oklch, var(--dash-color) 25%, transparent);
+      }
+
+      .footer-links a:hover .fi-lead {
+        transform: translateY(150%);
+      }
+
+      .footer-links a:hover .fi-next {
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .site-footer {
+        padding-inline: 1rem;
+      }
+
+      .footer-icon {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    .footer-mark {
+      display: none;
+    }
+
+    .footer-base {
+      display: none;
     }
   }
 </style>

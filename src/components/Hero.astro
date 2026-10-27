@@ -36,7 +36,7 @@ const navLinks = [
       class="hero-img hero-img-light"
       src="/hero/light-hero-1800.webp"
       srcset="/hero/light-hero-960.webp 960w, /hero/light-hero-1800.webp 1800w"
-      sizes="(min-width: 928px) 928px, 100vw"
+      sizes="(min-width: 1081px) 836px, 100vw"
       width="1800"
       height="1133"
       alt="Macro shot of two ants on a branch against a dark green background"
@@ -46,7 +46,7 @@ const navLinks = [
       class="hero-img hero-img-dark"
       src="/hero/dark-hero-1800.webp"
       srcset="/hero/dark-hero-960.webp 960w, /hero/dark-hero-1800.webp 1800w"
-      sizes="(min-width: 928px) 928px, 100vw"
+      sizes="(min-width: 1081px) 836px, 100vw"
       width="1800"
       height="1065"
       alt="Stone staircase climbing a Mayan pyramid at dusk"
@@ -463,9 +463,43 @@ const navLinks = [
     display: block;
   }
 
+  /* Without the lamp, the nav no longer needs to clear it: pin it to the image edge */
   @media (max-width: 1024px), (pointer: coarse) {
     .lamp-anchor {
       display: none;
+    }
+
+    .hero-nav {
+      right: 0;
+    }
+  }
+
+  :global(html.no-pendulum) .hero-nav {
+    right: 0;
+  }
+
+  /* Tablet: line the hero up with the section gutters below instead of the narrower desktop column */
+  @media (max-width: 1080px) {
+    .hero {
+      max-width: none;
+      padding-inline: max(0px, calc(clamp(1.5rem, 5vw, 5rem) - 2rem));
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      padding-inline: max(0px, calc(clamp(1.5rem, 5vw, 5rem) - 1rem));
+    }
+  }
+
+  /* Tall screens (iPad Pro portrait): a taller frame and no forced full-screen height, instead of a blank band under the photo */
+  @media (min-width: 861px) and (orientation: portrait) {
+    .hero {
+      min-height: 0;
+    }
+
+    .hero-media {
+      aspect-ratio: 4 / 3;
     }
   }
 
@@ -493,12 +527,23 @@ const navLinks = [
       transform: translateY(calc(var(--name-fs) * -0.1));
     }
 
+    .hero-top {
+      margin-bottom: 1rem;
+    }
+
+    .hero-media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  /* Phone: no hero photo, About Me is the landing */
+  @media (max-width: 640px) {
     .hero-tilt {
       display: none;
     }
 
-    .hero-top {
-      margin-bottom: 0;
+    .hero {
+      padding-bottom: 0.5rem;
     }
   }
 </style>

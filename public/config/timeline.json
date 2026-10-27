@@ -8,6 +8,7 @@
       "color": "blue",
       "link": "https://www.uottawa.ca/",
       "logo": "/timeline/uottawa.webp",
+      "cardColor": "#8f001a",
       "logoZoom": 1.4,
       "description": "Honours Computer Science student on the Dean's List. Coursework includes Modelling & Simulation, Design & Analysis of Algorithms, Artificial Intelligence and Cybersecurity. Building the EECS department's first honours project portal as my CSI 4900 honours project. Likely pursuing a master's in data science at another institution after graduation."
     },
@@ -19,6 +20,7 @@
       "color": "purple",
       "link": "https://www.poissonconsulting.ca/",
       "logo": "/timeline/poisson.webp",
+      "cardColor": "#8fb8e0",
       "logoZoom": 1,
       "description": "Performed quality assurance in R to replace deprecated functions within analyses scripts, and mapped 1000s of salmon redds (fish eggs) in the Lower Columbia river to reduce mortality rates during water-level fluctuations from the dam upstream.",
       "skills": ["R", "Tidyverse", "Postgres"]
@@ -55,6 +57,7 @@
       "color": "sand",
       "link": "https://www.international.gc.ca/",
       "logo": "/timeline/gac.webp",
+      "cardColor": "#eb2d37",
       "description": "Developed an interactive tool allowing executives to model Official Development Assistance against our current commitments, as well as contributing significantly to statistics found in Canada's G7 Comprehensive Accountability Report for the 2025 Kananaskis summit. Additionally conducted analyses and built reports for countries in the CARICOM and Sahel.",
       "skills": ["Power BI", "Python", "Pandas"]
     },
@@ -62,10 +65,11 @@
       "title": "Kinaxis",
       "role": "Data & Analytics Engineer Intern",
       "start": "2025-09",
-      "end": "present",
+      "end": "2026-08",
       "color": "mint",
       "link": "https://www.kinaxis.com/",
       "logo": "/timeline/kinaxis.svg",
+      "cardColor": "#e30613",
       "description": "Supported a variety of Data Engineering and Cloud Analytics related tasks, including the development of dbt, GCP, and Power BI infrastructure for Marketing, Sales, Product, Finance, IT & Cloud Services. Heavily influenced dashboard styling within our Data & Analytics team, and was tasked with designing and modeling a customer footprint dashboard to welcome the new CEO to Kinaxis.",
       "skills": ["dbt", "GCP", "Snowflake", "Postgres", "Grafana", "Power BI", "Python", "GitHub Actions"]
     }

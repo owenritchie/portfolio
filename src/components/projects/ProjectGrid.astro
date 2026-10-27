@@ -24,7 +24,7 @@ const dl =
 ---
 
 <section id="projects" class="pgrid" style={`--n:${shown.length}`}>
-  <h2 class="pgrid-heading" data-reveal="up">{heading}</h2>
+  <h2 class="pgrid-heading" data-reveal="up"><span class="ph-long">{heading}</span><span class="ph-short">Projects</span></h2>
 
   <div class="pbrowser" data-active="0" data-reveal="up" style="--rd:0.1s">
     <div class="ptabs" role="tablist" aria-label="Projects">
@@ -112,6 +112,18 @@ const dl =
         </a>
       </div>
     </div>
+
+    <nav class="pnav" aria-label="Browse projects">
+      <button type="button" class="pnav-arrow" data-step="-1" aria-label="Previous project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
+      </button>
+      {shown.map((p, i) => (
+        <button type="button" class={`pnav-dot${i === 0 ? ' is-active' : ''}`} data-go={i} aria-label={`Project ${i + 1}: ${p.short ?? p.title}`} aria-current={i === 0 ? 'true' : undefined}><span></span></button>
+      ))}
+      <button type="button" class="pnav-arrow" data-step="1" aria-label="Next project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" /></svg>
+      </button>
+    </nav>
   </div>
 </section>
 
@@ -135,8 +147,40 @@ const dl =
         panel.hidden = !on;
         panel.classList.toggle('is-active', on);
       });
+      browser.querySelectorAll<HTMLElement>('.pnav-dot').forEach((n, idx) => {
+        const on = idx === i;
+        n.classList.toggle('is-active', on);
+        if (on) n.setAttribute('aria-current', 'true');
+        else n.removeAttribute('aria-current');
+      });
       if (focus) tabs[i].focus();
     };
+
+    const step = (d: number) => {
+      const cur = Number(browser.dataset.active);
+      select((cur + d + tabs.length) % tabs.length);
+    };
+
+    browser.querySelectorAll<HTMLButtonElement>('.pnav-arrow').forEach((btn) => {
+      btn.addEventListener('click', () => step(Number(btn.dataset.step)));
+    });
+    browser.querySelectorAll<HTMLButtonElement>('.pnav-dot').forEach((btn) => {
+      btn.addEventListener('click', () => select(Number(btn.dataset.go)));
+    });
+
+    let sx = 0;
+    let sy = 0;
+    const panelsEl = browser.querySelector('.ppanels');
+    panelsEl?.addEventListener('touchstart', (e) => {
+      const t = (e as TouchEvent).touches[0];
+      sx = t.clientX;
+      sy = t.clientY;
+    }, { passive: true });
+    panelsEl?.addEventListener('touchend', (e) => {
+      const t = (e as TouchEvent).changedTouches[0];
+      const dx = t.clientX - sx;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(t.clientY - sy) * 1.5) step(dx < 0 ? 1 : -1);
+    }, { passive: true });
 
     tabs.forEach((tab, i) => {
       tab.addEventListener('click', () => select(i));
@@ -215,6 +259,14 @@ const dl =
     .pgrid-heading {
       text-align: left;
     }
+  }
+
+  .ph-short {
+    display: none;
+  }
+
+  .pnav {
+    display: none;
   }
 
   .pbrowser {
@@ -769,6 +821,143 @@ const dl =
 
     .ppanel-stage {
       aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .ph-long {
+      display: none;
+    }
+
+    .ph-short {
+      display: inline;
+    }
+
+    .ppanel-download,
+    .ppanel-go {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .ptabs,
+    .pnotch {
+      display: none;
+    }
+
+    .ppanel-head {
+      padding-right: 0;
+    }
+
+    .ppanels {
+      display: grid;
+    }
+
+    .ppanel {
+      grid-area: 1 / 1;
+    }
+
+    .ppanel[hidden] {
+      display: flex;
+      visibility: hidden;
+    }
+
+    .ppanel-stage {
+      flex: 1 0 auto;
+    }
+
+    .pgrid .ppanel .ppanel-stage {
+      grid-template-columns: 1fr 0fr !important;
+      column-gap: 0 !important;
+      transition: none;
+    }
+
+    .pnav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.75rem;
+    }
+
+    .pnav-dot,
+    .pnav-arrow {
+      display: grid;
+      place-items: center;
+      height: 44px;
+      padding: 0;
+      border: none;
+      background: none;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .pnav-dot {
+      width: 28px;
+    }
+
+    .pnav-arrow {
+      width: 44px;
+      color: var(--ink-soft);
+    }
+
+    .pnav-arrow svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .pnav-arrow:active {
+      color: var(--ink);
+    }
+
+    .pnav-dot span {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: color-mix(in oklch, var(--ink) 28%, transparent);
+      transition: width var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+    }
+
+    .pnav-dot.is-active span {
+      width: 22px;
+      background: var(--ink);
+    }
+
+    .pnav-dot:focus-visible,
+    .pnav-arrow:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: -4px;
+      border-radius: 8px;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .pgrid .ppanel .ppanel-link {
+      background-size: 0% 2px !important;
+    }
+
+    .ppanel {
+      position: relative;
+    }
+
+    .ppanel-link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .ppanel:has(.ppanel-link) {
+      cursor: pointer;
+    }
+
+    .ppanel-download {
+      position: relative;
+      z-index: 2;
+    }
+
+    .pnotch {
+      z-index: 2;
     }
   }
 </style>
