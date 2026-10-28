@@ -1,5 +1,8 @@
 ---
+import AboutMap from './AboutMap.astro';
 import AboutQuiz from './AboutQuiz.astro';
+
+const showQuiz = false;
 ---
 
 <section id="me" class="about-me">
@@ -32,7 +35,7 @@ import AboutQuiz from './AboutQuiz.astro';
 
     </div>
 
-    <AboutQuiz />
+    {showQuiz ? <AboutQuiz /> : <AboutMap />}
   </div>
 </section>
 
@@ -130,11 +133,22 @@ import AboutQuiz from './AboutQuiz.astro';
     align-items: flex-start;
   }
 
-  /* The quiz sits under the text in the right column, bottom-aligned with the portrait, so it never makes the portrait taller */
-  .about-me-inner > :global(.about-quiz) {
+  .about-me-inner > :global(:is(.about-quiz, .about-map)) {
     grid-column: 2;
     grid-row: 2;
     align-self: end;
+  }
+
+  .about-me-inner > :global(.about-map) {
+    align-self: stretch;
+    height: auto;
+    min-height: 180px;
+  }
+
+  @media (max-width: 1024px) {
+    .about-me-inner > :global(.about-map) {
+      display: none;
+    }
   }
 
   .about-me-figure {
@@ -215,7 +229,6 @@ import AboutQuiz from './AboutQuiz.astro';
     }
   }
 
-  /* Phone landing: photo, then text, then quiz */
   @media (max-width: 680px) {
     .about-me {
       padding: 2rem 1.25rem calc(3.5rem + clamp(28px, 5vw, 52px));
@@ -230,7 +243,6 @@ import AboutQuiz from './AboutQuiz.astro';
     .about-me-content {
       display: contents;
     }
-
 
     .about-me-figure {
       grid-column: 1;
@@ -250,7 +262,7 @@ import AboutQuiz from './AboutQuiz.astro';
       font-size: 1.02rem;
     }
 
-    .about-me-inner > :global(.about-quiz) {
+    .about-me-inner > :global(:is(.about-quiz, .about-map)) {
       grid-column: 1;
       grid-row: auto;
       align-self: stretch;
@@ -259,8 +271,6 @@ import AboutQuiz from './AboutQuiz.astro';
     }
   }
 
-  /* Mid widths: same two-column shape as desktop, with a slimmer portrait that stretches to the height of the text and quiz so no blank space opens up */
-  /* Tablet: no quiz, so the portrait sits beside the text at its natural shape */
   @media (min-width: 681px) and (max-width: 1024px) {
     .about-me-inner {
       grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);

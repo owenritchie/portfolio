@@ -24,7 +24,9 @@ const { title } = Astro.props;
       gtag('config', 'G-8RHHBW0QB9');
     </script>
     <script is:inline>
-      document.documentElement.classList.add('js-reveal');
+      if (!matchMedia('(max-width: 680px), (pointer: coarse)').matches) {
+        document.documentElement.classList.add('js-reveal');
+      }
     </script>
     <script is:inline>
       (function () {
@@ -72,9 +74,7 @@ const { title } = Astro.props;
       };
     </script>
 
-
     <script>
-      // Quiz prize: while html.rose-trail is set, moving the pointer drops roses that drift up and fade
       (function () {
         const root = document.documentElement;
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -140,7 +140,7 @@ const { title } = Astro.props;
         const els = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
         if (!els.length) return;
 
-        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const reduce = matchMedia('(prefers-reduced-motion: reduce), (max-width: 680px), (pointer: coarse)').matches;
         if (reduce || !('IntersectionObserver' in window)) {
           els.forEach((el) => el.classList.add('is-in'));
           return;

@@ -19,7 +19,6 @@ interface Props {
 const { projects, heading = "Things I've been working on" } = Astro.props;
 const shown = projects.filter((p) => !p.hidden);
 
-// Myflora has no usable comma, period or ampersand, so those fall back to the serif
 const display = (text: string) =>
   text.split(/([,.&])/).map((part) => ({ part, punct: /^[,.&]$/.test(part) }));
 

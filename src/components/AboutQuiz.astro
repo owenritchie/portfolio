@@ -10,13 +10,11 @@ const quiz = JSON.parse(
 
 const total = quiz.questions.length;
 
-// Myflora has no usable comma, period or ampersand, so those fall back to the serif
 const display = (text: string) =>
   text.split(/([,.&])/).map((part) => ({ part, punct: /^[,.&]$/.test(part) }));
 ---
 
 <div class="about-quiz" data-reveal="fade" data-quiz={JSON.stringify({ passMark: quiz.passMark, answers: quiz.questions.map((q) => q.answer) })}>
-  <!-- Every screen sits in the same grid cell, so the card is always as tall as its tallest screen and never resizes -->
   <div class="quiz-stage" aria-live="polite">
     {quiz.questions.map((item, i) => (
       <section class:list={['quiz-slide', { 'is-active': i === 0 }]} data-slide={i} style={`--i:${i};--n:${total}`}>
@@ -203,7 +201,6 @@ const display = (text: string) =>
     visibility: inherit;
   }
 
-  /* Same pill the site uses elsewhere: dashed, transparent, a faint tint and an outer dashed ring on hover/focus */
   .quiz-btn {
     position: relative;
     flex: none;
@@ -257,7 +254,6 @@ const display = (text: string) =>
     color: var(--q-muted);
   }
 
-  /* Keep its space reserved before the prize is won so the foot never reflows and the card never resizes */
   @media (min-width: 681px) {
     .quiz-switch[hidden] {
       display: inline-block;
@@ -362,7 +358,6 @@ const display = (text: string) =>
     display: block;
   }
 
-  /* The quiz is desktop-only: gone on tablets and phones */
   @media (max-width: 1024px), (pointer: coarse) {
     .about-quiz {
       display: none;
@@ -382,7 +377,6 @@ const display = (text: string) =>
       min-height: 44px;
     }
 
-    /* The touch result message is a line longer, so reserve it up front and the card still never resizes */
     .quiz-message {
       min-height: 3.3em;
     }
@@ -425,7 +419,6 @@ const display = (text: string) =>
       gap: 0.6rem;
     }
 
-    /* No hover ring on small layouts */
     .quiz-btn::after {
       display: none;
     }
@@ -437,7 +430,6 @@ const display = (text: string) =>
       text-align: center;
     }
 
-    /* Note on top, the two secondary buttons side by side, Next as the full-width action underneath */
     @media (prefers-reduced-motion: reduce) {
     .quiz-rule-fill {
       transition: none;
@@ -463,9 +455,7 @@ const display = (text: string) =>
     const html = document.documentElement;
     const total = slides.length;
 
-    // Touch screens have no cursor to trail, so the prize is described rather than granted
     const coarse = matchMedia('(hover: none), (pointer: coarse)').matches;
-    // Phone-sized layouts don't hear about the rose at all, whatever the input device
     const phone = matchMedia('(max-width: 680px)');
     root.classList.toggle('no-rose', phone.matches);
     phone.addEventListener('change', () => root.classList.toggle('no-rose', phone.matches));
@@ -474,7 +464,6 @@ const display = (text: string) =>
     let correct = 0;
     let winTitle = 'Here, a rose for you, lovely visitor.';
 
-    // Myflora has no usable comma, period or ampersand, so those fall back to the serif
     const setDisplay = (el: HTMLElement, text: string) => {
       el.replaceChildren(
         ...text.split(/([,.&])/).map((part) => {
@@ -502,7 +491,6 @@ const display = (text: string) =>
       syncToggle();
     };
 
-    // Once the rose is earned, every question screen carries an on/off switch for it
     const revealSwitches = () => {
       switches.forEach((btn) => (btn.hidden = false));
       syncToggle();
@@ -531,7 +519,6 @@ const display = (text: string) =>
       slide.querySelector<HTMLButtonElement>('.quiz-next')!.focus();
     };
 
-    // Result screen is drawn from the current layout, so a win only talks about the rose where the rose exists
     let finished = false;
 
     const renderResult = () => {
@@ -601,7 +588,6 @@ const display = (text: string) =>
     retry.addEventListener('click', restart);
     toggle.addEventListener('click', () => setCursor(!html.classList.contains('rose-trail')));
 
-    // The quiz always starts fresh; a returning winner just gets different words and a switch for their rose
     let returning = false;
     try {
       returning = localStorage.getItem('rose-trail') !== null;
