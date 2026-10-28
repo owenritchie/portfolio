@@ -1,5 +1,5 @@
 ---
-import AboutMap from './AboutMap.astro';
+import AboutQuiz from './AboutQuiz.astro';
 ---
 
 <section id="me" class="about-me">
@@ -21,7 +21,7 @@ import AboutMap from './AboutMap.astro';
     <div class="about-me-content">
       <h2 class="about-me-heading" data-reveal="up" style="--rd:0.06s">About Me</h2>
       <p data-reveal="up" style="--rd:0.12s">
-        Hey, I'm Owen — a student, engineer &amp; designer currently based in Ottawa, ON. I love
+        Hey, I'm Owen — a data engineer, scientist &amp; designer currently based in Ottawa, ON. I love
         working on creative and meaningful projects, and spend lots of my free time outside hiking,
         skiing and playing various sports. I also love the arts, where I'm interested in design
         philosophy, playing music, and photography (photojournalism, wildlife).
@@ -30,19 +30,20 @@ import AboutMap from './AboutMap.astro';
         Always happy to talk, so feel free to <a href="mailto:owenritchie04@gmail.com">reach out<svg class="mail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 7 8.5 6.5L20.5 7" /></svg></a>!
       </p>
 
-      <AboutMap />
     </div>
+
+    <AboutQuiz />
   </div>
 </section>
 
 <style>
   .about-me {
-    --card: oklch(0.955 0.01 110);
-    --border: oklch(0.85 0.01 120);
+    --card: oklch(0.954 0.014 130);
+    --border: oklch(0.86 0.02 135);
     --text: oklch(0.26 0.035 145);
     --text-muted: oklch(0.48 0.04 145);
     --accent: oklch(0.5 0.16 145);
-    --accent-2: oklch(0.74 0.07 60);
+    --accent-2: oklch(0.78 0.1 145);
     position: relative;
     z-index: 1;
     width: 100vw;
@@ -85,7 +86,9 @@ import AboutMap from './AboutMap.astro';
     margin: 0 auto;
     display: grid;
     grid-template-columns: 0.95fr 1.05fr;
-    gap: clamp(2rem, 5vw, 4.5rem);
+    column-gap: clamp(2rem, 5vw, 4.5rem);
+    row-gap: 1.5rem;
+    grid-template-rows: auto 1fr;
     align-items: stretch;
   }
 
@@ -127,20 +130,29 @@ import AboutMap from './AboutMap.astro';
     align-items: flex-start;
   }
 
-  .about-me-content :global(.about-map.about-map) {
-    width: 100%;
-    flex: 1 1 auto;
-    height: auto;
-    min-height: 180px;
-    margin-top: 2rem;
+  /* The quiz sits under the text in the right column, bottom-aligned with the portrait, so it never makes the portrait taller */
+  .about-me-inner > :global(.about-quiz) {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .about-me-figure {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .about-me-content {
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .about-me-heading {
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
+    font-family: var(--heading-font);
+    font-weight: bold;
     font-size: clamp(2.4rem, 5vw, 3.8rem);
     line-height: 1.05;
-    color: var(--text);
+    color: var(--heading-ink);
     margin: 0 0 1.25rem;
   }
 
@@ -192,30 +204,7 @@ import AboutMap from './AboutMap.astro';
     margin-bottom: 0;
   }
 
-  @media (max-width: 860px) {
-    .about-me-inner {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-
-    .about-me {
-      padding-bottom: calc(clamp(4.5rem, 10vw, 8rem) + clamp(28px, 5vw, 52px));
-    }
-
-    .about-me-figure {
-      max-width: 380px;
-    }
-
-    .about-me-content p {
-      max-width: 62ch;
-    }
-
-    .about-me-content :global(.about-map.about-map) {
-      flex: none;
-    }
-  }
-
-  @media (max-width: 640px) {
+  @media (max-width: 680px) {
     .about-me-heading {
       position: absolute;
       width: 1px;
@@ -226,27 +215,15 @@ import AboutMap from './AboutMap.astro';
     }
   }
 
-  /* Tablet: stay side by side so the portrait stays a sensible size instead of going full-width */
-  @media (min-width: 601px) and (max-width: 860px) {
-    .about-me-inner {
-      grid-template-columns: 0.85fr 1.15fr;
-      gap: clamp(1.5rem, 4vw, 2.5rem);
-      align-items: center;
-    }
-
-    .about-me-figure {
-      max-width: none;
-    }
-  }
-
-  /* Phone landing: heading, then photo, then text, then map */
-  @media (max-width: 640px) {
+  /* Phone landing: photo, then text, then quiz */
+  @media (max-width: 680px) {
     .about-me {
       padding: 2rem 1.25rem calc(3.5rem + clamp(28px, 5vw, 52px));
     }
 
     .about-me-inner {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
       gap: 1.25rem;
     }
 
@@ -256,10 +233,11 @@ import AboutMap from './AboutMap.astro';
 
 
     .about-me-figure {
+      grid-column: 1;
+      grid-row: auto;
       order: 2;
       max-width: none;
-      padding: 0;
-      border: none;
+      padding: 12px;
     }
 
     .about-me-portrait {
@@ -272,9 +250,26 @@ import AboutMap from './AboutMap.astro';
       font-size: 1.02rem;
     }
 
-    .about-me-content :global(.about-map.about-map) {
+    .about-me-inner > :global(.about-quiz) {
+      grid-column: 1;
+      grid-row: auto;
+      align-self: stretch;
       order: 4;
       margin-top: 0.5rem;
+    }
+  }
+
+  /* Mid widths: same two-column shape as desktop, with a slimmer portrait that stretches to the height of the text and quiz so no blank space opens up */
+  @media (min-width: 681px) and (max-width: 1199px) {
+    .about-me-inner {
+      grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+      column-gap: clamp(1.5rem, 3.5vw, 2.5rem);
+    }
+
+    .about-me-portrait {
+      aspect-ratio: auto;
+      min-height: 0;
+      object-position: 38% 30%;
     }
   }
 </style>

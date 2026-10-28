@@ -24,16 +24,12 @@ const featuredLogos = [
   }
 
   .featured-title {
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
+    font-family: var(--heading-font);
+    font-weight: bold;
     font-size: clamp(2rem, 5vw, 3rem);
     line-height: 1.05;
-    color: #000;
+    color: var(--heading-ink);
     margin: 0 0 1.75rem;
-  }
-
-  :global([data-theme="dark"]) .featured-title {
-    color: var(--text);
   }
 
   .featured-logos {

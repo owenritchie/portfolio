@@ -164,13 +164,13 @@ const year = new Date().getFullYear();
     margin-left: calc(50% - 50vw);
     margin-bottom: calc(-1 * var(--band-pad));
     padding: 0 clamp(1.5rem, 5vw, 5rem) calc(var(--band-pad) + env(safe-area-inset-bottom, 0px));
-    --band-bg: oklch(0.955 0.01 110);
+    --band-bg: oklch(0.954 0.014 130);
     background: var(--band-bg);
   }
 
   /* The canvas colour is what shows under the mobile browser toolbar and on overscroll at the bottom: match the footer so there is no hard edge (body paints the page colour above it) */
   :global(html:root) {
-    background: oklch(0.955 0.01 110);
+    background: oklch(0.954 0.014 130);
   }
 
   :global(html[data-theme="dark"]:root) {
@@ -205,10 +205,10 @@ const year = new Date().getFullYear();
   }
 
   .site-footer {
-    --footer-bg: oklch(0.955 0.01 110);
-    --footer-ink: oklch(0.42 0.06 70);
-    --footer-muted: oklch(0.42 0.06 70);
-    --footer-mark: oklch(0.5 0.16 145);
+    --footer-bg: oklch(0.954 0.014 130);
+    --footer-ink: oklch(0.26 0.035 145);
+    --footer-muted: oklch(0.38 0.04 145);
+    --footer-mark: oklch(0.74 0.07 60);
 
     position: relative;
     max-width: 900px;

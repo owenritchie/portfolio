@@ -1,0 +1,89 @@
+{
+  "passMark": 7,
+  "questions": [
+    {
+      "q": "What's Owen's favourite animal?",
+      "options": [
+        "Octopus",
+        "Jellyfish",
+        "Red panda",
+        "Otter"
+      ],
+      "answer": 1,
+      "note": "No brain, no heart"
+    },
+    {
+      "q": "His favourite colour?",
+      "options": [
+        "Green",
+        "Orange",
+        "Purple",
+        "Blue"
+      ],
+      "answer": 3,
+      "note": "The jellyfish had a say"
+    },
+    {
+      "q": "Which sport is his favourite?",
+      "options": [
+        "Hockey",
+        "Baseball",
+        "Soccer",
+        "Basketball"
+      ],
+      "answer": 1,
+      "note": "Statcast!"
+    },
+    {
+      "q": "His favourite class so far?",
+      "options": [
+        "Databases",
+        "Algorithms",
+        "Modelling & Simulation",
+        "Cybersecurity"
+      ],
+      "answer": 2,
+      "note": "Basically the Sims"
+    },
+    {
+      "q": "Which city does he call home?",
+      "options": [
+        "Toronto",
+        "Montreal",
+        "Vancouver",
+        "Ottawa"
+      ],
+      "answer": 3,
+      "note": "Currently in Sandy Hill"
+    },
+    {
+      "q": "Where did he last travel?",
+      "options": [
+        "Costa Rica",
+        "Belize",
+        "Taiwan",
+        "Slovakia"
+      ],
+      "answer": 2,
+      "note": "August 2026"
+    },
+    {
+      "q": "His favourite way to visualize data?",
+      "options": [
+        "Heatmap",
+        "Sankey diagram",
+        "Treemap",
+        "Radar chart"
+      ],
+      "answer": 3,
+      "note": "Your friendly neighbourhood data visualization"
+    }
+  ],
+  "jokes": [
+    "Why did the random walker cross the road? Nobody knows, and it won't remember either.",
+    "I'd tell you a joke about Markov chains, but this one only depends on the last.",
+    "Statistically, everyone who finishes this quiz finishes this quiz.",
+    "This joke was drawn uniformly at random. Hope it lands at p < 0.05.",
+    "A stochastic process walks into a bar. It's a different bar every time."
+  ]
+}

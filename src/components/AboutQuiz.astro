@@ -1,0 +1,692 @@
+---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+type Question = { q: string; options: string[]; answer: number; note?: string };
+
+const quiz = JSON.parse(
+  readFileSync(join(process.cwd(), 'public/config/quiz.json'), 'utf-8')
+) as { passMark: number; questions: Question[]; jokes?: string[] };
+
+const total = quiz.questions.length;
+
+// Myflora has no usable comma, period or ampersand, so those fall back to the serif
+const display = (text: string) =>
+  text.split(/([,.&])/).map((part) => ({ part, punct: /^[,.&]$/.test(part) }));
+---
+
+<div class="about-quiz" data-reveal="fade" data-quiz={JSON.stringify({ passMark: quiz.passMark, answers: quiz.questions.map((q) => q.answer) })}>
+  <!-- Every screen sits in the same grid cell, so the card is always as tall as its tallest screen and never resizes -->
+  <div class="quiz-stage" aria-live="polite">
+    {quiz.questions.map((item, i) => (
+      <section class:list={['quiz-slide', { 'is-active': i === 0 }]} data-slide={i} style={`--i:${i};--n:${total}`}>
+        <p class="quiz-question">
+          {display(item.q).map(({ part, punct }) => (punct ? <span class="quiz-punct">{part}</span> : part))}
+        </p>
+        <div class="quiz-rule" aria-hidden="true"><span class="quiz-rule-fill"></span></div>
+        <div class="quiz-options" role="group">
+          {item.options.map((label, j) => (
+            <button type="button" class="quiz-option" data-option={j}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <div class="quiz-foot">
+          <button type="button" class="quiz-btn quiz-next">{i === total - 1 ? 'See result' : 'Next'}</button>
+          <p class="quiz-note">{item.note}</p>
+          <button type="button" class="quiz-btn quiz-switch" hidden>Bring the rose back</button>
+          <button type="button" class="quiz-btn quiz-restart">Start over</button>
+        </div>
+      </section>
+    ))}
+
+    <section class="quiz-slide quiz-result">
+      <img class="quiz-rose" src="/other/mc-rose-crop.png" alt="" width="132" height="238" draggable="false" />
+      <p class="quiz-score"></p>
+      <p class="quiz-message"></p>
+      <!-- Every joke shares one cell so the card is sized for the longest and one is picked at random on completion -->
+      <div class="quiz-jokes">
+        {(quiz.jokes ?? []).map((joke) => <p class="quiz-joke">{joke}</p>)}
+      </div>
+      <div class="quiz-actions">
+        <button type="button" class="quiz-btn quiz-toggle"></button>
+        <button type="button" class="quiz-btn quiz-retry">Try again</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+  .about-quiz {
+    --q-ink: oklch(0.26 0.035 145);
+    --q-muted: oklch(0.45 0.04 145);
+    --q-mark: oklch(0.5 0.16 145);
+    --q-tint: color-mix(in oklch, var(--dash-color) 25%, transparent);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: clamp(20px, 3.5vw, 36px);
+    padding: clamp(1.3rem, 2.2vw, 1.75rem) clamp(1.35rem, 2.4vw, 1.9rem);
+    color: var(--q-ink);
+  }
+
+  :global([data-theme="dark"]) .about-quiz {
+    --q-ink: oklch(0.84 0.07 295);
+    --q-muted: oklch(0.72 0.08 290);
+    --q-mark: var(--accent);
+  }
+
+  .quiz-rule {
+    position: relative;
+    height: 4px;
+    margin-bottom: 1rem;
+    border-radius: 2px;
+    background: color-mix(in oklch, var(--dash-color) 45%, transparent);
+    overflow: hidden;
+  }
+
+  .quiz-rule-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--i) / var(--n) * 100%);
+    border-radius: 2px;
+    background: var(--q-mark);
+    transition: width 0.5s var(--ease-out);
+  }
+
+  .quiz-slide.is-answered .quiz-rule-fill {
+    width: calc((var(--i) + 1) / var(--n) * 100%);
+  }
+
+  .quiz-stage {
+    display: grid;
+  }
+
+  .quiz-slide {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+  }
+
+  .quiz-slide.is-active {
+    visibility: visible;
+  }
+
+  .quiz-question {
+    margin: 0 0 0.85rem;
+    font-family: 'Myflora', serif;
+    font-weight: bold;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    line-height: 1.05;
+    color: var(--q-ink);
+  }
+
+  .about-quiz :global(.quiz-punct) {
+    font-family: 'Grenze', serif;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .quiz-option,
+  .quiz-btn {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .quiz-option {
+    display: flex;
+    align-items: center;
+    font: inherit;
+    font-size: 0.95rem;
+    line-height: 1.25;
+    text-align: left;
+    color: var(--q-ink);
+    background: transparent;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 16px;
+    padding: 0.65rem 1rem;
+    min-height: 50px;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-out);
+  }
+
+  .quiz-option:not(:disabled):focus-visible {
+    background: var(--q-tint);
+  }
+
+  @media (hover: hover) {
+    .quiz-option:not(:disabled):hover {
+      background: var(--q-tint);
+    }
+
+    .quiz-btn:hover {
+      background: var(--q-tint);
+    }
+
+    .quiz-btn:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .quiz-option:focus-visible {
+    outline: 2px solid var(--q-mark);
+    outline-offset: 2px;
+  }
+
+  .quiz-option:disabled {
+    cursor: default;
+  }
+
+  .quiz-option.is-correct {
+    border-color: var(--q-mark);
+    background: color-mix(in oklch, var(--q-mark) 12%, transparent);
+  }
+
+  .quiz-option.is-wrong {
+    color: var(--q-muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .quiz-foot {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.1rem;
+  }
+
+  .quiz-note {
+    margin: 0;
+    font-family: 'Grenze', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.35;
+    color: var(--q-muted);
+  }
+
+  .quiz-next,
+  .quiz-note {
+    visibility: hidden;
+  }
+
+  .quiz-slide.is-answered .quiz-next,
+  .quiz-slide.is-answered .quiz-note {
+    visibility: inherit;
+  }
+
+  /* Same pill the site uses elsewhere: dashed, transparent, a faint tint and an outer dashed ring on hover/focus */
+  .quiz-btn {
+    position: relative;
+    flex: none;
+    min-height: 40px;
+    padding: 0.4rem 1.3rem;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--q-ink);
+    background: transparent;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-out);
+  }
+
+  .quiz-btn::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.94);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .quiz-btn:focus-visible {
+    background: var(--q-tint);
+  }
+
+  .quiz-btn:focus-visible::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .quiz-btn:focus-visible {
+    outline: none;
+  }
+
+  .quiz-switch {
+    width: 10.5rem;
+    padding-inline: 0.5rem;
+    white-space: nowrap;
+    margin-left: auto;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--q-muted);
+  }
+
+  /* Keep its space reserved before the prize is won so the foot never reflows and the card never resizes */
+  @media (min-width: 681px) {
+    .quiz-switch[hidden] {
+      display: inline-block;
+      visibility: hidden;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .quiz-switch[hidden] {
+      display: none;
+    }
+  }
+
+  .quiz-switch:not([hidden]) + .quiz-restart {
+    margin-left: 0;
+  }
+
+  .quiz-restart {
+    margin-left: auto;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--q-muted);
+  }
+
+  .quiz-result {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .quiz-rose {
+    width: auto;
+    height: 84px;
+    margin: 0 0 0.75rem;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+
+  .quiz-score {
+    margin: 0 0 0.5rem;
+    font-family: 'Myflora', serif;
+    font-weight: bold;
+    font-size: clamp(1.5rem, 2.3vw, 1.9rem);
+    line-height: 1.05;
+    color: var(--q-ink);
+  }
+
+  .quiz-message {
+    margin: 0;
+    max-width: 34ch;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--q-muted);
+  }
+
+  .quiz-jokes {
+    display: none;
+    margin-top: 0.7rem;
+  }
+
+  .quiz-joke {
+    grid-area: 1 / 1;
+    margin: 0;
+    font-family: 'Grenze', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.35;
+    color: var(--q-ink);
+    visibility: hidden;
+  }
+
+  .quiz-joke.is-picked {
+    visibility: inherit;
+  }
+
+  .quiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    min-height: 40px;
+  }
+
+  .quiz-result .quiz-rose {
+    visibility: hidden;
+  }
+
+  .about-quiz.no-rose .quiz-rose {
+    display: none;
+  }
+
+  .quiz-result.show-joke .quiz-jokes {
+    display: grid;
+  }
+
+  .about-quiz.no-rose .quiz-jokes {
+    display: none;
+  }
+
+  .about-quiz.no-rose .quiz-switch {
+    display: none;
+  }
+
+  .about-quiz.no-rose .quiz-restart {
+    grid-column: 1 / -1;
+  }
+
+  .about-quiz.no-rose .quiz-score {
+    min-height: 1.2em;
+  }
+
+  .about-quiz.no-rose .quiz-message {
+    min-height: 1.6em;
+  }
+
+  .quiz-result .quiz-toggle,
+  .quiz-result .quiz-retry {
+    display: none;
+  }
+
+  .quiz-result.show-rose .quiz-rose {
+    visibility: inherit;
+  }
+
+  .quiz-result.show-toggle .quiz-toggle,
+  .quiz-result.show-retry .quiz-retry {
+    display: block;
+  }
+
+  @media (pointer: coarse) {
+    .quiz-btn::after {
+      display: none;
+    }
+
+    .quiz-btn {
+      min-height: 44px;
+    }
+
+    .quiz-actions {
+      min-height: 44px;
+    }
+
+    /* The touch result message is a line longer, so reserve it up front and the card still never resizes */
+    .quiz-message {
+      min-height: 3.3em;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .about-quiz {
+      gap: 0.6rem;
+      padding: 1.15rem 1.1rem;
+    }
+
+    .quiz-question {
+      font-size: 1.55rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .quiz-rule {
+      margin-bottom: 0.8rem;
+    }
+
+    .quiz-options {
+      gap: 0.45rem;
+    }
+
+    .quiz-option {
+      min-height: 52px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.92rem;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .quiz-foot {
+      padding-top: 0.8rem;
+    }
+
+    .quiz-foot {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    /* No hover ring on small layouts */
+    .quiz-btn::after {
+      display: none;
+    }
+
+    .quiz-foot .quiz-btn {
+      width: 100%;
+      margin: 0;
+      padding-inline: 0.5rem;
+      text-align: center;
+    }
+
+    /* Note on top, the two secondary buttons side by side, Next as the full-width action underneath */
+    .quiz-note {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+
+    .quiz-switch {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .quiz-restart {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .quiz-switch[hidden] + .quiz-restart {
+      grid-column: 1 / -1;
+    }
+
+    .quiz-next {
+      grid-column: 1 / -1;
+      grid-row: 3;
+    }
+
+    .quiz-rose {
+      height: 56px;
+      margin-bottom: 0.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quiz-rule-fill {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.about-quiz');
+
+  if (root) {
+    const { passMark, answers } = JSON.parse(root.dataset.quiz ?? '{}') as {
+      passMark: number;
+      answers: number[];
+    };
+
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('.quiz-slide:not(.quiz-result)'));
+    const result = root.querySelector<HTMLElement>('.quiz-result')!;
+    const score = result.querySelector<HTMLElement>('.quiz-score')!;
+    const message = result.querySelector<HTMLElement>('.quiz-message')!;
+    const toggle = result.querySelector<HTMLButtonElement>('.quiz-toggle')!;
+    const retry = result.querySelector<HTMLButtonElement>('.quiz-retry')!;
+    const html = document.documentElement;
+    const total = slides.length;
+
+    // Touch screens have no cursor to trail, so the prize is described rather than granted
+    const coarse = matchMedia('(hover: none), (pointer: coarse)').matches;
+    // Phone-sized layouts don't hear about the rose at all, whatever the input device
+    const phone = matchMedia('(max-width: 680px)');
+    root.classList.toggle('no-rose', phone.matches);
+    phone.addEventListener('change', () => root.classList.toggle('no-rose', phone.matches));
+
+    let index = 0;
+    let correct = 0;
+    let winTitle = 'Here, a rose for you, lovely visitor.';
+
+    // Myflora has no usable comma, period or ampersand, so those fall back to the serif
+    const setDisplay = (el: HTMLElement, text: string) => {
+      el.replaceChildren(
+        ...text.split(/([,.&])/).map((part) => {
+          if (!/^[,.&]$/.test(part)) return document.createTextNode(part);
+          const span = document.createElement('span');
+          span.className = 'quiz-punct';
+          span.textContent = part;
+          return span;
+        })
+      );
+    };
+
+    const switches = Array.from(root.querySelectorAll<HTMLButtonElement>('.quiz-switch'));
+    const syncToggle = () => {
+      const label = html.classList.contains('rose-trail') ? 'Put the rose away' : 'Bring the rose back';
+      toggle.textContent = label;
+      switches.forEach((btn) => (btn.textContent = label));
+    };
+
+    const setCursor = (on: boolean) => {
+      html.classList.toggle('rose-trail', on);
+      try {
+        localStorage.setItem('rose-trail', on ? 'on' : 'off');
+      } catch {}
+      syncToggle();
+    };
+
+    // Once the rose is earned, every question screen carries an on/off switch for it
+    const revealSwitches = () => {
+      switches.forEach((btn) => (btn.hidden = false));
+      syncToggle();
+    };
+
+    const activate = (el: HTMLElement) => {
+      [...slides, result].forEach((s) => s.classList.toggle('is-active', s === el));
+    };
+
+    const showResult = (state: { rose: boolean; toggle: boolean; retry: boolean }) => {
+      result.classList.toggle('show-rose', state.rose);
+      result.classList.toggle('show-toggle', state.toggle);
+      result.classList.toggle('show-retry', state.retry);
+      activate(result);
+    };
+
+    const answer = (slide: HTMLElement, picked: number) => {
+      const right = answers[index];
+      if (picked === right) correct++;
+      slide.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === right) btn.classList.add('is-correct');
+        else if (i === picked) btn.classList.add('is-wrong');
+      });
+      slide.classList.add('is-answered');
+      slide.querySelector<HTMLButtonElement>('.quiz-next')!.focus();
+    };
+
+    const jokes = Array.from(root.querySelectorAll<HTMLElement>('.quiz-joke'));
+
+    // Result screen is drawn from the current layout, so a win only talks about the rose where the rose exists
+    let finished = false;
+
+    const renderResult = () => {
+      if (!finished) return;
+      const passed = correct >= passMark;
+      result.classList.toggle('show-joke', !passed);
+      retry.textContent = 'Try again';
+      if (!passed) {
+        score.textContent = `${correct} out of ${total}`;
+        message.textContent = 'Not quite. Have another go?';
+        showResult({ rose: false, toggle: false, retry: true });
+        return;
+      }
+      retry.textContent = 'Play again';
+      if (phone.matches) {
+        setDisplay(score, 'Well done, thanks for playing!');
+        message.textContent = '';
+        showResult({ rose: false, toggle: false, retry: true });
+      } else if (coarse) {
+        setDisplay(score, 'A perfect score, lovely visitor.');
+        message.textContent = "On desktop you'd have won a rose that trails your cursor.";
+        showResult({ rose: true, toggle: false, retry: true });
+      } else {
+        setDisplay(score, winTitle);
+        message.textContent = 'Thanks for playing.';
+        setCursor(true);
+        revealSwitches();
+        showResult({ rose: true, toggle: true, retry: false });
+      }
+    };
+
+    const finish = () => {
+      jokes.forEach((joke) => joke.classList.remove('is-picked'));
+      jokes[Math.floor(Math.random() * jokes.length)]?.classList.add('is-picked');
+      finished = true;
+      renderResult();
+    };
+
+    phone.addEventListener('change', renderResult);
+
+    const restart = () => {
+      finished = false;
+      index = 0;
+      correct = 0;
+      slides.forEach((slide) => {
+        slide.classList.remove('is-answered');
+        slide.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn) => {
+          btn.disabled = false;
+          btn.classList.remove('is-correct', 'is-wrong');
+        });
+      });
+      activate(slides[0]);
+    };
+
+    slides.forEach((slide, i) => {
+      slide.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn, j) => {
+        btn.addEventListener('click', () => answer(slide, j));
+      });
+      slide.querySelector('.quiz-next')!.addEventListener('click', () => {
+        if (i < total - 1) {
+          index = i + 1;
+          activate(slides[index]);
+        } else {
+          finish();
+        }
+      });
+      slide.querySelector('.quiz-restart')!.addEventListener('click', restart);
+    });
+
+    retry.addEventListener('click', restart);
+    toggle.addEventListener('click', () => setCursor(!html.classList.contains('rose-trail')));
+
+    // The quiz always starts fresh; a returning winner just gets different words and a switch for their rose
+    let returning = false;
+    try {
+      returning = localStorage.getItem('rose-trail') !== null;
+    } catch {}
+
+    switches.forEach((btn) => btn.addEventListener('click', () => setCursor(!html.classList.contains('rose-trail'))));
+
+    if (returning && !coarse) {
+      revealSwitches();
+      winTitle = 'Back again? Have another rose, lovely visitor.';
+    }
+  }
+</script>
