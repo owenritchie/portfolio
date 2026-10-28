@@ -2,11 +2,11 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-type Question = { q: string; options: string[]; answer: number; note?: string };
+type Question = { q: string; options: string[]; answer: number };
 
 const quiz = JSON.parse(
   readFileSync(join(process.cwd(), 'public/config/quiz.json'), 'utf-8')
-) as { passMark: number; questions: Question[]; jokes?: string[] };
+) as { passMark: number; questions: Question[] };
 
 const total = quiz.questions.length;
 
@@ -33,7 +33,6 @@ const display = (text: string) =>
         </div>
         <div class="quiz-foot">
           <button type="button" class="quiz-btn quiz-next">{i === total - 1 ? 'See result' : 'Next'}</button>
-          <p class="quiz-note">{item.note}</p>
           <button type="button" class="quiz-btn quiz-switch" hidden>Bring the rose back</button>
           <button type="button" class="quiz-btn quiz-restart">Start over</button>
         </div>
@@ -44,10 +43,6 @@ const display = (text: string) =>
       <img class="quiz-rose" src="/other/mc-rose-crop.png" alt="" width="132" height="238" draggable="false" />
       <p class="quiz-score"></p>
       <p class="quiz-message"></p>
-      <!-- Every joke shares one cell so the card is sized for the longest and one is picked at random on completion -->
-      <div class="quiz-jokes">
-        {(quiz.jokes ?? []).map((joke) => <p class="quiz-joke">{joke}</p>)}
-      </div>
       <div class="quiz-actions">
         <button type="button" class="quiz-btn quiz-toggle"></button>
         <button type="button" class="quiz-btn quiz-retry">Try again</button>
@@ -203,22 +198,8 @@ const display = (text: string) =>
     padding-top: 1.1rem;
   }
 
-  .quiz-note {
-    margin: 0;
-    font-family: 'Grenze', serif;
-    font-style: italic;
-    font-size: 1.05rem;
-    line-height: 1.35;
-    color: var(--q-muted);
-  }
-
   .quiz-next,
-  .quiz-note {
-    visibility: hidden;
-  }
-
-  .quiz-slide.is-answered .quiz-next,
-  .quiz-slide.is-answered .quiz-note {
+  .quiz-slide.is-answered .quiz-next {
     visibility: inherit;
   }
 
@@ -334,26 +315,6 @@ const display = (text: string) =>
     color: var(--q-muted);
   }
 
-  .quiz-jokes {
-    display: none;
-    margin-top: 0.7rem;
-  }
-
-  .quiz-joke {
-    grid-area: 1 / 1;
-    margin: 0;
-    font-family: 'Grenze', serif;
-    font-style: italic;
-    font-size: 1.05rem;
-    line-height: 1.35;
-    color: var(--q-ink);
-    visibility: hidden;
-  }
-
-  .quiz-joke.is-picked {
-    visibility: inherit;
-  }
-
   .quiz-actions {
     display: flex;
     flex-wrap: wrap;
@@ -364,18 +325,10 @@ const display = (text: string) =>
   }
 
   .quiz-result .quiz-rose {
-    visibility: hidden;
-  }
-
-  .about-quiz.no-rose .quiz-rose {
     display: none;
   }
 
-  .quiz-result.show-joke .quiz-jokes {
-    display: grid;
-  }
-
-  .about-quiz.no-rose .quiz-jokes {
+  .about-quiz.no-rose .quiz-rose {
     display: none;
   }
 
@@ -401,12 +354,19 @@ const display = (text: string) =>
   }
 
   .quiz-result.show-rose .quiz-rose {
-    visibility: inherit;
+    display: block;
   }
 
   .quiz-result.show-toggle .quiz-toggle,
   .quiz-result.show-retry .quiz-retry {
     display: block;
+  }
+
+  /* The quiz is desktop-only: gone on tablets and phones */
+  @media (max-width: 1024px), (pointer: coarse) {
+    .about-quiz {
+      display: none;
+    }
   }
 
   @media (pointer: coarse) {
@@ -478,37 +438,7 @@ const display = (text: string) =>
     }
 
     /* Note on top, the two secondary buttons side by side, Next as the full-width action underneath */
-    .quiz-note {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
-
-    .quiz-switch {
-      grid-column: 1;
-      grid-row: 2;
-    }
-
-    .quiz-restart {
-      grid-column: 2;
-      grid-row: 2;
-    }
-
-    .quiz-switch[hidden] + .quiz-restart {
-      grid-column: 1 / -1;
-    }
-
-    .quiz-next {
-      grid-column: 1 / -1;
-      grid-row: 3;
-    }
-
-    .quiz-rose {
-      height: 56px;
-      margin-bottom: 0.4rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
+    @media (prefers-reduced-motion: reduce) {
     .quiz-rule-fill {
       transition: none;
     }
@@ -601,15 +531,12 @@ const display = (text: string) =>
       slide.querySelector<HTMLButtonElement>('.quiz-next')!.focus();
     };
 
-    const jokes = Array.from(root.querySelectorAll<HTMLElement>('.quiz-joke'));
-
     // Result screen is drawn from the current layout, so a win only talks about the rose where the rose exists
     let finished = false;
 
     const renderResult = () => {
       if (!finished) return;
       const passed = correct >= passMark;
-      result.classList.toggle('show-joke', !passed);
       retry.textContent = 'Try again';
       if (!passed) {
         score.textContent = `${correct} out of ${total}`;
@@ -636,8 +563,6 @@ const display = (text: string) =>
     };
 
     const finish = () => {
-      jokes.forEach((joke) => joke.classList.remove('is-picked'));
-      jokes[Math.floor(Math.random() * jokes.length)]?.classList.add('is-picked');
       finished = true;
       renderResult();
     };

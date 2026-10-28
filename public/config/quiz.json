@@ -9,8 +9,7 @@
         "Red panda",
         "Otter"
       ],
-      "answer": 1,
-      "note": "No brain, no heart"
+      "answer": 1
     },
     {
       "q": "His favourite colour?",
@@ -20,8 +19,7 @@
         "Purple",
         "Blue"
       ],
-      "answer": 3,
-      "note": "The jellyfish had a say"
+      "answer": 3
     },
     {
       "q": "Which sport is his favourite?",
@@ -31,8 +29,7 @@
         "Soccer",
         "Basketball"
       ],
-      "answer": 1,
-      "note": "Statcast!"
+      "answer": 1
     },
     {
       "q": "His favourite class so far?",
@@ -42,8 +39,7 @@
         "Modelling & Simulation",
         "Cybersecurity"
       ],
-      "answer": 2,
-      "note": "Basically the Sims"
+      "answer": 2
     },
     {
       "q": "Which city does he call home?",
@@ -53,8 +49,7 @@
         "Vancouver",
         "Ottawa"
       ],
-      "answer": 3,
-      "note": "Currently in Sandy Hill"
+      "answer": 3
     },
     {
       "q": "Where did he last travel?",
@@ -64,8 +59,7 @@
         "Taiwan",
         "Slovakia"
       ],
-      "answer": 2,
-      "note": "August 2026"
+      "answer": 2
     },
     {
       "q": "His favourite way to visualize data?",
@@ -75,15 +69,7 @@
         "Treemap",
         "Radar chart"
       ],
-      "answer": 3,
-      "note": "Your friendly neighbourhood data visualization"
+      "answer": 3
     }
-  ],
-  "jokes": [
-    "Why did the random walker cross the road? Nobody knows, and it won't remember either.",
-    "I'd tell you a joke about Markov chains, but this one only depends on the last.",
-    "Statistically, everyone who finishes this quiz finishes this quiz.",
-    "This joke was drawn uniformly at random. Hope it lands at p < 0.05.",
-    "A stochastic process walks into a bar. It's a different bar every time."
   ]
 }
