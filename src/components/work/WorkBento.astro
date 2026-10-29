@@ -39,7 +39,11 @@ const fmt = (d: string) => {
   return `${MONTHS[Number(m) - 1]} ${y}`;
 };
 
-const sym = (v: string) => v.replace(/([+%$~.,])/g, '<span class="sym">$1</span>');
+const counter = (value: string) => {
+  const m = value.match(/^([^0-9]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
+  if (!m) return null;
+  return { prefix: m[1], target: m[2], suffix: m[3], decimals: (m[2].split('.')[1] ?? '').length };
+};
 
 const shape = (e: Entry) => ({
   ...e,
@@ -114,8 +118,8 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
 
   <div class="work-list">
     {jobs.map((job, i) => (
-      <article class:list={['work-group', { flip: i % 2 === 1, solo: job.best.length === 0 }]} data-reveal="up">
-        <div class="work-job">
+      <article class:list={['work-group', { flip: i % 2 === 1, solo: job.best.length === 0 }]}>
+        <div class="work-job" data-reveal={i % 2 === 1 ? 'right' : 'left'}>
           <header class="work-job-head">
             {job.logo && (
               <span class="work-logo">
@@ -140,8 +144,8 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
           {job.description && <p class="work-desc">{job.description}</p>}
           {job.icons.length > 0 && (
             <ul class="work-skills" aria-label="Skills">
-              {job.icons.map((s) => (
-                <li><img src={s.icon} alt={`${s.name} logo`} title={s.name} width="30" height="30" loading="lazy" /></li>
+              {job.icons.map((s, k) => (
+                <li style={`--k:${k}`}><img src={s.icon} alt={`${s.name} logo`} title={s.name} width="30" height="30" loading="lazy" /></li>
               ))}
             </ul>
           )}
@@ -150,8 +154,13 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
         {job.best.length > 0 && (
           <ul class="work-stats" aria-label={`Highlights at ${job.title}`}>
             {job.best.map((s, k) => (
-              <li class:list={['work-stat', { lead: k === 0 }]}>
-                <b set:html={sym(s.value)} />
+              <li class:list={['work-stat', { lead: k === 0 }]} data-reveal={i % 2 === 1 ? 'left' : 'right'} style={`--rd:${0.12 + k * 0.1}s`}>
+                {(() => {
+                  const c = counter(s.value);
+                  return c
+                    ? <b aria-label={s.value} data-prefix={c.prefix} data-target={c.target} data-suffix={c.suffix} data-decimals={c.decimals}>{s.value}</b>
+                    : <b>{s.value}</b>;
+                })()}
                 <span>{s.label}</span>
               </li>
             ))}
@@ -518,8 +527,9 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
   }
 
   .work-stat b {
-    font-family: var(--heading-font);
-    font-weight: bold;
+    font-family: 'Grenze', serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     font-size: clamp(1.9rem, 3.2vw, 2.6rem);
     line-height: 1;
     color: var(--heading-ink);
@@ -535,8 +545,27 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
     color: var(--text-muted);
   }
 
-  .work-stat b :global(.sym) {
-    font-family: 'Grenze', serif;
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-reveal) .work-skills li {
+      opacity: 0;
+      translate: 0 8px;
+      transition: opacity 0.4s var(--ease-out), translate 0.4s var(--ease-out);
+      transition-delay: calc(0.35s + var(--k, 0) * 0.05s);
+    }
+
+    :global(.js-reveal) .work-job:global(.is-in) .work-skills li {
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    :global(.js-reveal) .work-stat.lead {
+      background: linear-gradient(var(--green), var(--green)) no-repeat 0 0 / 0% 100%;
+      transition: background-size 0.9s var(--ease-out) 0.15s;
+    }
+
+    :global(.js-reveal) .work-stat.lead:global(.is-in) {
+      background-size: 100% 100%;
+    }
   }
 
   @media (max-width: 860px) {
@@ -573,3 +602,42 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
     }
   }
 </style>
+
+<script>
+  const root = document.documentElement;
+  const motion = root.classList.contains('js-reveal') && matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  const counters = Array.from(document.querySelectorAll<HTMLElement>('.work-stat b[data-target]'));
+
+  if (motion && counters.length) {
+    const render = (el: HTMLElement, n: number) => {
+      const d = Number(el.dataset.decimals || 0);
+      el.textContent = `${el.dataset.prefix ?? ''}${n.toFixed(d)}${el.dataset.suffix ?? ''}`;
+    };
+
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.target);
+      const start = performance.now();
+      const dur = 1400;
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / dur);
+        render(el, target * (1 - Math.pow(1 - t, 3)));
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    counters.forEach((el) => render(el, 0));
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          io.unobserve(e.target);
+          setTimeout(() => run(e.target as HTMLElement), 250);
+        });
+      },
+      { threshold: 0.6 }
+    );
+    counters.forEach((el) => io.observe(el));
+  }
+</script>
