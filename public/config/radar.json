@@ -1,0 +1,216 @@
+{
+  "scale": [
+    "Learning",
+    "Familiar",
+    "Comfortable",
+    "Strong",
+    "Expert"
+  ],
+  "groups": [
+    {
+      "name": "Data science",
+      "skills": [
+        {
+          "name": "Python",
+          "icon": "/stack/python.webp",
+          "level": 9,
+          "note": "Pipelines, dlt ingestion, multithreaded API loads, Pandas and Scikit-learn analysis"
+        },
+        {
+          "name": "Pandas",
+          "icon": "/stack/pandas.webp",
+          "level": 8,
+          "note": "Validated 50+ G7 statistics and estimated missing indicators at Global Affairs"
+        },
+        {
+          "name": "Scikit-learn",
+          "icon": "/stack/scikit.webp",
+          "level": 6,
+          "note": "Imputed missing development indicators for Sahel and CARICOM reports"
+        },
+        {
+          "name": "R",
+          "icon": "/stack/r.webp",
+          "level": 7,
+          "note": "500k+ salmon egg records at Poisson; taught R to 15 students as a TA"
+        },
+        {
+          "name": "Tidyverse",
+          "icon": "/stack/tidyverse.webp",
+          "level": 7,
+          "note": "Reproducible published analyses kept working across package versions"
+        },
+        {
+          "name": "Java",
+          "icon": "/stack/java.webp",
+          "level": 6,
+          "note": "Core language through the Computer Science degree"
+        }
+      ]
+    },
+    {
+      "name": "Data engineering",
+      "skills": [
+        {
+          "name": "dbt",
+          "icon": "/stack/dbt.webp",
+          "level": 9,
+          "note": "Daily driver at Kinaxis: footprint tool, GA pipelines, a 90M row migration"
+        },
+        {
+          "name": "Airflow",
+          "icon": "/stack/airflow.webp",
+          "level": 4,
+          "note": "Orchestration on the resume's infrastructure stack"
+        },
+        {
+          "name": "Snowflake",
+          "icon": "/stack/snowflake.webp",
+          "level": 6,
+          "note": "Moved ~90M Eloqua rows to BigQuery with zero downtime"
+        },
+        {
+          "name": "Databricks",
+          "icon": "/stack/databricks.webp",
+          "level": 3,
+          "note": "Hands-on exposure alongside Spark"
+        },
+        {
+          "name": "Fabric",
+          "icon": "/stack/fabric.webp",
+          "level": 6,
+          "note": "Cut 100k+ CU-hours (~$18k) a year by optimizing dataflows"
+        },
+        {
+          "name": "Postgres",
+          "icon": "/stack/postgres.webp",
+          "level": 7,
+          "note": "10+ years of ServiceNow data migrated out; RLS governing every request"
+        },
+        {
+          "name": "Supabase",
+          "icon": "/stack/supabase.webp",
+          "level": 6,
+          "note": "Auth, RLS and storage for a portal serving 200+ students a semester"
+        }
+      ]
+    },
+    {
+      "name": "Cloud and DevOps",
+      "skills": [
+        {
+          "name": "GCP",
+          "icon": "/stack/gcp.webp",
+          "level": 9,
+          "note": "BigQuery, BigQueryML, GCS, Cloud Run and Vertex AI at Kinaxis"
+        },
+        {
+          "name": "S3",
+          "icon": "/stack/s3.webp",
+          "level": 5,
+          "note": "Per-file attachment storage with access policies and pgTAP tests"
+        },
+        {
+          "name": "Terraform",
+          "icon": "/stack/terraform.webp",
+          "level": 4,
+          "note": "Provisioned Supabase for the honours project portal"
+        },
+        {
+          "name": "GitHub Actions",
+          "icon": "/stack/github_actions.webp",
+          "level": 7,
+          "note": "Scheduled ingestion for the data repository and the .dmg release workflow"
+        },
+        {
+          "name": "Docker",
+          "icon": "/stack/docker.webp",
+          "level": 6,
+          "note": "Containerized services and local dev environments"
+        }
+      ]
+    },
+    {
+      "name": "Reporting",
+      "skills": [
+        {
+          "name": "Power BI",
+          "icon": "/stack/powerbi.webp",
+          "level": 8,
+          "note": "CEO and CMO dashboards, DAX, G7 policy modelling tool"
+        },
+        {
+          "name": "Looker",
+          "icon": "/stack/looker.webp",
+          "level": 5,
+          "note": "Looker Studio reporting"
+        },
+        {
+          "name": "Grafana",
+          "icon": "/stack/grafana.webp",
+          "level": 5,
+          "note": "Monitoring dashboards, now being decommissioned into GCS"
+        },
+        {
+          "name": "Google Analytics",
+          "icon": "/stack/google_analytics.webp",
+          "level": 7,
+          "note": "ELT for 3 properties, 250k+ daily events"
+        },
+        {
+          "name": "Metabase",
+          "icon": "/stack/metabase.webp",
+          "level": 5,
+          "note": "Self-serve dashboards over warehouse models"
+        }
+      ]
+    },
+    {
+      "name": "Web dev",
+      "skills": [
+        {
+          "name": "TypeScript",
+          "icon": "/stack/typescript.webp",
+          "level": 7,
+          "note": "Chrome extension for GCP cost, Next.js planning app"
+        },
+        {
+          "name": "React",
+          "icon": "/stack/react.webp",
+          "level": 6,
+          "note": "Spotify Analytics and the Next.js planning app"
+        },
+        {
+          "name": "Blazor",
+          "icon": "/stack/blazor.webp",
+          "level": 3,
+          "note": "Explored alongside the ASP.NET stack"
+        },
+        {
+          "name": "C#",
+          "icon": "/stack/c_sharp.webp",
+          "level": 5,
+          "note": "ASP.NET Core API for the honours project portal"
+        },
+        {
+          "name": "Claude Code",
+          "icon": "/stack/claude_code.webp",
+          "level": 8,
+          "note": "Everyday development tool, plus the Claude SDK in the planning app"
+        },
+        {
+          "name": "Tauri",
+          "icon": "/stack/tauri.webp",
+          "level": 5,
+          "note": "Packaged the planning app as a native macOS .dmg"
+        },
+        {
+          "name": "Ollama",
+          "icon": "/stack/ollama.webp",
+          "level": 5,
+          "note": "Local model chat inside the planning app"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "parents": [
+    { "id": "kinaxis", "label": "Kinaxis", "kind": "work", "sub": "Data & Analytics Engineer Intern", "skills": ["dbt", "GCP", "Snowflake", "Postgres", "Grafana", "Power BI", "Python", "GitHub Actions", "Fabric", "Google Analytics", "TypeScript"] },
+    { "id": "gac", "label": "Global Affairs Canada", "kind": "work", "sub": "Data Analytics Intern", "skills": ["Python", "Pandas", "Scikit-learn", "Power BI"] },
+    { "id": "poisson", "label": "Poisson Consulting", "kind": "work", "sub": "Data Science Intern", "skills": ["R", "Tidyverse", "Postgres"] },
+    { "id": "uottawa", "label": "University of Ottawa", "kind": "school", "sub": "BSc Computer Science", "skills": ["Java", "Python", "Postgres"] },
+    { "id": "datarepo", "label": "Data Repository", "kind": "project", "sub": "Ingestion and dbt for my personal projects", "skills": ["dbt", "Python", "GitHub Actions", "Postgres", "React"] },
+    { "id": "mill", "label": "Mill", "kind": "project", "sub": "Local-first planning app", "skills": ["TypeScript", "React", "Tauri", "Ollama", "Claude Code", "GitHub Actions"] },
+    { "id": "portal", "label": "Honours Project Portal", "kind": "project", "sub": "UOttawa project portal for 200+ students", "skills": ["Supabase", "S3", "Terraform", "C#", "Postgres"] }
+  ]
+}

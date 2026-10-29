@@ -1,0 +1,636 @@
+---
+import Layout from '../layouts/Layout.astro';
+import IconLoopButton from '../components/IconLoopButton.astro';
+import LampToggle from '../components/LampToggle.astro';
+import Footer from '../components/Footer.astro';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { buildRadar, type Group } from '../lib/radar';
+import type { GraphData } from '../lib/graph';
+
+const config = JSON.parse(await readFile(resolve('./public/config/radar.json'), 'utf8')) as {
+  groups: Group[];
+};
+
+const { groups } = config;
+const groupsJson = JSON.stringify(groups);
+
+const graphConfig = JSON.parse(await readFile(resolve('./public/config/graph.json'), 'utf8')) as {
+  parents: { id: string; label: string; kind: 'work' | 'school' | 'project'; sub: string; skills: string[] }[];
+};
+const skillByName = new Map(groups.flatMap((g) => g.skills).map((s) => [s.name, s]));
+const used = new Set(graphConfig.parents.flatMap((p) => p.skills));
+const graph: GraphData = {
+  nodes: [
+    ...graphConfig.parents.map((p) => ({ id: p.id, label: p.label, kind: p.kind, sub: p.sub })),
+    ...[...used].map((name) => {
+      const s = skillByName.get(name);
+      if (!s) throw new Error(`graph.json references unknown skill "${name}"`);
+      return { id: `skill:${name}`, label: name, kind: 'skill' as const, sub: s.note, icon: s.icon };
+    }),
+  ],
+  edges: graphConfig.parents.flatMap((p) => p.skills.map((name) => [p.id, `skill:${name}`] as [string, string])),
+};
+const graphJson = JSON.stringify(graph);
+---
+
+<Layout title="Skills — Owen Ritchie">
+  <div class="page">
+    <div class="lamp-anchor">
+      <div class="lamp">
+        <LampToggle restLength={90} maxPull={36} size="46px" />
+      </div>
+    </div>
+
+    <header class="page-header">
+      <IconLoopButton icon="arrow-left" label="Back" direction="left" variant="accent" tone="page" href="/" />
+    </header>
+
+    <main class="radar">
+      <div class="radar-intro">
+        <h1 class="radar-title">Skills</h1>
+        <p>
+          Skills don't have boundaries, so neither does this chart. Every tool in my stack; the further
+          out, the more I have built with it.
+        </p>
+      </div>
+
+      <div class="views" role="group" aria-label="View">
+        <button type="button" class="view" data-view="radar" aria-pressed="true">Radar</button>
+        <button type="button" class="view" data-view="graph" aria-pressed="false">Graph</button>
+      </div>
+
+      <div id="view-radar">
+
+      <button type="button" class="back" id="radar-back" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M5 12l6.5-6.5M5 12l6.5 6.5" /></svg>
+        All skills
+      </button>
+
+      <figure class="radar-figure" id="radar-figure" set:html={buildRadar(groups, null)} />
+      <script type="application/json" id="radar-data" set:html={groupsJson}></script>
+
+      <div class="legend">
+        {groups.map((g, gi) => (
+          <section class="group">
+            <h2><button type="button" class="group-pick" data-group={gi}>{g.name}</button></h2>
+            <ul>
+              {g.skills.map((s) => (
+                <li class="skill">
+                  <img src={s.icon} alt="" width="32" height="32" loading="lazy" />
+                  <div class="skill-body">
+                    <span class="skill-name">{s.name}</span>
+                    <p>{s.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+      </div>
+
+      <div id="view-graph" hidden>
+        <p class="graph-hint">Drag to turn it. Hover a node to see what it connects to.</p>
+        <canvas id="graph-canvas" aria-label="Graph of work, school and projects linked to the skills used in each"></canvas>
+        <ul class="graph-key">
+          <li><i class="key-dot work"></i>Work</li>
+          <li><i class="key-dot school"></i>School</li>
+          <li><i class="key-dot project"></i>Projects</li>
+        </ul>
+        <script type="application/json" id="graph-data" set:html={graphJson}></script>
+      </div>
+
+      <div class="tip" id="radar-tip" role="tooltip" hidden></div>
+    </main>
+  </div>
+
+  <Footer rounded flush />
+</Layout>
+
+<style>
+  .page {
+    width: 100%;
+    position: relative;
+  }
+
+  .lamp-anchor {
+    position: fixed;
+    top: 2rem;
+    left: 0;
+    width: 100vw;
+    height: 0;
+    z-index: 150;
+    pointer-events: none;
+  }
+
+  .lamp {
+    position: absolute;
+    top: -3.5rem;
+    right: 2.5rem;
+    width: 46px;
+    pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    .lamp {
+      top: -2.5rem;
+    }
+  }
+
+  @media (max-width: 1024px), (pointer: coarse) {
+    .lamp-anchor {
+      display: none;
+    }
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    min-height: 2.2rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      margin-bottom: 2rem;
+    }
+  }
+
+  .radar {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+  }
+
+  .radar-intro {
+    max-width: 38rem;
+    margin: 0 auto clamp(1rem, 3vw, 2rem);
+    text-align: center;
+  }
+
+  .radar-title {
+    font-family: var(--heading-font);
+    font-weight: bold;
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    line-height: 1.05;
+    color: var(--heading-ink);
+    margin-bottom: 0.9rem;
+  }
+
+  .radar-intro p {
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.35vw, 1.15rem);
+    line-height: 1.7;
+  }
+
+  .radar-figure {
+    margin: 0 auto;
+    max-width: 1100px;
+  }
+
+  .views {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .view {
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    background: transparent;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    padding: 0.45rem 1.3rem;
+    cursor: pointer;
+  }
+
+  .view[aria-pressed="true"] {
+    background: var(--btn-2);
+    border-color: transparent;
+  }
+
+  .view:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  #view-graph[hidden] {
+    display: none;
+  }
+
+  .graph-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  #graph-canvas {
+    display: block;
+    width: 100%;
+    height: clamp(460px, 82vh, 820px);
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  #graph-canvas.is-dragging {
+    cursor: grabbing;
+  }
+
+  .graph-key {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .graph-key li {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .key-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .key-dot.work { background: var(--accent); }
+  .key-dot.school { background: var(--accent-2); }
+  .key-dot.project { background: var(--heading-ink); }
+
+  .back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto 1.5rem;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    background: transparent;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem 0.45rem 0.9rem;
+    cursor: pointer;
+  }
+
+  .back[hidden] {
+    display: flex;
+    visibility: hidden;
+  }
+
+  .back svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .back:focus-visible,
+  .group-pick:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .radar-figure :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .radar-figure.is-swapping :global(svg) {
+    animation: radar-in 0.35s var(--ease-out);
+  }
+
+  @keyframes radar-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .radar-figure :global(.ring),
+  .radar-figure :global(.spoke) {
+    fill: none;
+    stroke: var(--dash-color);
+    stroke-width: 1.2;
+    opacity: 0.6;
+  }
+
+  .radar-figure :global(.area) {
+    fill: color-mix(in oklch, var(--accent) 16%, transparent);
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .radar-figure :global(.dot) {
+    fill: var(--accent);
+  }
+
+  .radar-figure :global(.node) {
+    cursor: default;
+    outline: none;
+  }
+
+  .radar-figure :global(.node:focus-visible .disc) {
+    stroke: var(--accent);
+    stroke-width: 2.5;
+  }
+
+  .tip {
+    position: fixed;
+    z-index: 200;
+    max-width: 17rem;
+    padding: 0.7rem 0.9rem 0.75rem;
+    border-radius: 12px;
+    background: var(--heading-ink);
+    color: color-mix(in oklch, var(--bg) 82%, transparent);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    pointer-events: none;
+  }
+
+  .tip :global(strong) {
+    display: block;
+    color: var(--bg);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .radar-figure :global(.disc) {
+    fill: var(--bg);
+    stroke: var(--dash-color);
+    stroke-width: var(--dash-width);
+  }
+
+  .radar-figure :global(.group-label) {
+    font-family: var(--heading-font);
+    font-weight: bold;
+    font-size: 24px;
+    fill: var(--heading-ink);
+    cursor: pointer;
+  }
+
+  .radar-figure :global(.node) {
+    transition: opacity 0.2s var(--ease-out);
+  }
+
+  .radar-figure.has-hot :global(.node:not(.hot)) {
+    opacity: 0.3;
+  }
+
+  .radar-figure :global(.node.hot .disc) {
+    stroke: var(--accent);
+    stroke-width: 3;
+  }
+
+  .radar-figure :global(.group-label) {
+    paint-order: stroke;
+    stroke: transparent;
+    stroke-width: 0.6px;
+    transition: fill 0.2s var(--ease-out);
+  }
+
+  .radar-figure :global(.group-label.hot) {
+    fill: var(--accent);
+  }
+
+  .radar-figure :global(.group-label:focus-visible) {
+    outline: 2px solid var(--accent);
+  }
+
+  .radar-figure :global(.skill-label) {
+    font-size: 21px;
+    font-weight: 500;
+    fill: var(--text);
+  }
+
+  @media (max-width: 700px) {
+    .radar-figure :global(.group-label) {
+      display: none;
+    }
+
+    .radar-figure :global(.skill-label) {
+      font-size: 26px;
+    }
+  }
+
+  .legend {
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
+  }
+
+  .group h2 {
+    font-family: var(--heading-font);
+    font-weight: bold;
+    font-size: 1.6rem;
+    color: var(--heading-ink);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.4rem;
+    border-bottom: var(--dash-width) dashed var(--dash-color);
+  }
+
+  .group-pick {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .group ul {
+    list-style: none;
+  }
+
+  .skill {
+    display: flex;
+    gap: 0.9rem;
+    padding: 0.85rem 0;
+  }
+
+  .skill img {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-top: 0.15rem;
+  }
+
+  .skill-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .skill-name {
+    display: block;
+    margin-bottom: 0.15rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .skill p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 801px) {
+    .group:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: calc(50% - clamp(1rem, 2.5vw, 2rem));
+    }
+  }
+
+  @media (max-width: 800px) {
+    .legend {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { buildRadar, type Group } from '../lib/radar';
+  import { initGraph, type GraphData } from '../lib/graph';
+import type { GraphData } from '../lib/graph';
+
+  const figure = document.getElementById('radar-figure');
+  const data = document.getElementById('radar-data');
+  const tip = document.getElementById('radar-tip');
+  const back = document.getElementById('radar-back');
+
+  if (figure && data) {
+    const groups = JSON.parse(data.textContent || '[]') as Group[];
+    let current: number | null = null;
+
+    const hideTip = () => {
+      if (tip) tip.hidden = true;
+    };
+
+    const showTip = (node: Element) => {
+      if (!tip) return;
+      tip.innerHTML = '';
+      const name = document.createElement('strong');
+      name.textContent = (node as HTMLElement).dataset.name || '';
+      tip.append(name, (node as HTMLElement).dataset.note || '');
+      tip.hidden = false;
+      const r = node.getBoundingClientRect();
+      const t = tip.getBoundingClientRect();
+      const left = Math.min(Math.max(8, r.left + r.width / 2 - t.width / 2), innerWidth - t.width - 8);
+      const above = r.top - t.height - 10;
+      tip.style.left = `${left}px`;
+      tip.style.top = `${above >= 8 ? above : r.bottom + 10}px`;
+    };
+
+    const show = (next: number | null) => {
+      if (next === current) return;
+      hideTip();
+      current = next;
+      figure.innerHTML = buildRadar(groups, next);
+      figure.classList.remove('is-swapping');
+      void figure.offsetWidth;
+      figure.classList.add('is-swapping');
+      if (back) back.hidden = next === null;
+    };
+
+    back?.addEventListener('click', () => show(null));
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') show(null);
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.group-pick').forEach((b) =>
+      b.addEventListener('click', () => {
+        show(Number(b.dataset.group));
+        figure.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+    );
+
+    const heat = (label: Element | null, on: boolean) => {
+      if (!label) return;
+      const g = (label as HTMLElement).dataset.group;
+      label.classList.toggle('hot', on);
+      figure.classList.toggle('has-hot', on);
+      figure.querySelectorAll('.node').forEach((n) => n.classList.toggle('hot', on && (n as HTMLElement).dataset.group === g));
+    };
+    figure.addEventListener('pointerover', (e) => heat((e.target as Element).closest('.group-label'), true));
+    figure.addEventListener('pointerout', (e) => heat((e.target as Element).closest('.group-label'), false));
+    figure.addEventListener('focusin', (e) => heat((e.target as Element).closest('.group-label'), true));
+    figure.addEventListener('focusout', (e) => heat((e.target as Element).closest('.group-label'), false));
+
+    const pick = (e: Event) => {
+      const label = (e.target as Element).closest<SVGTextElement>('.group-label');
+      if (label) show(Number(label.dataset.group));
+    };
+    figure.addEventListener('pointerover', (e) => {
+      const node = (e.target as Element).closest('.node');
+      if (node) showTip(node);
+    });
+    figure.addEventListener('pointerout', (e) => {
+      if ((e.target as Element).closest('.node')) hideTip();
+    });
+    figure.addEventListener('focusin', (e) => {
+      const node = (e.target as Element).closest('.node');
+      if (node) showTip(node);
+    });
+    figure.addEventListener('focusout', hideTip);
+    figure.addEventListener('click', pick);
+    figure.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        pick(e);
+      }
+    });
+  }
+
+  const viewBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.view'));
+  const viewRadar = document.getElementById('view-radar');
+  const viewGraph = document.getElementById('view-graph');
+  const canvas = document.getElementById('graph-canvas') as HTMLCanvasElement | null;
+  const graphData = document.getElementById('graph-data');
+  let graph: ReturnType<typeof initGraph> | null = null;
+
+  const graphTip = (h: { node: { label: string; kind: string; sub: string }; x: number; y: number } | null) => {
+    const tipEl = document.getElementById('radar-tip');
+    if (!tipEl) return;
+    if (!h) {
+      tipEl.hidden = true;
+      return;
+    }
+    tipEl.innerHTML = '';
+    const name = document.createElement('strong');
+    name.textContent = h.node.label;
+    tipEl.append(name, h.node.sub);
+    tipEl.hidden = false;
+    const t = tipEl.getBoundingClientRect();
+    tipEl.style.left = `${Math.min(Math.max(8, h.x - t.width / 2), innerWidth - t.width - 8)}px`;
+    tipEl.style.top = `${h.y - t.height - 18 >= 8 ? h.y - t.height - 18 : h.y + 22}px`;
+  };
+
+  const setView = (name: string) => {
+    viewBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === name)));
+    if (!viewRadar || !viewGraph) return;
+    const isGraph = name === 'graph';
+    viewRadar.hidden = isGraph;
+    viewGraph.hidden = !isGraph;
+    document.getElementById('radar-tip')?.setAttribute('hidden', '');
+    if (isGraph && canvas && graphData) {
+      if (!graph) graph = initGraph(canvas, JSON.parse(graphData.textContent || '{}') as GraphData, graphTip);
+      else graph.resume();
+    } else {
+      graph?.pause();
+    }
+  };
+
+  viewBtns.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view || 'radar')));
+</script>
