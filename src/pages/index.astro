@@ -74,6 +74,41 @@ const timelineData = JSON.parse(
   fit();
   addEventListener('resize', fit);
   pinned.forEach((el) => new ResizeObserver(fit).observe(el));
+
+  const naturalTop = (el: HTMLElement) => {
+    const stack = Array.from(document.querySelectorAll<HTMLElement>('.cover-stack > *'));
+    const prev = stack.map((n) => n.getAttribute('style'));
+    stack.forEach((n) => {
+      n.style.position = 'static';
+      n.style.top = 'auto';
+    });
+    const y = el.getBoundingClientRect().top + scrollY;
+    stack.forEach((n, i) => {
+      const p = prev[i];
+      if (p === null) n.removeAttribute('style');
+      else n.setAttribute('style', p);
+    });
+    return y - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
+  };
+
+  const jump = (id: string, smooth: boolean) => {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    scrollTo({ top: naturalTop(el), behavior: smooth && !still ? 'smooth' : 'auto' });
+    return true;
+  };
+
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('a[href*="#"]');
+    if (!a || a.origin !== location.origin || a.pathname !== location.pathname || !a.hash) return;
+    if (jump(a.hash.slice(1), true)) {
+      e.preventDefault();
+      history.replaceState(null, '', a.hash);
+    }
+  });
+
+  if (location.hash) addEventListener('load', () => jump(location.hash.slice(1), false));
 </script>
 
 <style>
