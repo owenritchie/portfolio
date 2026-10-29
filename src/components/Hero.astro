@@ -1,63 +1,49 @@
 ---
 import LampToggle from './LampToggle.astro';
 
-const navLinks = [
-  { label: 'Me', href: '#me' },
-  { label: 'Work', href: '#work' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Art', href: '/art' },
-];
 ---
 
 <header class="hero">
-  <canvas class="hero-dots" aria-hidden="true"></canvas>
-  <div class="hero-top">
-    <a class="hero-name" href="/" data-reveal="up">Owen Ritchie</a>
+  <p class="hero-name" data-reveal="up">Owen Ritchie</p>
 
-    <nav class="hero-nav" aria-label="Primary" data-reveal="up" style="--rd:0.08s">
-      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
-    </nav>
+  <div class="hero-tilt">
+    <div class="hero-media" data-reveal="scale" style="--rd:0.06s">
+      <img
+        class="hero-img hero-img-light"
+        src="/hero/light-hero-1800.webp"
+        srcset="/hero/light-hero-960.webp 960w, /hero/light-hero-1800.webp 1800w"
+        sizes="(min-width: 1081px) 836px, 100vw"
+        width="1800"
+        height="1133"
+        alt="Macro shot of two ants on a branch against a dark green background"
+        fetchpriority="high"
+      />
+      <img
+        class="hero-img hero-img-dark"
+        src="/hero/dark-hero-1800.webp"
+        srcset="/hero/dark-hero-960.webp 960w, /hero/dark-hero-1800.webp 1800w"
+        sizes="(min-width: 1081px) 836px, 100vw"
+        width="1800"
+        height="1065"
+        alt="Stone staircase climbing a Mayan pyramid at dusk"
+        fetchpriority="high"
+      />
+      <h1 class="hero-big"><span>Owen Ritchie</span></h1>
+      <span class="hero-shine" aria-hidden="true"></span>
+    </div>
+  </div>
 
-    <button
-      type="button"
-      class="hero-burger"
-      id="hero-burger"
-      aria-label="Open menu"
-      aria-expanded="false"
-      aria-controls="hero-menu"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" focusable="false">
-        <path d="M3 5h18M3 12h18M3 19h18" />
-      </svg>
+  <div class="hero-hint">
+    <button type="button" class="auto-btn" id="autoscroll" aria-label="Enable autoscroll">
+      <span class="ab-icon" aria-hidden="true">
+        <span class="ab-viewport">
+          <span class="ab-glyph ab-lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="6.5" y="3" width="11" height="18" rx="5.5" /><path d="M12 7v3" /></svg></span>
+          <span class="ab-glyph ab-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="6.5" y="3" width="11" height="18" rx="5.5" /><path d="M12 7v3" /></svg></span>
+        </span>
+      </span>
+      <span class="ab-text" aria-hidden="true"><span>Enable autoscroll</span></span>
     </button>
   </div>
-  <div class="hero-tilt">
-  <div class="hero-media" data-reveal="scale" style="--rd:0.06s">
-    <img
-      class="hero-img hero-img-light"
-      src="/hero/light-hero-1800.webp"
-      srcset="/hero/light-hero-960.webp 960w, /hero/light-hero-1800.webp 1800w"
-      sizes="(min-width: 1081px) 836px, 100vw"
-      width="1800"
-      height="1133"
-      alt="Macro shot of two ants on a branch against a dark green background"
-      fetchpriority="high"
-    />
-    <img
-      class="hero-img hero-img-dark"
-      src="/hero/dark-hero-1800.webp"
-      srcset="/hero/dark-hero-960.webp 960w, /hero/dark-hero-1800.webp 1800w"
-      sizes="(min-width: 1081px) 836px, 100vw"
-      width="1800"
-      height="1065"
-      alt="Stone staircase climbing a Mayan pyramid at dusk"
-      fetchpriority="high"
-    />
-    <span class="hero-shine" aria-hidden="true"></span>
-    <span class="hero-glint" aria-hidden="true"></span>
-  </div>
-  </div>
-
 </header>
 
 <div class="lamp-anchor">
@@ -66,250 +52,77 @@ const navLinks = [
   </div>
 </div>
 
-<div class="hero-menu" id="hero-menu">
-  <div class="hero-menu-bar">
-    <button type="button" class="hero-menu-close" id="hero-menu-close" aria-label="Close menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" focusable="false">
-        <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
-      </svg>
-    </button>
-  </div>
-
-  <nav aria-label="Primary">
-    <ul class="hero-menu-list">
-      {navLinks.map((l) => (
-        <li><a href={l.href}>{l.label}</a></li>
-      ))}
-    </ul>
-  </nav>
-</div>
-
 <script>
-  const burger = document.getElementById('hero-burger');
-  const menu = document.getElementById('hero-menu');
-  const closeBtn = document.getElementById('hero-menu-close');
+  const big = document.querySelector<HTMLElement>('.hero-big');
+  const media = document.querySelector<HTMLElement>('.hero-media');
 
-  if (burger && menu && closeBtn) {
-    const focusables = () =>
-      [closeBtn, ...menu.querySelectorAll<HTMLAnchorElement>('a')];
-
-    const setOpen = (open: boolean) => {
-      menu.classList.toggle('is-open', open);
-      burger.setAttribute('aria-expanded', String(open));
-      document.documentElement.classList.toggle('menu-open', open);
-      if (open) closeBtn.focus();
-      else burger.focus();
+  if (big && media) {
+    const fit = () => {
+      if (!media.clientWidth) return;
+      big.style.fontSize = '100px';
+      const style = getComputedStyle(big);
+      const room = media.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const text = big.firstElementChild as HTMLElement;
+      big.style.fontSize = `${((100 * room) / text.offsetWidth) * 0.99}px`;
     };
-
-    addEventListener('pageshow', () => {
-      if (menu.classList.contains('is-open')) setOpen(false);
-      else document.documentElement.classList.remove('menu-open');
-    });
-
-    burger.addEventListener('click', () => setOpen(true));
-    closeBtn.addEventListener('click', () => setOpen(false));
-
-    menu.querySelectorAll('a').forEach((a) =>
-      a.addEventListener('click', () => setOpen(false))
-    );
-
-    document.addEventListener('keydown', (e) => {
-      if (!menu.classList.contains('is-open')) return;
-
-      if (e.key === 'Escape') {
-        setOpen(false);
-        return;
-      }
-
-      if (e.key !== 'Tab') return;
-
-      const items = focusables();
-      const first = items[0];
-      const last = items[items.length - 1];
-
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    });
+    document.fonts.ready.then(fit);
+    new ResizeObserver(fit).observe(media);
   }
 
-  const hero = document.querySelector('.hero');
-  const artLink = document.querySelector('.hero-nav a[href="/art"]');
-  const glint = document.querySelector<HTMLElement>('.hero-glint');
+  const hint = document.querySelector<HTMLElement>('.hero-hint');
+  if (hint) {
+    const update = () => hint.classList.toggle('is-gone', scrollY > 0);
 
-  if (hero && artLink && glint) {
-    artLink.addEventListener('mouseenter', () => hero.classList.add('is-glinting'));
-    glint.addEventListener('animationend', (e: AnimationEvent) => {
-      if (e.animationName === 'hero-glint') hero.classList.remove('is-glinting');
-    });
+    addEventListener('scroll', update, { passive: true });
+    update();
   }
 
-  const dots = document.querySelector<HTMLCanvasElement>('.hero-dots');
-  const dotsCtx = dots?.getContext('2d');
-  const wide = matchMedia('(min-width: 1240px)');
-
-  if (dots && dotsCtx && hero) {
-    const GAP = 14;
-    const REACH = 170;
-    const FALL_DISTANCE = 520;
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const mouse = { x: 0, y: 0, tx: 0, ty: 0, k: 0, tk: 0 };
-    let w = 0;
-    let h = 0;
+  const auto = document.getElementById('autoscroll');
+  if (auto) {
+    const SPEED = 150;
+    const root = document.documentElement;
+    let running = false;
     let raf = 0;
-    let introStart = 0;
-    const INTRO_DELAY = 200;
-    const INTRO_SPREAD = 850;
-    const INTRO_POP = 500;
-    const easeOutBack = (t: number) => 1 + 2.4 * (t - 1) ** 3 + 1.4 * (t - 1) ** 2;
-    const hash = (x: number, y: number) => {
-      const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
-      return n - Math.floor(n);
+    let last = 0;
+    let holdUntil = 0;
+    let y = 0;
+
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      root.classList.remove('autoscrolling');
+      dispatchEvent(new CustomEvent('autoscroll', { detail: false }));
+      cancelAnimationFrame(raf);
+      root.style.scrollBehavior = '';
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((t) => removeEventListener(t, stop));
     };
 
-    const smooth = (a: number, b: number, v: number) => {
-      const t = Math.min(1, Math.max(0, (v - a) / (b - a)));
-      return t * t * (3 - 2 * t);
-    };
-
-    const resize = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      w = dots.clientWidth;
-      h = dots.clientHeight;
-      dots.width = Math.round(w * dpr);
-      dots.height = Math.round(h * dpr);
-      dotsCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const draw = () => {
-      raf = 0;
-      if (!w || !h || document.documentElement.dataset.theme !== 'dark') return;
-      dotsCtx.clearRect(0, 0, w, h);
-      dotsCtx.fillStyle = 'oklch(0.38 0.12 270)';
-
-      let intro = !still;
-      let elapsed = 0;
-      if (intro) {
-        if (!introStart) introStart = performance.now();
-        elapsed = performance.now() - introStart - INTRO_DELAY;
-        if (elapsed > INTRO_SPREAD + INTRO_POP) intro = false;
+    const tick = (now: number) => {
+      if (!running) return;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (now >= holdUntil) {
+        y += SPEED * dt;
+        scrollTo(0, y);
       }
-
-      const fall = still ? 0 : Math.min(1, Math.max(0, scrollY / FALL_DISTANCE));
-
-      mouse.x += (mouse.tx - mouse.x) * 0.2;
-      mouse.y += (mouse.ty - mouse.y) * 0.2;
-      mouse.k += (mouse.tk - mouse.k) * 0.12;
-
-      for (let y = GAP / 2; y < h; y += GAP) {
-        const v = y / h;
-        const bottom = v * v * v * v;
-        const fade = smooth(0.08, 0.62, v);
-        for (let x = GAP / 2; x < w; x += GAP) {
-          const cx = (x / w - 0.5) * 2;
-          const side = cx * cx;
-          const edge = 1 - (1 - side) * (1 - bottom);
-          let density = smooth(0.3, 1, edge) * fade;
-          if (density < 0.01) continue;
-          let px = x;
-          let py = y;
-
-          const dx = mouse.x - x;
-          const dy = mouse.y - y;
-          const d = Math.hypot(dx, dy);
-          if (mouse.k > 0.01 && d < REACH) {
-            const f = (1 - d / REACH) ** 2 * mouse.k;
-            const pull = f * 0.45;
-            px += dx * pull;
-            py += dy * pull;
-            density = Math.min(1, density * (1 + f * 1.2));
-          }
-
-          let grow = 1;
-          let flash = 1;
-          if (intro) {
-            // ripples out from bottom centre and up the sides, each mark popping in with an overshoot and a bright flash
-            const dist = Math.hypot((x / w - 0.5) * 1.6, (1 - y / h) * 1.1);
-            const delay = (dist / 1.3 + hash(x, y) * 0.12) * INTRO_SPREAD;
-            const local = Math.min(1, Math.max(0, (elapsed - delay) / INTRO_POP));
-            grow = local === 0 ? 0 : easeOutBack(local);
-            flash = 1 + 2.2 * Math.sin(Math.PI * local);
-          }
-
-          // scrolling shakes every mark loose: each one drops under gravity, drifts sideways and tumbles
-          let alpha = Math.min(1, 0.7 * density * flash);
-          let spin = 0;
-          if (fall > 0) {
-            const r1 = hash(x, y);
-            const r2 = hash(y + 3.7, x);
-            const local = Math.min(1, Math.max(0, (fall - r1 * 0.3) / 0.7));
-            const eased = local * local;
-            py += eased * h * (0.55 + r2 * 0.9);
-            px += (r2 - 0.5) * 90 * eased;
-            spin = (r1 - 0.5) * 7 * eased;
-            alpha *= 1 - smooth(0.35, 1, local);
-            if (alpha < 0.005 || py > h + 12) continue;
-          }
-
-          const r = (0.4 + 3 * density) * grow;
-          const c = Math.cos(spin) * r;
-          const sn = Math.sin(spin) * r;
-          dotsCtx.globalAlpha = alpha;
-          dotsCtx.beginPath();
-          dotsCtx.moveTo(px + sn, py - c);
-          dotsCtx.lineTo(px + c, py + sn);
-          dotsCtx.lineTo(px - sn, py + c);
-          dotsCtx.lineTo(px - c, py - sn);
-          dotsCtx.closePath();
-          dotsCtx.fill();
-        }
-      }
-
-      if (intro || Math.abs(mouse.tk - mouse.k) > 0.005 || Math.hypot(mouse.tx - mouse.x, mouse.ty - mouse.y) > 0.5) {
-        raf = requestAnimationFrame(draw);
-      }
+      if (y >= root.scrollHeight - innerHeight - 1) return stop();
+      raf = requestAnimationFrame(tick);
     };
 
-    const request = () => {
-      if (!raf) raf = requestAnimationFrame(draw);
-    };
-
-    const refresh = () => {
-      if (!wide.matches) return;
-      resize();
-      request();
-    };
-
-    refresh();
-    addEventListener('resize', refresh);
-    wide.addEventListener('change', refresh);
-    new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-    if (!still) {
-      addEventListener('scroll', request, { passive: true });
-      addEventListener('pointermove', (e: PointerEvent) => {
-        if (!wide.matches || e.pointerType === 'touch') return;
-        const r = dots.getBoundingClientRect();
-        const first = mouse.tk === 0;
-        mouse.tx = e.clientX - r.left;
-        mouse.ty = e.clientY - r.top;
-        if (first) {
-          mouse.x = mouse.tx;
-          mouse.y = mouse.ty;
-        }
-        mouse.tk = 1;
-        request();
-      });
-      document.documentElement.addEventListener('pointerleave', () => {
-        mouse.tk = 0;
-        request();
-      });
-    }
+    auto.addEventListener('click', (e) => {
+      e.stopPropagation();
+      y = scrollY;
+      running = true;
+      root.classList.add('autoscrolling');
+      dispatchEvent(new CustomEvent('autoscroll', { detail: true }));
+      root.style.scrollBehavior = 'auto';
+      last = performance.now();
+      holdUntil = last + 300;
+      setTimeout(() => ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((t) => addEventListener(t, stop, { passive: true })), 0);
+      raf = requestAnimationFrame(tick);
+    });
   }
+
 </script>
 
 <style>
@@ -325,25 +138,6 @@ const navLinks = [
     position: relative;
     isolation: isolate;
     container-type: inline-size;
-  }
-
-  /* Wide screens only: canvas dot field, drawn by the script below */
-  .hero-dots {
-    display: none;
-  }
-
-  @media (min-width: 1240px) {
-    :global([data-theme="dark"]) .hero-dots {
-      display: block;
-      position: absolute;
-      z-index: -1;
-      top: 0;
-      left: 50%;
-      width: 100vw;
-      height: 100%;
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
   }
 
   .lamp-anchor {
@@ -371,165 +165,14 @@ const navLinks = [
     }
   }
 
-  .hero-top {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    margin-bottom: clamp(1.25rem, 3.88cqw, 2.25rem);
-    position: relative;
-    z-index: 1;
-  }
-
   .hero-name {
-    font-family: 'Myflora', serif;
-    font-weight: bold;
-    font-size: clamp(2rem, 6.2cqw, 3.6rem);
-    line-height: 1;
-    letter-spacing: 0.02em;
-    color: var(--heading-ink);
-    text-decoration: none;
-  }
-
-  .hero-nav {
-    position: absolute;
-    top: 50%;
-    right: clamp(1.5rem, 12cqw, 7.5rem);
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: clamp(1.4rem, 5cqw, 2.9rem);
-    font-family: 'Grenze', serif;
-  }
-
-  .hero-nav a {
-    position: relative;
-    font-size: clamp(1.05rem, 2.5cqw, 1.45rem);
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--heading-ink);
-    text-decoration: none;
-    padding-bottom: 0.2rem;
-    background-image: linear-gradient(currentColor, currentColor);
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    background-size: 0% 2px;
-    transition: background-size var(--dur-base) var(--ease-out);
-  }
-
-  .hero-nav a:hover {
-    background-size: 100% 2px;
-  }
-
-
-  .hero-burger {
     display: none;
-    margin-left: auto;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: none;
-    background: none;
+    font-family: var(--heading-font);
+    font-weight: bold;
+    font-size: clamp(2.4rem, 11cqw, 3.4rem);
+    line-height: 1;
     color: var(--heading-ink);
-    cursor: pointer;
-  }
-
-  .hero-burger svg {
-    width: clamp(2rem, 9.4cqw, 2.4rem);
-    height: clamp(2rem, 9.4cqw, 2.4rem);
-  }
-
-  .hero-burger:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  .hero-menu {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    padding: clamp(1.25rem, 5vw, 2rem);
-    background: var(--bg);
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity var(--dur-base) var(--ease-out),
-      visibility 0s linear var(--dur-base);
-  }
-
-  .hero-menu.is-open {
-    opacity: 1;
-    visibility: visible;
-    transition-delay: 0s;
-  }
-
-  .hero-menu-bar {
-    display: flex;
-    justify-content: flex-end;
-    flex-shrink: 0;
-  }
-
-  .hero-menu-close {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: none;
-    background: none;
-    color: var(--heading-ink);
-    cursor: pointer;
-  }
-
-  .hero-menu-close svg {
-    width: clamp(2rem, 8.5vw, 2.4rem);
-    height: clamp(2rem, 8.5vw, 2.4rem);
-  }
-
-  .hero-menu-close:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  .hero-menu nav {
-    margin: auto 0;
-    width: 100%;
-  }
-
-  .hero-menu-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .hero-menu-list li + li {
-    border-top: var(--dash-width) dashed var(--dash-color);
-  }
-
-  .hero-menu-list a {
-    display: block;
-    padding: 1.05rem 0;
-    font-family: 'Grenze', serif;
-    font-size: clamp(1.7rem, 9vw, 2.4rem);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    line-height: 1.1;
-    text-transform: uppercase;
-    color: var(--heading-ink);
-    text-decoration: none;
-  }
-
-  .hero-media {
-    flex-shrink: 0;
-    aspect-ratio: 16 / 9;
-    border-radius: clamp(16px, 3cqw, 28px);
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
+    margin: 0 0 1.2rem;
   }
 
   .hero-tilt {
@@ -538,9 +181,76 @@ const navLinks = [
     z-index: 1;
   }
 
+  .hero-media {
+    --inset: clamp(1rem, 3cqw, 1.9rem);
+    flex-shrink: 0;
+    aspect-ratio: 16 / 9;
+    border-radius: clamp(16px, 3cqw, 28px);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.35), transparent 45%);
+  }
+
+  :global([data-theme="dark"]) .hero-media::after {
+    display: none;
+  }
+
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-img-dark {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .hero-img-light {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .hero-img-dark {
+    display: block;
+  }
+
+  .hero-big {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--inset) * 0.55);
+    margin: 0;
+    padding: 0 var(--inset);
+    font-family: var(--heading-font);
+    font-weight: bold;
+    font-size: 15cqw;
+    line-height: 0.8;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+    color: var(--bg);
+    text-align: center;
+  }
+
+  :global([data-theme="dark"]) .hero-big {
+    color: var(--heading-ink);
+  }
+
   .hero-shine {
     position: absolute;
     inset: 0;
+    z-index: 3;
     pointer-events: none;
     opacity: 0;
     background:
@@ -550,35 +260,148 @@ const navLinks = [
     mix-blend-mode: soft-light;
   }
 
-  .hero-glint {
+  .hero-hint {
+    display: flex;
+    justify-content: center;
+    gap: 1.1rem;
+    margin: clamp(1.5rem, 6vh, 3.5rem) 0 auto;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear 0s;
+  }
+
+  .auto-btn {
+    --ab-travel: 150%;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    height: 48px;
+    padding: 0;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    background: transparent;
+    color: oklch(0.42 0.06 70);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-out);
+  }
+
+  :global(:root:not([data-theme="dark"])) .auto-btn {
+    background: oklch(0.26 0.035 145);
+    border-color: transparent;
+    color: oklch(0.945 0.013 92);
+  }
+
+  :global(:root:not([data-theme="dark"])) .auto-btn::after {
+    border-color: oklch(0.45 0.04 145);
+  }
+
+  :global(:root:not([data-theme="dark"])) .auto-btn:is(:hover, :focus-visible) {
+    background: oklch(0.34 0.05 145);
+  }
+
+  :global([data-theme="dark"]) .auto-btn {
+    color: oklch(0.84 0.07 295);
+  }
+
+  .ab-icon {
+    position: relative;
+    flex: none;
+    width: 45px;
+    height: 45px;
+  }
+
+  .ab-viewport {
     position: absolute;
     inset: 0;
-    pointer-events: none;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ab-glyph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+
+  .ab-glyph svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .ab-next {
+    transform: translateY(calc(-1 * var(--ab-travel)));
+  }
+
+  .ab-text {
+    display: grid;
+    grid-template-columns: 0fr;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: grid-template-columns var(--dur-slow) var(--ease-out);
+  }
+
+  .ab-text span {
+    min-width: 0;
+    padding-right: 0;
     opacity: 0;
-    background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.5) 50%, transparent 65%) no-repeat 120% 0 / 250% 100%;
-    mix-blend-mode: soft-light;
+    transition: opacity var(--dur-base) var(--ease-out), padding var(--dur-slow) var(--ease-out);
   }
 
-  @keyframes hero-glint {
-    0% { opacity: 1; background-position: 120% 0; }
-    70% { opacity: 1; }
-    100% { opacity: 0; background-position: -20% 0; }
+  .auto-btn::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -8.5px;
+    border: var(--dash-width) dashed var(--dash-color);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .hero.is-glinting .hero-glint {
-      animation: hero-glint calc(var(--dur-slow) * 1.2) ease-in-out;
-    }
+  .auto-btn:focus-visible {
+    outline: none;
+  }
+
+  .auto-btn:is(:hover, :focus-visible) {
+    background: color-mix(in oklch, var(--dash-color) 25%, transparent);
+  }
+
+  .auto-btn:is(:hover, :focus-visible) .ab-text {
+    grid-template-columns: 1fr;
+  }
+
+  .auto-btn:is(:hover, :focus-visible) .ab-text span {
+    opacity: 1;
+    padding-right: 1.2rem;
+  }
+
+  .auto-btn:is(:hover, :focus-visible) .ab-lead {
+    transform: translateY(var(--ab-travel));
+  }
+
+  .auto-btn:is(:hover, :focus-visible) .ab-next {
+    transform: none;
+  }
+
+  .auto-btn:is(:hover, :focus-visible)::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .hero-hint.is-gone {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
   }
 
   @keyframes hero-tilt {
     from { transform: perspective(900px) rotateX(0deg) scale(1); }
     to { transform: perspective(900px) rotateX(48deg) scale(0.94); }
-  }
-
-  @keyframes hero-wipe {
-    from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
-    to { -webkit-mask-position: 0 0; mask-position: 0 0; }
   }
 
   @keyframes hero-shine {
@@ -607,59 +430,13 @@ const navLinks = [
       .hero-shine {
         animation-name: hero-shine;
       }
-
-      .hero-top {
-        --wipe: linear-gradient(90deg, transparent 0%, transparent 33%, #000 50%, #000 100%);
-        -webkit-mask-image: var(--wipe);
-        mask-image: var(--wipe);
-        -webkit-mask-size: 300% 100%;
-        mask-size: 300% 100%;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        animation-name: hero-wipe;
-        animation-timeline: scroll(root);
-        animation-range: 0 40vh;
-        animation-fill-mode: both;
-        animation-timing-function: ease-in-out;
-        animation-duration: 1ms;
-      }
     }
   }
 
-  .hero-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .hero-img-dark {
-    display: none;
-  }
-
-  :global([data-theme="dark"]) .hero-img-light {
-    display: none;
-  }
-
-  :global([data-theme="dark"]) .hero-img-dark {
-    display: block;
-  }
-
-  /* Without the lamp, the nav no longer needs to clear it: pin it to the image edge */
   @media (max-width: 1024px), (pointer: coarse) {
     .lamp-anchor {
       display: none;
     }
-
-    .hero-nav {
-      right: 0;
-    }
-  }
-
-  :global(html.no-pendulum) .hero-nav {
-    right: 0;
   }
 
   /* Tablet: line the hero up with the section gutters below instead of the narrower desktop column */
@@ -676,7 +453,6 @@ const navLinks = [
     }
   }
 
-  /* Tall screens (iPad Pro portrait): a taller frame and no forced full-screen height, instead of a blank band under the photo */
   @media (min-width: 861px) and (orientation: portrait) {
     .hero {
       min-height: 0;
@@ -694,35 +470,12 @@ const navLinks = [
   }
 
   @media (max-width: 680px) {
-    .hero-top {
-      --name-fs: clamp(2.4rem, 11cqw, 3.4rem);
-    }
-
     .hero-name {
-      font-size: var(--name-fs);
+      display: block;
     }
 
-    .hero-nav {
-      display: none;
-    }
-
-    .hero-burger {
-      display: grid;
-      transform: translateY(calc(var(--name-fs) * -0.1));
-    }
-
-    .hero-top {
-      margin-bottom: 1rem;
-    }
-
-    .hero-media {
-      aspect-ratio: 4 / 3;
-    }
-  }
-
-  /* Phone: no hero photo, About Me is the landing */
-  @media (max-width: 680px) {
-    .hero-tilt {
+    .hero-tilt,
+    .hero-hint {
       display: none;
     }
 

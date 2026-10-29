@@ -3,9 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import AboutMe from '../components/AboutMe.astro';
 import ProjectGrid from '../components/projects/ProjectGrid.astro';
-import Timeline from '../components/timeline/Timeline.astro';
 import WorkBento from '../components/work/WorkBento.astro';
 import Footer from '../components/Footer.astro';
+import TypeOn from '../components/TypeOn.astro';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -43,8 +43,6 @@ const timelineData = JSON.parse(
   events?: { date: string; label: string; description?: string; link?: string }[];
 };
 
-const today = new Date().toISOString().slice(0, 10);
-const workBento = true;
 ---
 
 <Layout title="Owen Ritchie">
@@ -54,13 +52,14 @@ const workBento = true;
 
       <AboutMe />
 
-      {workBento ? <WorkBento entries={timelineData.entries} /> : <Timeline now={today} entries={timelineData.entries} />}
+      <WorkBento entries={timelineData.entries} />
 
       <ProjectGrid projects={projectsData} />
     </div>
 
     <Footer />
   </main>
+  <TypeOn />
 </Layout>
 
 <script>
@@ -78,8 +77,6 @@ const workBento = true;
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
-
   main {
     max-width: 1320px;
     margin: 0 auto;

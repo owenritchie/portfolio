@@ -1,0 +1,100 @@
+---
+interface Props {
+  selector?: string;
+}
+
+const { selector = '#me .about-me-content p, #work .work-desc, #projects .ppanel-desc' } = Astro.props;
+---
+
+<div data-type-on={selector} hidden></div>
+
+<style is:global>
+  html.type-on .tc {
+    opacity: 0.22;
+  }
+
+  html.type-on .tc.on {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  const host = document.querySelector<HTMLElement>('[data-type-on]');
+  const ok = matchMedia('(prefers-reduced-motion: no-preference) and (min-width: 861px) and (pointer: fine)').matches;
+
+  if (host && ok) {
+    const blocks = Array.from(document.querySelectorAll<HTMLElement>(host.dataset.typeOn || ''));
+    const chars = new Map<HTMLElement, HTMLElement[]>();
+
+    blocks.forEach((block) => {
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+      const nodes: Text[] = [];
+      while (walker.nextNode()) {
+        const node = walker.currentNode as Text;
+        if (node.textContent && !node.parentElement?.closest('svg')) nodes.push(node);
+      }
+      const list: HTMLElement[] = [];
+      nodes.forEach((node) => {
+        const frag = document.createDocumentFragment();
+        (node.textContent || '').split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) {
+            frag.append(part);
+            return;
+          }
+          const word = document.createElement('span');
+          word.style.whiteSpace = 'nowrap';
+          for (const ch of part) {
+            const c = document.createElement('span');
+            c.className = 'tc';
+            c.textContent = ch;
+            word.append(c);
+            list.push(c);
+          }
+          frag.append(word);
+        });
+        node.replaceWith(frag);
+      });
+      chars.set(block, list);
+    });
+
+    const root = document.documentElement;
+    const auto = () => root.classList.contains('autoscrolling');
+    addEventListener('autoscroll', (e) => root.classList.toggle('type-on', (e as CustomEvent).detail));
+
+    const type = (block: HTMLElement) => {
+      const list = chars.get(block) || [];
+      if (!auto()) {
+        list.forEach((c) => c.classList.add('on'));
+        return;
+      }
+      const rate = Math.max(160, list.length / 1.6);
+      const start = performance.now();
+      let shown = 0;
+      const step = (now: number) => {
+        const target = Math.min(list.length, Math.floor(((now - start) / 1000) * rate));
+        while (shown < target) list[shown++].classList.add('on');
+        if (shown < list.length) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const visible = (el: HTMLElement) =>
+      typeof el.checkVisibility !== 'function' || el.checkVisibility({ opacityProperty: true, visibilityProperty: true });
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const el = e.target as HTMLElement;
+          io.unobserve(el);
+          const go = () => (visible(el) ? type(el) : setTimeout(go, 150));
+          go();
+        });
+      },
+      { threshold: 0.3 }
+    );
+    blocks.forEach((b) => io.observe(b));
+
+  }
+</script>

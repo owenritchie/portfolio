@@ -1,6 +1,6 @@
 ---
 interface Props {
-  icon: 'download' | 'arrow-up' | 'arrow-left';
+  icon: 'download' | 'arrow-up' | 'arrow-down' | 'arrow-left' | 'mouse';
   label: string;
   direction?: 'up' | 'down' | 'left' | 'right';
   variant?: 'download' | 'to-top' | 'accent';
@@ -27,6 +27,8 @@ const paths: Record<Props['icon'], string> = {
   download:
     '<path d="M12 13v8l-4-4" /><path d="m12 21 4-4" /><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />',
   'arrow-up': '<path d="M12 19V5M12 5l-6.5 6.5M12 5l6.5 6.5" />',
+  'arrow-down': '<path d="M12 5v14M12 19l-6.5-6.5M12 19l6.5-6.5" />',
+  mouse: '<rect x="6.5" y="3" width="11" height="18" rx="5.5" /><path d="M12 7v3" />',
   'arrow-left': '<path d="M19 12H5M5 12l6.5-6.5M5 12l6.5 6.5" />',
 };
 
@@ -272,6 +274,20 @@ const tagAttrs = href ? { href, target, rel } : { type: 'button' as const };
   :global([data-theme="dark"]) .ib[data-variant="to-top"][data-tone="page"]:hover,
   :global([data-theme="dark"]) .ib[data-variant="to-top"][data-tone="page"]:focus-visible {
     --ib-bg: color-mix(in oklch, var(--dash-color) 25%, transparent);
+  }
+
+  :global(:root:not([data-theme="dark"])) .ib:is([data-variant="accent"], [data-variant="to-top"]) {
+    --ib-bg: oklch(0.26 0.035 145);
+    --ib-fg: oklch(0.945 0.013 92);
+    border-color: transparent;
+  }
+
+  :global(:root:not([data-theme="dark"])) .ib:is([data-variant="accent"], [data-variant="to-top"])::after {
+    border-color: oklch(0.45 0.04 145);
+  }
+
+  :global(:root:not([data-theme="dark"])) .ib:is([data-variant="accent"], [data-variant="to-top"]):is(:hover, :focus-visible) {
+    --ib-bg: oklch(0.34 0.05 145);
   }
 
   .ib[data-variant="to-top"].is-visible {

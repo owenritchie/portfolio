@@ -26,7 +26,7 @@
         "Modelling & Simulation",
         "Design & Analysis of Algorithms",
         "Artificial Intelligence",
-        "Requirements Engineering",
+        "Cybersecurity",
         "Databases",
         "User Interfaces"
       ]
@@ -119,7 +119,7 @@
         {
           "value": "10+",
           "num": 10,
-          "label": "Directors modelling policy impact across aid funding scenarios with my development indicators tool"
+          "label": "Directors modelling aid funding scenarios with my ODA tool"
         }
       ]
     },
@@ -155,7 +155,7 @@
         {
           "value": "~90M",
           "num": 90000000.0,
-          "label": "rows migrated from Snowflake to BigQuery with zero downtime"
+          "label": "rows migrated from Snowflake to BigQuery with 0 downtime"
         },
         {
           "value": "$18k",

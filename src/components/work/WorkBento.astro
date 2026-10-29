@@ -1,7 +1,4 @@
 ---
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 interface Entry {
   title: string;
   role: string;
@@ -25,13 +22,6 @@ interface Props {
 
 const { entries } = Astro.props;
 
-const skillIcons = new Map(
-  (JSON.parse(readFileSync(join(process.cwd(), 'public/config/skills.json'), 'utf-8')) as {
-    name: string;
-    icon: string;
-  }[]).map((s) => [s.name, s.icon] as const)
-);
-
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const fmt = (d: string) => {
   if (d === 'present') return 'Present';
@@ -48,7 +38,6 @@ const counter = (value: string) => {
 const shape = (e: Entry) => ({
   ...e,
   range: `${fmt(e.start)} — ${fmt(e.end)}`,
-  icons: (e.skills ?? []).map((name) => ({ name, icon: skillIcons.get(name) })).filter((s) => s.icon),
   best: (e.stats ?? []).slice(0, 3),
 });
 
@@ -62,18 +51,7 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
 
 <section id="work" class="timeline work" aria-label="Work">
   <div class="work-top">
-  <h2 class="work-heading" data-reveal="up"><span class="wh-long">Where I've done my work</span><span class="wh-short">Work</span></h2>
-  <div class="work-sub" data-reveal="up" style="--rd:0.06s">
-    <a class="work-resume" href="/resume/owen-ritchie.pdf" target="_blank" rel="noopener">
-      <span class="wr-icon" aria-hidden="true">
-        <span class="wr-viewport">
-          <span class="wr-glyph wr-lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M8 13h8M8 17h5" /></svg></span>
-          <span class="wr-glyph wr-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M8 13h8M8 17h5" /></svg></span>
-        </span>
-      </span>
-      <span>View resume</span>
-    </a>
-  </div>
+  <h2 class="work-heading" data-reveal="up"><span class="wh-long">Where I've done my work</span><span class="wh-short">Experience</span></h2>
   </div>
 
   {schools.map((school) => (
@@ -95,13 +73,6 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
       <div class="edu-body">
         <div>
           {school.description && <p class="work-desc">{school.description}</p>}
-          {school.icons.length > 0 && (
-            <ul class="work-skills" aria-label="Skills">
-              {school.icons.map((s) => (
-                <li><img src={s.icon} alt={`${s.name} logo`} title={s.name} width="30" height="30" loading="lazy" /></li>
-              ))}
-            </ul>
-          )}
         </div>
         {school.courses && school.courses.length > 0 && (
           <div class="edu-courses">
@@ -142,13 +113,6 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
             <p class="work-dates">{job.range}</p>
           </header>
           {job.description && <p class="work-desc">{job.description}</p>}
-          {job.icons.length > 0 && (
-            <ul class="work-skills" aria-label="Skills">
-              {job.icons.map((s, k) => (
-                <li style={`--k:${k}`}><img src={s.icon} alt={`${s.name} logo`} title={s.name} width="30" height="30" loading="lazy" /></li>
-              ))}
-            </ul>
-          )}
         </div>
 
         {job.best.length > 0 && (
@@ -221,108 +185,6 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
 
   .wh-short {
     display: none;
-  }
-
-  .work-resume {
-    --wr-fill: oklch(0.26 0.035 145);
-    --wr-fg: oklch(0.945 0.013 92);
-    --wr-ring: oklch(0.45 0.04 145);
-    --wr-travel: 150%;
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    height: 3rem;
-    padding: 0 1.2rem 0 0.35rem;
-    border-radius: 999px;
-    background: var(--wr-fill);
-    color: var(--wr-fg);
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  :global([data-theme="dark"]) .work-resume {
-    --wr-fill: oklch(0.3 0.055 280);
-    --wr-fg: oklch(0.88 0.04 285);
-    --wr-ring: var(--dash-color);
-  }
-
-  .wr-icon {
-    position: relative;
-    flex: none;
-    width: 2.4rem;
-    height: 2.4rem;
-  }
-
-  .wr-viewport {
-    position: absolute;
-    inset: 0;
-    border-radius: 999px;
-    overflow: hidden;
-  }
-
-  .wr-glyph {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    transition: transform var(--dur-slow) var(--ease-out);
-  }
-
-  .wr-glyph :global(svg) {
-    width: 20px;
-    height: 20px;
-  }
-
-  .wr-next {
-    transform: translate(0, calc(-1 * var(--wr-travel)));
-  }
-
-  .work-resume::after {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: -7px;
-    border: var(--dash-width) dashed var(--wr-ring);
-    border-radius: 999px;
-    opacity: 0;
-    transform: scale(0.94);
-    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
-  }
-
-  .work-resume:focus-visible {
-    outline: none;
-  }
-
-  .work-resume:focus-visible .wr-lead {
-    transform: translate(0, var(--wr-travel));
-  }
-
-  .work-resume:focus-visible .wr-next {
-    transform: translate(0, 0);
-  }
-
-  .work-resume:focus-visible::after {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  @media (hover: hover) {
-    .work-resume:hover .wr-lead {
-      transform: translate(0, var(--wr-travel));
-    }
-
-    .work-resume:hover .wr-next {
-      transform: translate(0, 0);
-    }
-
-    .work-resume:hover::after {
-      opacity: 1;
-      transform: scale(1);
-    }
   }
 
   .work-list {
@@ -476,30 +338,6 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
     margin: 1.2rem 0 0;
   }
 
-  .work-skills {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    padding: 0;
-    margin: auto 0 0;
-    padding-top: 1.4rem;
-  }
-
-  .work-skills img {
-    display: block;
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    transition: transform 0.85s var(--ease-out);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .work-skills img:hover {
-      transform: rotate(360deg) scale(1.12);
-    }
-  }
-
   .work-stats {
     list-style: none;
     display: grid;
@@ -546,25 +384,12 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    :global(.js-reveal) .work-skills li {
-      opacity: 0;
-      translate: 0 8px;
-      transition: opacity 0.4s var(--ease-out), translate 0.4s var(--ease-out);
-      transition-delay: calc(0.35s + var(--k, 0) * 0.05s);
-    }
-
-    :global(.js-reveal) .work-job:global(.is-in) .work-skills li {
-      opacity: 1;
-      translate: 0 0;
-    }
-
-    :global(.js-reveal) .work-stat.lead {
+    :global(.autoscrolling) .work-stat.lead:not(:global(.is-in)) {
       background: linear-gradient(var(--green), var(--green)) no-repeat 0 0 / 0% 100%;
-      transition: background-size 0.9s var(--ease-out) 0.15s;
     }
 
-    :global(.js-reveal) .work-stat.lead:global(.is-in) {
-      background-size: 100% 100%;
+    :global(.autoscrolling) .work-stat.lead {
+      transition: background-size 0.9s var(--ease-out) 0.15s;
     }
   }
 
@@ -601,6 +426,16 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
       grid-auto-rows: auto;
     }
   }
+
+  @media (max-width: 680px) {
+    .work-top {
+      justify-content: center;
+    }
+
+    .work-heading {
+      text-align: center;
+    }
+  }
 </style>
 
 <script>
@@ -626,13 +461,13 @@ const schools = visible.filter((e) => e.kind === 'education').map(shape);
       requestAnimationFrame(tick);
     };
 
-    counters.forEach((el) => render(el, 0));
-
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
           io.unobserve(e.target);
+          if (!root.classList.contains('autoscrolling')) return;
+          render(e.target as HTMLElement, 0);
           setTimeout(() => run(e.target as HTMLElement), 250);
         });
       },

@@ -106,6 +106,22 @@ const dl =
           </div>
         </article>
       ))}
+      <button type="button" class="ppeek ppeek--prev" data-step="-1" aria-label="Previous project" tabindex="-1">
+        {shown.map((p, i) => (
+          <span class:list={['ppeek-item', { 'is-on': i === shown.length - 1 }]} data-i={i}>
+            <span class="ppeek-title">{display(p.short ?? p.title).map(({ part, punct }) => (punct ? <span class="punct">{part}</span> : part))}</span>
+            <img src={p.image} alt="" width="1600" height="1000" loading="lazy" />
+          </span>
+        ))}
+      </button>
+      <button type="button" class="ppeek ppeek--next" data-step="1" aria-label="Next project" tabindex="-1">
+        {shown.map((p, i) => (
+          <span class:list={['ppeek-item', { 'is-on': i === 1 }]} data-i={i}>
+            <span class="ppeek-title">{display(p.short ?? p.title).map(({ part, punct }) => (punct ? <span class="punct">{part}</span> : part))}</span>
+            <img src={p.image} alt="" width="1600" height="1000" loading="lazy" />
+          </span>
+        ))}
+      </button>
       <div class="pnotch">
         <a class="pnotch-gh" href="https://github.com/owenritchie" target="_blank" rel="noopener" aria-label="Owen's GitHub profile">
           <span class="pnotch-viewport">
@@ -129,6 +145,7 @@ const dl =
     </nav>
   </div>
 </section>
+<div class="pgrid-track" aria-hidden="true" style={`--n:${shown.length}`}></div>
 
 <script>
   const browser = document.querySelector<HTMLElement>('.pbrowser');
@@ -138,6 +155,12 @@ const dl =
     const panels = Array.from(browser.querySelectorAll<HTMLElement>('.ppanel'));
 
     const select = (i: number, focus = false) => {
+      const cur = Number(browser.dataset.active);
+      if (i !== cur) {
+        const n = tabs.length;
+        const fwd = (i - cur + n) % n <= n / 2;
+        browser.dataset.dir = fwd ? 'next' : 'prev';
+      }
       browser.dataset.active = String(i);
       tabs.forEach((tab, idx) => {
         const on = idx === i;
@@ -156,6 +179,11 @@ const dl =
         if (on) n.setAttribute('aria-current', 'true');
         else n.removeAttribute('aria-current');
       });
+      const n = tabs.length;
+      browser.querySelectorAll<HTMLElement>('.ppeek').forEach((pk) => {
+        const want = (i + Number(pk.dataset.step) + n) % n;
+        pk.querySelectorAll<HTMLElement>('.ppeek-item').forEach((it, idx) => it.classList.toggle('is-on', idx === want));
+      });
       if (focus) tabs[i].focus();
     };
 
@@ -171,6 +199,15 @@ const dl =
       btn.addEventListener('click', () => select(Number(btn.dataset.go)));
     });
 
+    browser.querySelectorAll<HTMLElement>('.ppeek').forEach((pk) =>
+      pk.addEventListener('click', () => {
+        const n = tabs.length;
+        const to = (Number(browser.dataset.active) + Number(pk.dataset.step) + n) % n;
+        select(to);
+        goTo(to);
+      })
+    );
+
     let sx = 0;
     let sy = 0;
     const panelsEl = browser.querySelector('.ppanels');
@@ -185,8 +222,50 @@ const dl =
       if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(t.clientY - sy) * 1.5) step(dx < 0 ? 1 : -1);
     }, { passive: true });
 
+    const section = browser.closest<HTMLElement>('.pgrid');
+    const track = document.querySelector<HTMLElement>('.pgrid-track');
+    const pinned = matchMedia('(min-width: 861px) and (pointer: fine)');
+
+    const span = () => {
+      if (!section || !track || !pinned.matches || !track.offsetHeight) return null;
+      const top = parseFloat(section.style.top) || 0;
+      const trackTop = track.getBoundingClientRect().top + scrollY;
+      const start = trackTop - section.offsetHeight - top;
+      return { start, len: track.offsetHeight };
+    };
+
+    const fitTop = () => {
+      if (!section) return;
+      section.style.top = pinned.matches ? `${Math.min(0, innerHeight - section.offsetHeight)}px` : '';
+    };
+
+    const onScroll = () => {
+      const r = span();
+      if (!r) return;
+      const p = (scrollY - r.start) / r.len;
+      if (p < 0 || p > 1) return;
+      const i = Math.min(tabs.length - 1, Math.floor(p * tabs.length));
+      if (i !== Number(browser.dataset.active)) select(i);
+    };
+
+    const goTo = (i: number) => {
+      const r = span();
+      if (!r) return false;
+      if (scrollY < r.start - 2 || scrollY > r.start + r.len + 2) return false;
+      scrollTo({ top: r.start + ((i + 0.5) / tabs.length) * r.len, behavior: 'smooth' });
+      return true;
+    };
+
+    fitTop();
+    addEventListener('resize', fitTop);
+    addEventListener('scroll', onScroll, { passive: true });
+    pinned.addEventListener('change', fitTop);
+
     tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('click', () => {
+        select(i);
+        goTo(i);
+      });
       tab.addEventListener('keydown', (e) => {
         const last = tabs.length - 1;
         let next = -1;
@@ -226,6 +305,22 @@ const dl =
     scroll-margin-top: 1.5rem;
   }
 
+  .pgrid-track {
+    display: none;
+  }
+
+  @media (min-width: 861px) and (pointer: fine) {
+    .pgrid {
+      position: sticky;
+      min-height: 100vh;
+    }
+
+    .pgrid-track {
+      display: block;
+      height: calc((var(--n) - 1) * 28vh);
+    }
+  }
+
   :global([data-theme='dark']) .pgrid {
     --sec: oklch(0.22 0.04 280);
     --card: oklch(0.17 0.03 278);
@@ -261,6 +356,12 @@ const dl =
   @media (max-width: 860px) {
     .pgrid-heading {
       text-align: left;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .pgrid-heading {
+      text-align: center;
     }
   }
 
@@ -386,6 +487,82 @@ const dl =
     height: clamp(40rem, 86vh, 52rem);
   }
 
+  .ppeek {
+    display: none;
+  }
+
+  @media (min-width: 1081px) {
+    .pgrid {
+      overflow-x: clip;
+    }
+
+    .ppeek {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 70%;
+      display: block;
+      padding: clamp(1.4rem, 2.6vw, 2.2rem);
+      border: 0;
+      border-radius: var(--r);
+      background: var(--card);
+      color: var(--ink);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      opacity: 0.55;
+    }
+
+    .ppeek--next {
+      left: calc(100% + 1.5rem);
+      transform-origin: 0 50%;
+      transform: perspective(1400px) rotateY(-10deg);
+    }
+
+    .ppeek--prev {
+      right: calc(100% + 1.5rem);
+      transform-origin: 100% 50%;
+      transform: perspective(1400px) rotateY(10deg);
+    }
+
+    .ppeek--prev .ppeek-item {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .ppeek--prev .ppeek-item img {
+      object-position: top right;
+    }
+
+    .ppeek-item {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .ppeek-item.is-on {
+      display: flex;
+    }
+
+    .ppeek-title {
+      font-family: var(--heading-font);
+      font-weight: bold;
+      font-size: clamp(2rem, 3.4vw, 3rem);
+      line-height: 1.05;
+      color: var(--ink);
+    }
+
+    .ppeek-item img {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      object-fit: cover;
+      object-position: top left;
+      border-radius: clamp(12px, 1.4vw, 18px);
+    }
+  }
+
   .ppanel {
     height: 100%;
     display: flex;
@@ -402,6 +579,28 @@ const dl =
     .ppanel.is-active {
       animation: panel-in var(--dur-slow) var(--ease-out);
     }
+
+    .pbrowser[data-dir="next"] .ppanel.is-active {
+      animation-name: slide-from-right;
+    }
+
+    .pbrowser[data-dir="prev"] .ppanel.is-active {
+      animation-name: slide-from-left;
+    }
+
+    .pbrowser[data-dir] .ppeek-item.is-on {
+      animation: panel-in var(--dur-slow) var(--ease-out);
+    }
+  }
+
+  @keyframes slide-from-right {
+    from { opacity: 0; transform: translateX(3rem); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes slide-from-left {
+    from { opacity: 0; transform: translateX(-3rem); }
+    to { opacity: 1; transform: none; }
   }
 
   @keyframes panel-in {
