@@ -1,0 +1,51 @@
+[
+  {
+    "id": "kinaxis",
+    "company": "Kinaxis",
+    "role": "Data & Analytics Engineer Intern",
+    "start": "2025-09",
+    "end": "2026-08",
+    "logo": "/timeline/kinaxis.svg",
+    "ink": "#e30613",
+    "stats": [
+      { "value": "500M+", "num": 500000000, "label": "tracked parts, scenarios & users in a CEO-facing footprint tool" },
+      { "value": "~90M", "num": 90000000, "label": "Eloqua rows moved from Snowflake to BigQuery, zero downtime" },
+      { "value": "250k+", "num": 250000, "label": "daily events processed across 3 Google Analytics properties" },
+      { "value": "100k+", "num": 100000, "label": "CU-hours of yearly Fabric compute cut" },
+      { "value": "$18k", "num": 18000, "label": "saved a year by optimizing dataflows" },
+      { "value": "400+", "num": 400, "label": "Maestro customers in the footprint tool" },
+      { "value": "10+", "num": 10, "label": "years of ServiceNow & LogicMonitor data migrated" },
+      { "value": "3", "num": 3, "label": "Google Analytics properties automated to the CMO" }
+    ]
+  },
+  {
+    "id": "gac",
+    "company": "Global Affairs Canada",
+    "role": "Data Analytics Intern",
+    "start": "2025-01",
+    "end": "2025-07",
+    "logo": "/timeline/gac.webp",
+    "ink": "#eb2d37",
+    "stats": [
+      { "value": "99.8%", "num": 99.8, "label": "faster API responses through multithreaded ingestion" },
+      { "value": "50+", "num": 50, "label": "statistics in the G7 Accountability Report validated" },
+      { "value": "25+", "num": 25, "label": "metrics per Sahel and CARICOM report" },
+      { "value": "10+", "num": 10, "label": "Directors using the aid-funding scenario tool" },
+      { "value": "5+", "num": 5, "label": "years of cross-institutional data checked" }
+    ]
+  },
+  {
+    "id": "poisson",
+    "company": "Poisson Consulting",
+    "role": "Data Science Intern",
+    "start": "2023-05",
+    "end": "2023-09",
+    "logo": "/timeline/poisson.webp",
+    "ink": "#4a86c0",
+    "stats": [
+      { "value": "500k+", "num": 500000, "label": "salmon egg records analyzed in R and Tidyverse" },
+      { "value": "3k+", "num": 3000, "label": "salmon redds mapped from drone surveys" },
+      { "value": "15", "num": 15, "label": "students taught R as a volunteer TA" }
+    ]
+  }
+]

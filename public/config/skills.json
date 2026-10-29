@@ -16,5 +16,17 @@
   { "name": "Java", "icon": "/stack/java.webp" },
   { "name": "TypeScript", "icon": "/stack/typescript.webp" },
   { "name": "R", "icon": "/stack/r.webp" },
-  { "name": "Looker", "icon": "/stack/looker.webp" }
+  { "name": "Looker", "icon": "/stack/looker.webp" },
+  { "name": "Fabric", "icon": "/stack/fabric.webp" },
+  { "name": "Google Analytics", "icon": "/stack/google_analytics.webp" },
+  { "name": "C#", "icon": "/stack/c_sharp.webp" },
+  { "name": "Supabase", "icon": "/stack/supabase.webp" },
+  { "name": "S3", "icon": "/stack/s3.webp" },
+  { "name": "Terraform", "icon": "/stack/terraform.webp" },
+  { "name": "Docker", "icon": "/stack/docker.webp" },
+  { "name": "Metabase", "icon": "/stack/metabase.webp" },
+  { "name": "Tauri", "icon": "/stack/tauri.webp" },
+  { "name": "Ollama", "icon": "/stack/ollama.webp" },
+  { "name": "Blazor", "icon": "/stack/blazor.webp" },
+  { "name": "Claude Code", "icon": "/stack/claude_code.webp" }
 ]

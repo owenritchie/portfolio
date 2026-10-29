@@ -4,14 +4,32 @@
       "title": "University of Ottawa",
       "role": "BSc Computer Science",
       "start": "2022-09",
-      "end": "present",
+      "end": "2026-12",
       "color": "blue",
       "link": "https://www.uottawa.ca/",
       "logo": "/timeline/uottawa.webp",
       "cardColor": "#8f001a",
       "logoZoom": 1.4,
-      "description": "Honours Computer Science student on the Dean's List. Coursework includes Modelling & Simulation, Design & Analysis of Algorithms, Artificial Intelligence and Cybersecurity. Building the EECS department's first honours project portal as my CSI 4900 honours project. Likely pursuing a master's in data science at another institution after graduation.",
-      "skills": ["Java", "Python", "Postgres"]
+      "description": "Honours Computer Science on the Dean's List. Building the EECS department's first honours project portal as my CSI 4900 honours project.",
+      "skills": [
+        "Java",
+        "Python",
+        "Postgres",
+        "C#",
+        "Blazor",
+        "Supabase",
+        "S3",
+        "Terraform"
+      ],
+      "kind": "education",
+      "courses": [
+        "Modelling & Simulation",
+        "Design & Analysis of Algorithms",
+        "Artificial Intelligence",
+        "Requirements Engineering",
+        "Databases",
+        "User Interfaces"
+      ]
     },
     {
       "title": "Poisson Consulting",
@@ -23,8 +41,29 @@
       "logo": "/timeline/poisson.webp",
       "cardColor": "#8fb8e0",
       "logoZoom": 1,
-      "description": "Performed quality assurance in R to replace deprecated functions within analyses scripts, and mapped 1000s of salmon redds (fish eggs) in the Lower Columbia river to reduce mortality rates during water-level fluctuations from the dam upstream.",
-      "skills": ["R", "Tidyverse", "Postgres"]
+      "description": "Worked with senior computational biologists on salmon research along the Lower Columbia River, keeping published R analyses reproducible as packages changed. Mapped spawning sites from drone surveys to estimate how dam operations affect egg survival, and taught R to students as a volunteer TA.",
+      "skills": [
+        "R",
+        "Tidyverse",
+        "Postgres"
+      ],
+      "stats": [
+        {
+          "value": "500k+",
+          "num": 500000.0,
+          "label": "egg records analyzed in R and Tidyverse"
+        },
+        {
+          "value": "3k+",
+          "num": 3000,
+          "label": "salmon redds mapped from weekly drone surveys"
+        },
+        {
+          "value": "15",
+          "num": 15,
+          "label": "students taught R as a volunteer TA"
+        }
+      ]
     },
     {
       "title": "City of Ottawa",
@@ -59,8 +98,30 @@
       "link": "https://www.international.gc.ca/",
       "logo": "/timeline/gac.webp",
       "cardColor": "#eb2d37",
-      "description": "Developed an interactive tool allowing executives to model Official Development Assistance against our current commitments, as well as contributing significantly to statistics found in Canada's G7 Comprehensive Accountability Report for the 2025 Kananaskis summit. Additionally conducted analyses and built reports for countries in the CARICOM and Sahel.",
-      "skills": ["Power BI", "Python", "Pandas"]
+      "description": "Worked on the data behind Canada's international development reporting, bringing together sources like the World Bank, OECD, UN and WEF. Built a scenario tool for Directors to model aid funding against Canada's commitments, validated statistics for the G7 Accountability Report at the 2025 Kananaskis summit, and delivered regional reports on the Sahel and CARICOM.",
+      "skills": [
+        "Power BI",
+        "Python",
+        "Pandas",
+        "Scikit-learn"
+      ],
+      "stats": [
+        {
+          "value": "99.8%",
+          "num": 99.8,
+          "label": "cut in API response times pulling World Bank, OECD, UN & WEF data, through multithreading"
+        },
+        {
+          "value": "50+",
+          "num": 50,
+          "label": "statistics in Canada's G7 Accountability Report (2025)"
+        },
+        {
+          "value": "10+",
+          "num": 10,
+          "label": "Directors modelling policy impact across aid funding scenarios with my development indicators tool"
+        }
+      ]
     },
     {
       "title": "Kinaxis",
@@ -71,8 +132,42 @@
       "link": "https://www.kinaxis.com/",
       "logo": "/timeline/kinaxis.svg",
       "cardColor": "#e30613",
-      "description": "Supported a variety of Data Engineering and Cloud Analytics related tasks, including the development of dbt, GCP, and Power BI infrastructure for Marketing, Sales, Product, Finance, IT & Cloud Services. Heavily influenced dashboard styling within our Data & Analytics team, and was tasked with designing and modeling a customer footprint dashboard to welcome the new CEO to Kinaxis.",
-      "skills": ["dbt", "GCP", "Snowflake", "Postgres", "Grafana", "Power BI", "Python", "GitHub Actions"]
+      "description": "Worked across data engineering and cloud analytics, building the dbt, GCP and Power BI infrastructure behind Marketing, Sales, Product, Finance, IT and Cloud Services. Designed and modelled reporting for at least five C-level executives, including the CEO, and redesigned our Data & Analytics team's reporting standards.",
+      "skills": [
+        "dbt",
+        "GCP",
+        "Snowflake",
+        "Postgres",
+        "Grafana",
+        "Power BI",
+        "Fabric",
+        "Python",
+        "GitHub Actions",
+        "Docker",
+        "Google Analytics"
+      ],
+      "stats": [
+        {
+          "value": "500M+",
+          "num": 500000000.0,
+          "label": "concurrent parts, scenarios & users tracked across 400+ Maestro customers"
+        },
+        {
+          "value": "~90M",
+          "num": 90000000.0,
+          "label": "rows migrated from Snowflake to BigQuery with zero downtime"
+        },
+        {
+          "value": "$18k",
+          "num": 18000.0,
+          "label": "saved a year by cutting 100k+ CU-hours of Fabric compute"
+        },
+        {
+          "value": "250k+",
+          "num": 250000.0,
+          "label": "daily events piped from 3 Google Analytics properties"
+        }
+      ]
     }
   ]
 }
